@@ -6,7 +6,8 @@ import { Label } from '@/components/ui/label';
 import { useNavigate } from 'react-router-dom';
 import { SessionData } from '@/hooks/useSession';
 
-const WS_URL = import.meta.env.VITE_REACT_APP_WS_URL || "ws://localhost:8000";
+const WS_URL = import.meta.env.VITE_REACT_APP_WS_URL || "ws://localhost:8080";
+const API_BASE = import.meta.env.VITE_REACT_APP_API_BASE || 'http://localhost:8080';
 const RECONNECT_BASE = 1000; // 1s
 const MAX_RECONNECT = 5;
 
@@ -17,45 +18,47 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
     const [statusMap, setStatusMap] = useState<Record<string, boolean>>({});
     const [error, setError] = useState<string|null>(null);
     const [uploaded, setUploaded] = useState(false);
-    const [reconnectAttempts, setReconnectAttempts] = useState(0);
-    const [sessionError, setSessionError] = useState<string|null>(null);
     const socketRef = useRef<WebSocket|null>(null);
     const navigate = useNavigate();
 
-    const isReady = Object.keys(statusMap).length === participantCount && Object.values(statusMap).every(Boolean);
+    // Safely handle cases where statusMap might be undefined/null
+    const safeStatusMap = statusMap || {};
+    const isReady = Object.keys(safeStatusMap).length === participantCount && Object.values(safeStatusMap).every(Boolean);
 
     useEffect(() => {
         let socket: WebSocket;
+        let retries = 0;
+      
         const connect = () => {
-            socket = new WebSocket(`${WS_URL}/api/v1/ws/${sessionId}`);
+            socket = new WebSocket(`${WS_URL}/ws/${sessionId}`);
             socketRef.current = socket;
-
+        
             socket.onopen = () => {
-                setReconnectAttempts(0);
+                // reset retry counter on success
+                retries = 0;
                 socket.send(JSON.stringify({ userId, status: false }));
             };
-
-            socket.onmessage = e => {
-                const data = JSON.parse(e.data);
-                if (Object.keys(data.statusMap).length > participantCount) {
-                    setSessionError('Too many participants in session.');
-                } else {
-                    setStatusMap(data.statusMap);
-                }
+        
+            socket.onmessage = ({ data }) => {
+                const { statusMap } = JSON.parse(data);
+                setStatusMap(statusMap);
             };
-
+        
             socket.onclose = () => {
-                if (reconnectAttempts < MAX_RECONNECT) {
-                const delay = RECONNECT_BASE * Math.pow(2, reconnectAttempts);
-                    setTimeout(() => { setReconnectAttempts(prev => prev+1); connect(); }, delay);
+                if (retries < MAX_RECONNECT) {
+                    const delay = RECONNECT_BASE * 2 ** retries;
+                    retries += 1;
+                    setTimeout(connect, delay);
                 }
             };
-
-            socket.onerror = () => setError('WebSocket error');
+        
+            socket.onerror = () => setError("WebSocket error");
         };
+      
         connect();
+      
         return () => socket && socket.close();
-    }, [sessionId, userId, participantCount, reconnectAttempts]);
+    }, [sessionId]);   // 🔑 only re-run when the sessionId changes
 
     const handleSubmit = async () => {
         setError(null);
@@ -76,7 +79,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
         }
 
         try {
-            const res = await fetch(`${process.env.REACT_APP_API_BASE}/api/v1/upload/`, { method: 'POST', body: form });
+            const res = await fetch(`${API_BASE}/upload/`, { method: 'POST', body: form });
             const json = await res.json();
             if (!res.ok) throw new Error(json.detail || 'Upload failed');
             setUploaded(true);
@@ -104,7 +107,6 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                     <Input type="file" accept=".csv" onChange={e => setFile(e.target.files?.[0]||null)} />
 
                     {error && <p className="text-sm text-red-600">{error}</p>}
-                    {sessionError && <p className="text-sm text-red-600">{sessionError}</p>}
 
                     <Button onClick={handleSubmit} disabled={uploaded || !file || (userType==='lead' && (!orgName||!label))}>
                         {uploaded ? 'Uploaded ✓' : 'Upload'}
@@ -116,7 +118,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
 
                     <div className="mt-4 text-sm text-muted-foreground">
                         <p className="font-semibold mb-1">Participant Status:</p>
-                        {Object.entries(statusMap).map(([id, status]) => (
+                        {Object.entries(safeStatusMap).map(([id, status]) => (
                             <p key={id}>{id===userId?'You':id}: {status? '✅ Uploaded':'⏳ Waiting'}</p>
                         ))}
                     </div>
