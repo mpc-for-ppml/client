@@ -1,45 +1,28 @@
-import { Outlet, RouteObject, createBrowserRouter } from "react-router-dom";
-import { Home } from "@/pages";
-import { Navbar, Footer } from "@/components";
-// import { AuthProvider } from "@/contexts/AuthContext";
+import React from 'react';
+import { createBrowserRouter, Outlet, RouteObject } from 'react-router-dom';
+import { Navbar, Footer } from '@/components';
+import { Home } from '@/pages/Home';
+import FormUploadWrapper from '@/wrappers/FormUploadWrapper';
 
-const MainLayout = () => {
-    return (
-        <>
-            <Navbar />
-            <Outlet />
-            <Footer />
-        </>
-    );
-};
-
-const AuthLayout = () => {
-    return <Outlet />;
-};
+const MainLayout: React.FC = () => (
+    <>
+        <Navbar />
+        <Outlet />
+        <Footer />
+    </>
+);
 
 const routes: RouteObject[] = [
     {
-        path: "/",
-        element: <MainLayout />,
+        path: '/',
+        element: <MainLayout />, 
         children: [
-            {
-                path: "/",
-                element: <Home />,
-            }
-        ],
-    },
-    {
-        path: "/",
-        element: <AuthLayout />,
-        children: [
-            {
-                path: "/auth",
-                element: <Home />,
-            }
-        ],
-    },
+            { index: true, element: <Home /> },
+            { path: 'form-upload', element: <FormUploadWrapper /> },
+            { path: '*', element: <Home /> }
+        ]
+    }
 ];
 
 const router = createBrowserRouter(routes);
-
 export default router;
