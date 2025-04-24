@@ -52,7 +52,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                 }
             };
         
-            socket.onerror = () => setError("WebSocket error");
+            // socket.onerror = () => setError("WebSocket error");
         };
       
         connect();
@@ -108,13 +108,19 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
 
                     {error && <p className="text-sm text-red-600">{error}</p>}
 
-                    <Button onClick={handleSubmit} disabled={uploaded || !file || (userType==='lead' && (!orgName||!label))}>
-                        {uploaded ? 'Uploaded ✓' : 'Upload'}
-                    </Button>
-
-                    <Button disabled={!isReady} variant={isReady ? 'default' : 'outline'} onClick={handleProceed}>
-                        Proceed (Enabled when all are ready)
-                    </Button>
+                    <div className="w-full flex flex-col">
+                        <div className="flex flex-row space-x-4">
+                            <Button onClick={handleSubmit} disabled={uploaded || !file || (userType==='lead' && (!orgName||!label))}>
+                                {uploaded ? 'Uploaded ✓' : 'Upload'}
+                            </Button>
+                            {userType === 'lead' && <Button disabled={!isReady} variant={isReady ? 'default' : 'outline'} onClick={handleProceed}>
+                                Proceed
+                            </Button>}
+                        </div>
+                        <div className='flex'>
+                            {userType !== 'lead' && uploaded && <div className='text-sm mt-2 text-yellow-600'>⚠️ Wait for the leader to proceed</div>}
+                        </div>
+                    </div>
 
                     <div className="mt-4 text-sm text-muted-foreground">
                         <p className="font-semibold mb-1">Participant Status:</p>
