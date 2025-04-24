@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { SessionData } from '@/hooks/useSession';
 
 const MAX_PARTICIPANTS = 20;
+const API_BASE = import.meta.env.VITE_REACT_APP_API_BASE || 'http://localhost:8080';
 
 export const Home: React.FC = () => {
     const navigate = useNavigate();
@@ -24,9 +25,28 @@ export const Home: React.FC = () => {
         setError('');
     }, [userType]);
 
-    const handleGenerateSession = () => {
+    const handleGenerateSession = async () => {
         setSessionId(uuidv4());
         setCopied(false);
+        try {
+            const res = await fetch(
+                `${API_BASE}/sessions/`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        participant_count: participantCount,
+                        lead_user_id: userId
+                    })
+                }
+            );
+            if (!res.ok) throw new Error('Failed to create session');
+            const { session_id } = await res.json();
+            setSessionId(session_id);
+            setCopied(false);
+        } catch (e: any) {
+            setError(e.message);
+        }
     };
 
     const handleProceed = async () => {
@@ -35,10 +55,10 @@ export const Home: React.FC = () => {
         if (userType === 'participant') {
             // validate session via API
             try {
-                const res = await fetch(`${import.meta.env.VITE_REACT_APP_API_BASE}/api/v1/sessions/${sessionId}`);
+                const res = await fetch(`${API_BASE}/sessions/${sessionId}`);
                 if (!res.ok) throw new Error('Invalid or full session');
                 const json = await res.json();
-                if (json.joinedCount >= participantCount) throw new Error('Session is full');
+                if (json.joined_count >= json.participant_count) throw new Error('Session is full');
             } catch (e: any) {
                 setError(e.message);
                 return;
