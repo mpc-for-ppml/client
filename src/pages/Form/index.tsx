@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+// import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { useNavigate } from 'react-router-dom';
 import { SessionData } from '@/hooks/useSession';
 import illustrationImg from "@/assets/images/side.png";
+import UploadImage from "@/assets/icons/upload.png";
 
 const WS_URL = import.meta.env.VITE_REACT_APP_WS_URL || "ws://localhost:8080";
 const API_BASE = import.meta.env.VITE_REACT_APP_API_BASE || 'http://localhost:8080';
@@ -21,6 +22,8 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
     const [uploaded, setUploaded] = useState(false);
     const socketRef = useRef<WebSocket|null>(null);
     const navigate = useNavigate();
+    const textRef = useRef<HTMLParagraphElement>(null);
+    const infoRef = useRef<HTMLParagraphElement>(null);
 
     // Safely handle cases where statusMap might be undefined/null
     const safeStatusMap = statusMap || {};
@@ -90,6 +93,21 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
         }
     };
 
+    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        const file = e.target.files?.[0];
+
+        if (file) {
+            if (textRef && textRef.current) {
+                textRef.current.textContent = 'File uploaded sucessfully!';
+            }
+            if (infoRef && infoRef.current) {
+                infoRef.current.textContent = `${file.name}`;
+            }
+        }
+        setFile(e.target.files?.[0]||null)
+    }
+
     const handleProceed = () => navigate(`/result/${sessionId}`);
 
     return (
@@ -97,25 +115,50 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
             <div className="w-[40%] flex flex-col items-center justify-center min-h-screen p-4 space-y-6">
                 <div className="w-full max-w-md">
                     <div className="flex flex-col w-full gap-1 mb-4">
-                        <p className="text-4xl font-semibold">Submit Your Dataset!</p>
-                        <p className="text-base font-normal mb-4">Ready your data. Once all join, we compute together</p>
+                        <p className="text-4xl font-bold">Submit Your Dataset!</p>
+                        <p className="text-lg mb-4">Ready your data. Once all join, we compute together</p>
                     </div>
                     <div className="space-y-3">
                         {userType === 'lead' && (
                             <>  
                                 <div className='space-y-2'>
                                     <Label className="mt-2 text-slate-600">Organization Name</Label>
-                                    <Input className="bg-white/60 rounded-3xl" value={orgName} onChange={e => setOrgName(e.target.value)} />
+                                    <Input className="bg-white/60 rounded-2xl pl-4 py-4 hover:bg-white/20 duration-200" value={orgName} onChange={e => setOrgName(e.target.value)} />
                                 </div>
                                 <div className='space-y-2'>
-                                    <Label>Label</Label>
-                                    <Input value={label} onChange={e => setLabel(e.target.value)} />
+                                    <Label className="mt-2 text-slate-600">Label</Label>
+                                    <Input className="bg-white/60 rounded-2xl pl-4 py-4 hover:bg-white/20 duration-200" value={label} onChange={e => setLabel(e.target.value)} />
                                 </div>
                             </>
                         )}
-                        <div className='space-y-2'>
-                            <Label>Upload CSV File</Label>
-                            <Input type="file" accept=".csv" onChange={e => setFile(e.target.files?.[0]||null)} />
+                        <div className="flex flex-col space-y-2">
+                            <Label className="mt-2 text-slate-600">Upload CSV File</Label>
+                            <input
+                                type="file"
+                                id="file-btn"
+                                accept=".csv"
+                                onChange={(e) => handleUpload(e)}
+                                onClick={(e) => {
+                                    const target = e.currentTarget as HTMLInputElement;
+                                    target.value = "";
+                                }}
+                                hidden
+                            />
+                            <label htmlFor="file-btn" className="w-full">
+                                <div className="border-2 border-dashed border-white-3 rounded-2xl p-6 py-2.5 w-full flex flex-col items-center cursor-pointer bg-white/60 hover:bg-white/20 duration-200 mt-2">
+                                    <img
+                                        src={UploadImage}
+                                        className="block h-14"
+                                        alt=""
+                                    />
+                                    <p className="text-sm font-bold text-slate-500 text-center" ref={textRef}>
+                                        Upload CSV file here...
+                                    </p>
+                                    <p className="text-sm font-normal text-slate-500 text-center mt-1" ref={infoRef}>
+                                        You haven't uploaded anything!
+                                    </p>
+                                </div>
+                            </label>
                         </div>
 
                         {error && <p className="text-sm text-red-600">{error}</p>}
