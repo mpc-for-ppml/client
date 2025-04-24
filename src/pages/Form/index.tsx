@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { useNavigate } from 'react-router-dom';
 import { SessionData } from '@/hooks/useSession';
+import illustrationImg from "@/assets/images/side.png";
 
 const WS_URL = import.meta.env.VITE_REACT_APP_WS_URL || "ws://localhost:8080";
 const API_BASE = import.meta.env.VITE_REACT_APP_API_BASE || 'http://localhost:8080';
@@ -92,50 +93,61 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
     const handleProceed = () => navigate(`/result/${sessionId}`);
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen p-4 space-y-6">
-            <Card className="w-full max-w-md p-6 pt-10">
-                <CardContent className="space-y-3">
-                    {userType === 'lead' && (
-                        <>  
-                            <div className='space-y-2'>
-                                <Label className="mt-2">Organization Name</Label>
-                                <Input value={orgName} onChange={e => setOrgName(e.target.value)} />
-                            </div>
-                            <div className='space-y-2'>
-                                <Label>Label</Label>
-                                <Input value={label} onChange={e => setLabel(e.target.value)} />
-                            </div>
-                        </>
-                    )}
-                    <div className='space-y-2'>
-                        <Label>Upload CSV File</Label>
-                        <Input type="file" accept=".csv" onChange={e => setFile(e.target.files?.[0]||null)} />
+        <main className="flex flex-row w-full min-h-screen bg-gradient-to-b from-[#003675]/30 to-[#FDBF25]/30">
+            <div className="w-[40%] flex flex-col items-center justify-center min-h-screen p-4 space-y-6">
+                <div className="w-full max-w-md">
+                    <div className="flex flex-col w-full gap-1 mb-4">
+                        <p className="text-4xl font-semibold">Submit Your Dataset!</p>
+                        <p className="text-base font-normal mb-4">Ready your data. Once all join, we compute together</p>
                     </div>
-
-                    {error && <p className="text-sm text-red-600">{error}</p>}
-
-                    <div className="w-full flex flex-col pt-2">
-                        <div className="flex flex-row space-x-4">
-                            <Button onClick={handleSubmit} disabled={uploaded || !file || (userType==='lead' && (!orgName||!label))}>
-                                {uploaded ? 'Uploaded ✓' : 'Upload'}
-                            </Button>
-                            {userType === 'lead' && <Button disabled={!isReady} variant={isReady ? 'default' : 'outline'} onClick={handleProceed}>
-                                Proceed
-                            </Button>}
+                    <div className="space-y-3">
+                        {userType === 'lead' && (
+                            <>  
+                                <div className='space-y-2'>
+                                    <Label className="mt-2 text-slate-600">Organization Name</Label>
+                                    <Input className="bg-white/60 rounded-3xl" value={orgName} onChange={e => setOrgName(e.target.value)} />
+                                </div>
+                                <div className='space-y-2'>
+                                    <Label>Label</Label>
+                                    <Input value={label} onChange={e => setLabel(e.target.value)} />
+                                </div>
+                            </>
+                        )}
+                        <div className='space-y-2'>
+                            <Label>Upload CSV File</Label>
+                            <Input type="file" accept=".csv" onChange={e => setFile(e.target.files?.[0]||null)} />
                         </div>
-                        <div className='flex'>
-                            {userType !== 'lead' && uploaded && <div className='text-sm mt-2 text-yellow-600'>⚠️ Wait for the leader to proceed</div>}
+
+                        {error && <p className="text-sm text-red-600">{error}</p>}
+
+                        <div className="w-full flex flex-col pt-2">
+                            <div className="flex flex-row space-x-4">
+                                <Button onClick={handleSubmit} disabled={uploaded || !file || (userType==='lead' && (!orgName||!label))}>
+                                    {uploaded ? 'Uploaded ✓' : 'Upload'}
+                                </Button>
+                                {userType === 'lead' && <Button disabled={!isReady} variant={isReady ? 'default' : 'outline'} onClick={handleProceed}>
+                                    Proceed
+                                </Button>}
+                            </div>
+                            <div className='flex'>
+                                {userType !== 'lead' && uploaded && <div className='text-sm mt-2 text-yellow-600'>⚠️ Wait for the leader to proceed</div>}
+                            </div>
+                        </div>
+
+                        <div className="mt-4 text-sm text-muted-foreground">
+                            <p className="font-semibold mb-1">Participant Status:</p>
+                            {Object.entries(safeStatusMap).map(([id, status]) => (
+                                <p key={id}>{id===userId?'You':id}: {status? '✅ Uploaded':'⏳ Waiting'}</p>
+                            ))}
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <div className="mt-4 text-sm text-muted-foreground">
-                        <p className="font-semibold mb-1">Participant Status:</p>
-                        {Object.entries(safeStatusMap).map(([id, status]) => (
-                            <p key={id}>{id===userId?'You':id}: {status? '✅ Uploaded':'⏳ Waiting'}</p>
-                        ))}
-                    </div>
-                </CardContent>
-            </Card>
-        </div>
+            <div className="relative w-[60%] h-screen p-6">
+                <div className="absolute inset-0 bg-green-gradient z-10 opacity-90" />
+                <img src={illustrationImg} className="rounded-3xl z-0 h-full w-full object-cover" alt="Illustration" />
+            </div>
+        </main>
     );
 };
