@@ -114,26 +114,26 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
         <main className="flex flex-row w-full min-h-screen bg-gradient-to-r from-[#003675] to-black">
             <div className="w-[40%] flex flex-col items-center justify-center min-h-screen p-4 space-y-6">
                 <div className="w-full max-w-md">
-                    <div className="absolute border-slate-900/60 bg-slate-900/10 font-semibold border-2 rounded-3xl p-2 rounded-xl top-8 left-10 w-28 text-center text-black text-sm z-20">{userType.charAt(0).toUpperCase() + userType.slice(1)}</div>
+                    <div className="absolute border-white bg-slate-900 font-semibold border rounded-3xl p-2 rounded-xl top-8 left-10 w-28 text-center text-white text-sm z-20">{userType.charAt(0).toUpperCase() + userType.slice(1)}</div>
                     <div className="flex flex-col w-full gap-1 mb-4">
-                        <p className="text-4xl font-bold">Submit Your Dataset!</p>
-                        <p className="text-lg mb-4">Ready your data. Once all join, we compute together</p>
+                        <p className="text-4xl font-bold text-white">Submit Your Dataset!</p>
+                        <p className="text-lg mb-4 text-white">Ready your data. Once all join, we compute together</p>
                     </div>
                     <div className="space-y-3">
                         {userType === 'lead' && (
                             <>  
                                 <div className='space-y-2'>
-                                    <Label className="mt-2 text-slate-600">Organization Name</Label>
+                                    <Label className="mt-2 text-white/80">Organization Name</Label>
                                     <Input className="bg-white/60 rounded-2xl pl-4 py-4 hover:bg-white/20 duration-200" value={orgName} onChange={e => setOrgName(e.target.value)} />
                                 </div>
                                 <div className='space-y-2'>
-                                    <Label className="mt-2 text-slate-600">Label</Label>
+                                    <Label className="mt-2 text-white/80">Label</Label>
                                     <Input className="bg-white/60 rounded-2xl pl-4 py-4 hover:bg-white/20 duration-200" value={label} onChange={e => setLabel(e.target.value)} />
                                 </div>
                             </>
                         )}
                         <div className="flex flex-col space-y-2">
-                            <Label className="mt-2 text-slate-600">Upload CSV File</Label>
+                            <Label className="mt-2 text-white/80">Upload CSV File</Label>
                             <input
                                 type="file"
                                 id="file-btn"
@@ -152,10 +152,10 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                                         className="block h-14"
                                         alt=""
                                     />
-                                    <p className="text-sm font-bold text-slate-500 text-center" ref={textRef}>
+                                    <p className="text-sm font-bold text-slate-800 text-center" ref={textRef}>
                                         Upload CSV file here...
                                     </p>
-                                    <p className="text-sm font-normal text-slate-500 text-center mt-1" ref={infoRef}>
+                                    <p className="text-sm font-normal text-slate-800 text-center mt-1" ref={infoRef}>
                                         You haven't uploaded anything!
                                     </p>
                                 </div>
