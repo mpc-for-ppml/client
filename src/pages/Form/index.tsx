@@ -93,22 +93,28 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen p-4 space-y-6">
-            <Card className="w-full max-w-md p-4">
-                <CardContent className="space-y-4">
+            <Card className="w-full max-w-md p-6 pt-10">
+                <CardContent className="space-y-3">
                     {userType === 'lead' && (
                         <>  
-                            <Label>Organization Name</Label>
-                            <Input value={orgName} onChange={e => setOrgName(e.target.value)} />
-                            <Label>Label</Label>
-                            <Input value={label} onChange={e => setLabel(e.target.value)} />
+                            <div className='space-y-2'>
+                                <Label className="mt-2">Organization Name</Label>
+                                <Input value={orgName} onChange={e => setOrgName(e.target.value)} />
+                            </div>
+                            <div className='space-y-2'>
+                                <Label>Label</Label>
+                                <Input value={label} onChange={e => setLabel(e.target.value)} />
+                            </div>
                         </>
                     )}
-                    <Label>Upload CSV File</Label>
-                    <Input type="file" accept=".csv" onChange={e => setFile(e.target.files?.[0]||null)} />
+                    <div className='space-y-2'>
+                        <Label>Upload CSV File</Label>
+                        <Input type="file" accept=".csv" onChange={e => setFile(e.target.files?.[0]||null)} />
+                    </div>
 
                     {error && <p className="text-sm text-red-600">{error}</p>}
 
-                    <div className="w-full flex flex-col">
+                    <div className="w-full flex flex-col pt-2">
                         <div className="flex flex-row space-x-4">
                             <Button onClick={handleSubmit} disabled={uploaded || !file || (userType==='lead' && (!orgName||!label))}>
                                 {uploaded ? 'Uploaded ✓' : 'Upload'}
