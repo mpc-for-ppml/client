@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const SESSION_STORAGE_KEY = 'app_session';
-const API_BASE = import.meta.env.VITE_REACT_APP_API_BASE || 'http://localhost:8000';
+const API_BASE = import.meta.env.VITE_REACT_APP_API_BASE || 'http://localhost:8080';
 
 export interface SessionData {
     userType: 'lead' | 'participant';
@@ -35,7 +35,7 @@ export function useSession() {
 
     const validateSession = async (id: string) => {
         try {
-            const res = await fetch(`${API_BASE}/api/v1/sessions/${id}`);
+            const res = await fetch(`${API_BASE}/sessions/${id}`);
             if (!res.ok) throw new Error('Session not found');
             const json = await res.json();
             if (json.joinedCount >= session!.participantCount) throw new Error('Session is full');
