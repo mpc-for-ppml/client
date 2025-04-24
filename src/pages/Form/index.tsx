@@ -111,9 +111,10 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
     const handleProceed = () => navigate(`/result/${sessionId}`);
 
     return (
-        <main className="flex flex-row w-full min-h-screen bg-gradient-to-b from-[#003675]/30 to-[#FDBF25]/30">
+        <main className="flex flex-row w-full min-h-screen bg-gradient-to-r from-[#003675] to-black">
             <div className="w-[40%] flex flex-col items-center justify-center min-h-screen p-4 space-y-6">
                 <div className="w-full max-w-md">
+                    <div className="absolute border-slate-900/60 bg-slate-900/10 font-semibold border-2 rounded-3xl p-2 rounded-xl top-8 left-10 w-28 text-center text-black text-sm z-20">{userType.charAt(0).toUpperCase() + userType.slice(1)}</div>
                     <div className="flex flex-col w-full gap-1 mb-4">
                         <p className="text-4xl font-bold">Submit Your Dataset!</p>
                         <p className="text-lg mb-4">Ready your data. Once all join, we compute together</p>
