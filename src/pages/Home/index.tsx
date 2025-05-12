@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Input, Button } from '@/components';
 import { Card, CardContent } from '@/components/ui/card';
+import { HomeApi } from '@/api';
 import { useNavigate } from 'react-router-dom';
 import { SessionData } from '@/hooks/useSession';
 
 const MAX_PARTICIPANTS = 20;
-const API_BASE = import.meta.env.VITE_REACT_APP_API_BASE;
 
 export const Home: React.FC = () => {
     const navigate = useNavigate();
@@ -29,21 +28,8 @@ export const Home: React.FC = () => {
         setSessionId(uuidv4());
         setCopied(false);
         try {
-            const res = await fetch(
-                `${API_BASE}/sessions/`,
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        participant_count: participantCount,
-                        lead_user_id: userId
-                    })
-                }
-            );
-            if (!res.ok) throw new Error('Failed to create session');
-            const { session_id } = await res.json();
-            setSessionId(session_id);
-            setCopied(false);
+            const newSessionId = await HomeApi.createSession(participantCount, userId);
+            setSessionId(newSessionId);
         } catch (e: any) {
             setError(e.message);
         }
@@ -52,18 +38,20 @@ export const Home: React.FC = () => {
     const handleProceed = async () => {
         setError('');
         if (!sessionId || !userType) return;
+
         if (userType === 'participant') {
             // validate session via API
             try {
-                const res = await fetch(`${API_BASE}/sessions/${sessionId}`);
-                if (!res.ok) throw new Error('Invalid or full session');
-                const json = await res.json();
-                if (json.joined_count >= json.participant_count) throw new Error('Session is full');
+                const session = await HomeApi.validateSession(sessionId);
+                if (session.joined_count >= session.participant_count) {
+                    throw new Error('Session is full');
+                }
             } catch (e: any) {
                 setError(e.message);
                 return;
             }
         }
+
         const session: SessionData = { userType, userId, sessionId, participantCount };
         navigate('/form-upload', { state: { session } });
     };
