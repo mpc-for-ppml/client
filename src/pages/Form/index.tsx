@@ -181,13 +181,21 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
 
             <div className="relative w-[60%] h-screen p-6">
                 <div className="absolute inset-0 bg-green-gradient z-10 opacity-90" />
-                <p className="absolute bg-white/20 p-4 rounded-xl bottom-14 right-14 w-[45%] justify-right align-right w-full text-white text-sm text-muted-foreground z-20">
+                
+                <div className="absolute bottom-14 right-14 z-20 bg-white/20 p-4 rounded-xl w-[50%] text-white text-sm text-muted-foreground">
                     <p className="font-semibold mb-2 text-base">Participant Status:</p>
                     {Object.entries(safeStatusMap).map(([id, status]) => (
-                        <p key={id}>{id===userId?'You':id}: {status? '✅ Uploaded':'⏳ Waiting'}</p>
+                        <p key={id}>
+                            {id === userId ? 'You' : id}: {status ? '✅ Uploaded' : '⏳ Waiting'}
+                        </p>
                     ))}
-                </p>
-                <img src={illustrationImg} className="rounded-3xl z-0 h-full w-full object-cover" alt="Illustration" />
+                </div>
+                
+                <img
+                    src={illustrationImg}
+                    className="rounded-3xl z-0 h-full w-full object-cover"
+                    alt="Illustration"
+                />
             </div>
         </main>
     );
