@@ -8,8 +8,8 @@ import { SessionData } from '@/hooks/useSession';
 import illustrationImg from "@/assets/images/side.png";
 import UploadImage from "@/assets/icons/upload.png";
 
-const WS_URL = import.meta.env.VITE_REACT_APP_WS_URL || "ws://localhost:8080";
-const API_BASE = import.meta.env.VITE_REACT_APP_API_BASE || 'http://localhost:8080';
+const WS_URL = import.meta.env.VITE_REACT_APP_WS_URL;
+const API_BASE = import.meta.env.VITE_REACT_APP_API_BASE;
 const RECONNECT_BASE = 1000; // 1s
 const MAX_RECONNECT = 5;
 

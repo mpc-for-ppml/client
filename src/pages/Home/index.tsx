@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { SessionData } from '@/hooks/useSession';
 
 const MAX_PARTICIPANTS = 20;
-const API_BASE = import.meta.env.VITE_REACT_APP_API_BASE || 'http://localhost:8080';
+const API_BASE = import.meta.env.VITE_REACT_APP_API_BASE;
 
 export const Home: React.FC = () => {
     const navigate = useNavigate();

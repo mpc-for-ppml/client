@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const SESSION_STORAGE_KEY = 'app_session';
-const API_BASE = import.meta.env.VITE_REACT_APP_API_BASE || 'http://localhost:8080';
+const API_BASE = import.meta.env.VITE_REACT_APP_API_BASE;
 
 export interface SessionData {
     userType: 'lead' | 'participant';
