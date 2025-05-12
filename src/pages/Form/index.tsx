@@ -1,15 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-// import { Card, CardContent } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
+import { Input, Button, Label } from '@/components';
+import { FormApi } from '@/api';
 import { useNavigate } from 'react-router-dom';
 import { SessionData } from '@/hooks/useSession';
+import { toast } from "react-toastify";
 import illustrationImg from "@/assets/images/side.png";
 import UploadImage from "@/assets/icons/upload.png";
 
 const WS_URL = import.meta.env.VITE_REACT_APP_WS_URL;
-const API_BASE = import.meta.env.VITE_REACT_APP_API_BASE;
 const RECONNECT_BASE = 1000; // 1s
 const MAX_RECONNECT = 5;
 
@@ -72,7 +70,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
             return;
         }
         setUploaded(false);
-        
+
         const form = new FormData();
         form.append('group_id', sessionId);
         form.append('user_id', userId);
@@ -82,15 +80,18 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
             form.append('label', label);
         }
 
-        try {
-            const res = await fetch(`${API_BASE}/upload/`, { method: 'POST', body: form });
-            const json = await res.json();
-            if (!res.ok) throw new Error(json.detail || 'Upload failed');
-            setUploaded(true);
-            socketRef.current?.send(JSON.stringify({ userId, status: true }));
-        } catch (e: any) {
-            setError(e.message);
-        }
+        await FormApi.upload(form)
+            .then(() => {
+                toast.success("Course added successfully!");
+                socketRef.current?.send(JSON.stringify({ userId, status: true }));
+            })
+            .catch((error: any) => {
+                setError(error.message || 'Upload failed');
+                toast.error(error || 'Server is unreachable. Please try again later.');
+            })
+            .finally(() => {
+                setUploaded(true);
+            });
     };
 
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -183,7 +184,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
 
             <div className="relative w-[60%] h-screen p-6">
                 <div className="absolute inset-0 bg-green-gradient z-10 opacity-90" />
-                <p className="absolute bg-white/20 p-4 rounded-xl bottom-14 right-14 w-[42%] justify-right align-right w-full text-white text-sm text-muted-foreground z-20">
+                <p className="absolute bg-white/20 p-4 rounded-xl bottom-14 right-14 w-[45%] justify-right align-right w-full text-white text-sm text-muted-foreground z-20">
                     <p className="font-semibold mb-2 text-base">Participant Status:</p>
                     {Object.entries(safeStatusMap).map(([id, status]) => (
                         <p key={id}>{id===userId?'You':id}: {status? '✅ Uploaded':'⏳ Waiting'}</p>
