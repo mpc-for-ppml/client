@@ -4,12 +4,9 @@ import { FormApi } from '@/api';
 import { useNavigate } from 'react-router-dom';
 import { SessionData } from '@/hooks/useSession';
 import { toast } from "react-toastify";
+import { WS_URL, RECONNECT_BASE, MAX_RECONNECT } from '@/constant';
 import illustrationImg from "@/assets/images/side.png";
 import UploadImage from "@/assets/icons/upload.png";
-
-const WS_URL = import.meta.env.VITE_REACT_APP_WS_URL;
-const RECONNECT_BASE = 1000; // 1s
-const MAX_RECONNECT = 5;
 
 export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId, participantCount }) => {
     const [orgName, setOrgName] = useState('');

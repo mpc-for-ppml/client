@@ -5,8 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { HomeApi } from '@/api';
 import { useNavigate } from 'react-router-dom';
 import { SessionData } from '@/hooks/useSession';
-
-const MAX_PARTICIPANTS = 20;
+import { MAX_PARTICIPANTS } from '@/constant';
 
 export const Home: React.FC = () => {
     const navigate = useNavigate();
