@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { ArrowLeft } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { Input, Button } from '@/components';
 import { Card, CardContent } from '@/components/ui/card';
@@ -63,6 +64,14 @@ export const Role: React.FC = () => {
             {/* Blurry Bubbles */}
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.7 }} transition={{ duration: 1 }} className="absolute -bottom-20 -right-20 w-[20rem] h-[20rem] bg-main-yellow rounded-full filter blur-[120px] opacity-50 z-0"></motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.9 }} transition={{ duration: 0.25 }} className="absolute -top-20 -left-20 w-[20rem] h-[20rem] bg-main-blue rounded-full filter blur-[120px] opacity-50 z-0"></motion.div>
+
+            <Button
+                className="absolute top-3 left-8 z-20 bg-white text-black hover:bg-gray-200 px-4 py-2 rounded shadow-md flex items-center space-x-2"
+                onClick={() => navigate('/')}
+            >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back</span>
+            </Button>
 
             <Card className="w-full max-w-lg p-4 bg-main-dark z">
                 <CardContent className="space-y-4 z-10">
