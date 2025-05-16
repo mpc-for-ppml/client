@@ -1,7 +1,7 @@
 import React from 'react';
 import { createBrowserRouter, Outlet, RouteObject } from 'react-router-dom';
 // import { Navbar, Footer } from '@/components';
-import { Home } from '@/pages/Home';
+import { Home, Role } from '@/pages';
 import FormUploadWrapper from '@/wrappers/FormUploadWrapper';
 
 const MainLayout: React.FC = () => (
@@ -16,6 +16,7 @@ const routes: RouteObject[] = [
         element: <MainLayout />, 
         children: [
             { index: true, element: <Home /> },
+            { path: 'role', element: <Role /> },
             { path: 'form-upload', element: <FormUploadWrapper /> },
             { path: '*', element: <Home /> }
         ]
