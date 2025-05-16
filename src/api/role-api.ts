@@ -3,7 +3,7 @@ import { API_URL_LOCAL } from "@/constant";
 
 const BASE_URL = import.meta.env.VITE_API_URL || API_URL_LOCAL;
 
-class HomeApi {
+class RoleApi {
     private static axiosInstance = axios.create({
         baseURL: BASE_URL,
         headers: { "Content-Type": "application/json" },
@@ -31,4 +31,4 @@ class HomeApi {
     }
 }
 
-export default HomeApi;
+export default RoleApi;
