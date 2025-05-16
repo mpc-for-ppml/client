@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from "framer-motion";
 import Batik from "@/assets/icons/batik.png";
 
 export const Home: React.FC = () => {
@@ -18,21 +19,47 @@ export const Home: React.FC = () => {
             </div>
 
             {/* Background watermark text */}
-            <h1
+            <motion.h1
+                initial={{
+                    opacity: 0,
+                    x: -1200,
+                }}
+                animate={{
+                    opacity: 1,
+                    x: 0,
+                }}
+                transition={{
+                    duration: 0.75,
+                    ease: [0.4, 0.5, 0.2, 1],
+                }}
                 className="absolute text-[19rem] font-bold left-[-3.5rem] bottom-[-3rem] select-none pointer-events-none text-transparent"
                 style={{
                     WebkitTextStroke: '0.5px #EAB12c80',
                 }}
             >
                 PRIVUS.
-            </h1>
+            </motion.h1>
 
             {/* Blurry Bubbles */}
-            <div className="absolute -top-16 -right-20 w-[30rem] h-[30rem] bg-main-yellow rounded-full filter blur-[120px] opacity-50 z-0"></div>
-            <div className="absolute -top-80 right-72 w-[42rem] h-[38rem] bg-main-blue rounded-full filter blur-[120px] opacity-50 z-0"></div>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} transition={{ duration: 1 }} className="absolute -top-16 -right-20 w-[30rem] h-[30rem] bg-main-yellow rounded-full filter blur-[120px] opacity-50 z-0"></motion.div>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} transition={{ duration: 0.25 }} className="absolute -top-80 right-72 w-[42rem] h-[38rem] bg-main-blue rounded-full filter blur-[120px] opacity-50 z-0"></motion.div>
 
             {/* Content */}
-            <div className="relative z-10 flex flex-col justify-center items-start h-full mt-28 px-8 max-w-6xl mx-auto">
+            <motion.div
+                initial={{
+                    opacity: 0,
+                    y: 200,
+                }}
+                animate={{
+                    opacity: 1,
+                    y: [50, -10, 0],
+                }}
+                transition={{
+                    duration: 0.5,
+                    ease: [0.4, 0.0, 0.2, 1],
+                }}
+                className="relative z-10 flex flex-col justify-center items-start h-full mt-28 px-8 max-w-6xl mx-auto"
+            >
                 {/* Logo */}
                 <div className="flex space-x-2">
                     <img
@@ -64,7 +91,7 @@ export const Home: React.FC = () => {
                 <button onClick={handleExplore} className="border border-white text-white px-8 py-2 mt-10 rounded hover:bg-white hover:text-black transition">
                     Explore
                 </button>
-            </div>
+            </motion.div>
         </div>
     );
 };
