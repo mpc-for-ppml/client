@@ -17,6 +17,9 @@ module.exports = {
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: ['Poppins', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -57,6 +60,10 @@ module.exports = {
 					'3': 'hsl(var(--chart-3))',
 					'4': 'hsl(var(--chart-4))',
 					'5': 'hsl(var(--chart-5))'
+				},
+				main: {
+					blue: '#00040B',
+					yellow: '#EAB123',
 				}
 			},
 			borderRadius: {
