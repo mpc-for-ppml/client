@@ -14,6 +14,8 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
     const [statusMap, setStatusMap] = useState<Record<string, boolean>>({});
     const [error, setError] = useState<string|null>(null);
     const [uploaded, setUploaded] = useState(false);
+    const [step, setStep] = useState(1);
+    const [headers, setHeaders] = useState<string[]>([]);
     const socketRef = useRef<WebSocket|null>(null);
     const textRef = useRef<HTMLParagraphElement>(null);
     const infoRef = useRef<HTMLParagraphElement>(null);
@@ -106,6 +108,15 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
             if (infoRef && infoRef.current) {
                 infoRef.current.textContent = `${file.name}`;
             }
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const text = event.target?.result as string;
+                const firstLine = text.split('\n')[0];
+                const parsedHeaders = firstLine.replace('\r', '').split(',');
+                setHeaders(parsedHeaders);
+            };
+            reader.readAsText(file);
         }
         setFile(e.target.files?.[0]||null)
     }
@@ -131,77 +142,9 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
     };
 
     return (
-        <main className="flex flex-row w-full min-h-screen bg-gradient-to-r from-[#003675] to-black">
-            <div className="w-[40%] flex flex-col items-center justify-center min-h-screen p-4 space-y-6">
-                <div className="w-full max-w-md">
-                    <div className="absolute border-white bg-slate-900 font-semibold border rounded-3xl p-2 rounded-xl top-8 left-10 w-28 text-center text-white text-sm z-20">{userType.charAt(0).toUpperCase() + userType.slice(1)}</div>
-                    <div className="flex flex-col w-full gap-1 mb-4">
-                        <p className="text-4xl font-bold text-white">Submit Your Dataset!</p>
-                        <p className="text-lg mb-4 text-white">Ready your data. Once all join, we compute together</p>
-                    </div>
-                    <div className="space-y-3">
-                        {userType === 'lead' && (
-                            <>  
-                                <div className='space-y-2'>
-                                    <Label className="mt-2 text-white/80">Organization Name</Label>
-                                    <Input className="bg-white/60 rounded-2xl pl-4 py-4 hover:bg-white/20 duration-200" value={orgName} onChange={e => setOrgName(e.target.value)} />
-                                </div>
-                                <div className='space-y-2'>
-                                    <Label className="mt-2 text-white/80">Label</Label>
-                                    <Input className="bg-white/60 rounded-2xl pl-4 py-4 hover:bg-white/20 duration-200" value={label} onChange={e => setLabel(e.target.value)} />
-                                </div>
-                            </>
-                        )}
-                        <div className="flex flex-col space-y-2">
-                            <Label className="mt-2 text-white/80">Upload CSV File</Label>
-                            <input
-                                type="file"
-                                id="file-btn"
-                                accept=".csv"
-                                onChange={(e) => handleUpload(e)}
-                                onClick={(e) => {
-                                    const target = e.currentTarget as HTMLInputElement;
-                                    target.value = "";
-                                }}
-                                hidden
-                            />
-                            <label htmlFor="file-btn" className="w-full">
-                                <div className="border-2 border-dashed border-white-3 rounded-2xl p-6 py-2.5 w-full flex flex-col items-center cursor-pointer bg-white/60 hover:bg-white/20 duration-200 mt-2">
-                                    <img
-                                        src={UploadImage}
-                                        className="block h-14"
-                                        alt=""
-                                    />
-                                    <p className="text-sm font-bold text-slate-800 text-center" ref={textRef}>
-                                        Upload CSV file here...
-                                    </p>
-                                    <p className="text-sm font-normal text-slate-800 text-center mt-1" ref={infoRef}>
-                                        You haven't uploaded anything!
-                                    </p>
-                                </div>
-                            </label>
-                        </div>
-
-                        {error && <p className="text-sm text-red-600">{error}</p>}
-
-                        <div className="w-full flex flex-col pt-2">
-                            <div className="flex flex-row space-x-4">
-                                <Button onClick={handleSubmit} disabled={uploaded || !file || (userType==='lead' && (!orgName||!label))}>
-                                    {uploaded ? 'Uploaded ✓' : 'Upload'}
-                                </Button>
-                                {<Button disabled={!isReady} variant={isReady ? 'default' : 'outline'} onClick={handleProceed}>
-                                    Proceed
-                                </Button>}
-                            </div>
-                            <div className='flex'>
-                                {userType !== 'lead' && uploaded && <div className='text-sm mt-2 text-yellow-600'>⚠️ Wait for the leader to proceed</div>}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div className="relative w-[60%] h-screen">
+        <main className="flex flex-row w-full min-h-screen bg-main-dark">
+            {/* Left Pane */}
+            <div className="relative w-[45%] h-screen">
                 {/* Top-left Title & Subtitle */}
                 <div className="absolute top-10 left-14 z-20 text-white">
                     <h1 className="text-6xl font-bold">Privus</h1>
@@ -212,9 +155,9 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                 <div className="absolute bottom-8 right-8 z-20 bg-white/20 p-4 rounded-xl w-[50%] text-white text-sm text-muted-foreground">
                     <p className="font-semibold mb-2 text-base">Participant Status:</p>
                     {Object.entries(safeStatusMap).map(([id, status]) => (
-                    <p key={id}>
-                        {id === userId ? 'You' : id}: {status ? '✅ Uploaded' : '⏳ Waiting'}
-                    </p>
+                        <p key={id}>
+                            {id === userId ? 'You' : id}: {status ? '✅ Uploaded' : '⏳ Waiting'}
+                        </p>
                     ))}
                 </div>
 
@@ -225,6 +168,134 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                     alt="Illustration"
                     draggable="false"
                 />
+            </div>
+
+            {/* Right Pane */}
+            <div className="w-[55%] flex flex-col items-center justify-center min-h-screen p-4 space-y-6">
+                <div className="w-full max-w-md">
+                    <div className="absolute border-white bg-slate-900 font-semibold border rounded-3xl p-2 rounded-xl top-8 left-10 w-28 text-center text-white text-sm z-20">{userType.charAt(0).toUpperCase() + userType.slice(1)}</div>
+                    <div className="flex flex-col w-full gap-1 mb-4">
+                        <p className="text-4xl font-semibold text-white">submit your dataset</p>
+                        <p className="text-base mb-4 text-white">ready your data. once all join, we compute together</p>
+                    </div>
+
+                    {/* Vertical Stepper */}
+                    <div className="flex space-x-4 text-white mt-6">
+                        {/* Stepper Line */}
+                        <div className="flex flex-col items-center mt-0.5">
+                            {/* Step 1 Circle */}
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm mb-2 ${step === 1 ? 'bg-main-blue text-white' : 'bg-white/30 text-white/50'}`}>
+                                1
+                            </div>
+                            {/* Vertical Line */}
+                            <div className={`w-px ${step >= 2 ? 'bg-main-blue h-[0.75rem]' : 'bg-white/30 h-[20.75rem]'}`} />
+                            {/* Step 2 Circle */}
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm mt-2 ${step === 2 ? 'bg-main-blue text-white' : 'bg-white/30 text-white/50'}`}>
+                                2
+                            </div>
+                        </div>
+
+                        {/* Stepper Content */}
+                        <div className="flex flex-col space-y-6 w-full">
+                            {/* Step 1 Content */}
+                            <div className="space-y-4">
+                                <p className={`font-semibold ${step === 1 ? "text-blue-500" : "text-white/50"} py-0.5`}>Organization & File Upload</p>
+
+                                {step === 1 && (
+                                    <>
+                                        <div className="space-y-2">
+                                            <Label>Organization Name</Label>
+                                            <Input
+                                                className="pl-4 py-4"
+                                                placeholder="Enter your organization name..."
+                                                value={orgName}
+                                                onChange={(e) => setOrgName(e.target.value)}
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <Label>Upload your CSV Dataset</Label>
+                                            <input
+                                                type="file"
+                                                accept=".csv"
+                                                onChange={(e) => handleUpload(e)}
+                                                onClick={(e) => (e.currentTarget.value = '')}
+                                                hidden
+                                                id="file-upload"
+                                            />
+                                            <label htmlFor="file-upload" className="block cursor-pointer mt-2">
+                                                <div className="border-2 border-dashed border-white/50 rounded-lg p-4 flex flex-col items-center bg-white/10 hover:bg-white/5">
+                                                    <img src={UploadImage} className="h-14" alt="" />
+                                                    <p className="text-sm font-bold text-white/70 text-center">
+                                                        Upload CSV file here...
+                                                    </p>
+                                                    <p className="text-sm font-normal text-white/70 text-center mt-1">
+                                                        {file ? file.name : "You haven't uploaded anything!"}
+                                                    </p>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        <Button
+                                            className="mt-2"
+                                            onClick={() => setStep(2)}
+                                            disabled={!orgName || !file}
+                                        >
+                                            Continue
+                                        </Button>
+                                    </>
+                                )}
+                            </div>
+
+                            {/* Step 2 Content */}
+                            <div className="space-y-4">
+                                <p className={`font-semibold ${step === 2 ? "text-blue-500" : "text-white/50"} py-0.5`}>Choose Label</p>
+
+                                {step === 2 && (
+                                    <>
+                                        {userType === 'lead' && (
+                                            <div className="space-y-2">
+                                                <Label>Choose the Label</Label>
+                                                <select
+                                                    className="w-full pl-4 pr-[200px] py-1.5 rounded-lg bg-white text-black"
+                                                    value={label}
+                                                    onChange={(e) => setLabel(e.target.value)}
+                                                >
+                                                    <option value="">Select label...</option>
+                                                    {headers.map((header, idx) => (
+                                                        <option key={idx} value={header}>{header}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        )}
+
+                                        {error && <p className="text-sm text-red-600">{error}</p>}
+
+                                        <div className="flex flex-row space-x-4">
+                                            <Button
+                                                onClick={handleSubmit}
+                                                disabled={uploaded || !file || (userType === 'lead' && !label)}
+                                            >
+                                                {uploaded ? 'Uploaded ✓' : 'Upload'}
+                                            </Button>
+                                            <Button
+                                                variant={isReady ? 'default' : 'outline'}
+                                                disabled={!isReady}
+                                                onClick={handleProceed}
+                                            >
+                                                Proceed
+                                            </Button>
+                                        </div>
+
+                                        {userType !== 'lead' && uploaded && (
+                                            <div className="text-sm mt-2 text-yellow-600">⚠️ Wait for the leader to proceed</div>
+                                        )}
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     );
