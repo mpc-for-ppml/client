@@ -185,14 +185,14 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                         <div className="flex flex-col items-center mt-0.5">
                             {/* Step 1 Circle */}
                             <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm mb-2 ${step === 1 ? 'bg-main-blue text-white' : 'bg-white/30 text-white/50'}`}>
-                                1
+                                {userType === 'lead' ? 1 : "-"}
                             </div>
                             {/* Vertical Line */}
-                            <div className={`w-px ${step >= 2 ? 'bg-main-blue h-[0.75rem]' : 'bg-white/30 h-[20.75rem]'}`} />
+                            {userType === 'lead' && <div className={`w-px ${step >= 2 ? 'bg-main-blue h-[0.75rem]' : 'bg-white/30 h-[20.75rem]'}`} />}
                             {/* Step 2 Circle */}
-                            <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm mt-2 ${step === 2 ? 'bg-main-blue text-white' : 'bg-white/30 text-white/50'}`}>
+                            {userType === 'lead' && <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm mt-2 ${step === 2 ? 'bg-main-blue text-white' : 'bg-white/30 text-white/50'}`}>
                                 2
-                            </div>
+                            </div>}
                         </div>
 
                         {/* Stepper Content */}
@@ -236,20 +236,44 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                                             </label>
                                         </div>
 
-                                        <Button
-                                            className="mt-2"
-                                            onClick={() => setStep(2)}
-                                            disabled={!orgName || !file}
-                                        >
-                                            Continue
-                                        </Button>
+                                        {userType === 'lead' && 
+                                            <Button
+                                                className="mt-2"
+                                                onClick={() => setStep(2)}
+                                                disabled={!orgName || !file}
+                                            >
+                                                Continue
+                                            </Button>
+                                        }
+
+                                        {userType !== 'lead' && 
+                                            <div className="flex flex-row space-x-4">
+                                                <Button
+                                                    onClick={handleSubmit}
+                                                    disabled={uploaded || !file}
+                                                >
+                                                    {uploaded ? 'Uploaded ✓' : 'Upload'}
+                                                </Button>
+                                                <Button
+                                                    variant={isReady ? 'default' : 'outline'}
+                                                    disabled={!isReady}
+                                                    onClick={handleProceed}
+                                                >
+                                                    Proceed
+                                                </Button>
+                                            </div>
+                                        }
+
+                                        {userType !== 'lead' && uploaded && (
+                                            <div className="text-sm mt-2 text-yellow-600">⚠️ Wait for the leader to proceed</div>
+                                        )}
                                     </>
                                 )}
                             </div>
 
                             {/* Step 2 Content */}
                             <div className="space-y-4">
-                                <p className={`font-semibold ${step === 2 ? "text-blue-500" : "text-white/50"} py-0.5`}>Choose Label</p>
+                                {userType === 'lead' && <p className={`font-semibold ${step === 2 ? "text-blue-500" : "text-white/50"} py-0.5`}>Choose Label</p>}
 
                                 {step === 2 && (
                                     <>
@@ -271,7 +295,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
 
                                         {error && <p className="text-sm text-red-600">{error}</p>}
 
-                                        <div className="flex flex-row space-x-4">
+                                        {userType === 'lead' && <div className="flex flex-row space-x-4">
                                             <Button
                                                 onClick={handleSubmit}
                                                 disabled={uploaded || !file || (userType === 'lead' && !label)}
@@ -285,7 +309,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                                             >
                                                 Proceed
                                             </Button>
-                                        </div>
+                                        </div>}
 
                                         {userType !== 'lead' && uploaded && (
                                             <div className="text-sm mt-2 text-yellow-600">⚠️ Wait for the leader to proceed</div>
