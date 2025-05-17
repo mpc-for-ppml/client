@@ -121,6 +121,7 @@ export const Role: React.FC = () => {
                             <label>Total Participants (incl. you)</label>
                             <Input
                                 type="number"
+                                className="pl-4 py-4"
                                 min={2}
                                 max={MAX_PARTICIPANTS}
                                 value={participantCount}
@@ -131,7 +132,7 @@ export const Role: React.FC = () => {
                             <Button onClick={handleGenerateSession}>Generate Session ID</Button>
                             {sessionId && (
                                 <div className="flex items-center space-x-2">
-                                    <Input value={sessionId} readOnly className="w-full" />
+                                    <Input value={sessionId} readOnly className="w-full pl-4 py-4" />
                                     <Button
                                         onClick={() => { navigator.clipboard.writeText(sessionId); setCopied(true); }}
                                     >Copy</Button>
