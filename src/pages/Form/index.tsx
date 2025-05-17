@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Input, Button, Label } from '@/components';
 import { FormApi } from '@/api';
-import { useNavigate } from 'react-router-dom';
 import { SessionData } from '@/hooks/useSession';
 import { toast } from "react-toastify";
 import { WS_URL, RECONNECT_BASE, MAX_RECONNECT } from '@/constant';
@@ -16,7 +15,6 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
     const [error, setError] = useState<string|null>(null);
     const [uploaded, setUploaded] = useState(false);
     const socketRef = useRef<WebSocket|null>(null);
-    const navigate = useNavigate();
     const textRef = useRef<HTMLParagraphElement>(null);
     const infoRef = useRef<HTMLParagraphElement>(null);
 
@@ -31,11 +29,17 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
         const connect = () => {
             socket = new WebSocket(`${WS_URL}/ws/${sessionId}`);
             socketRef.current = socket;
-        
+
             socket.onopen = () => {
                 // reset retry counter on success
                 retries = 0;
-                socket.send(JSON.stringify({ userId, status: false }));
+                const initPayload = {
+                    userId,
+                    userType,
+                    orgName: userType === 'lead' ? orgName : '',
+                    status: false
+                };
+                socket.send(JSON.stringify(initPayload));
             };
         
             socket.onmessage = ({ data }) => {
@@ -79,7 +83,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
 
         await FormApi.upload(form)
             .then(() => {
-                toast.success("Course added successfully!");
+                toast.success("Dataset added successfully!");
                 socketRef.current?.send(JSON.stringify({ userId, status: true }));
             })
             .catch((error: any) => {
@@ -106,7 +110,25 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
         setFile(e.target.files?.[0]||null)
     }
 
-    const handleProceed = () => navigate(`/result/${sessionId}`);
+    const handleProceed = async () => {
+        try {
+            const res = await fetch(`http://localhost:8080/api/v1/sessions/${sessionId}/proceed`, {
+                method: 'POST',
+            });
+
+            if (!res.ok) {
+                const errorText = await res.text(); // Read actual response
+                console.error('Server responded with:', res.status, errorText);
+                throw new Error(errorText || 'Failed to proceed with the session.');
+            }
+
+            toast.success("Computation started!");
+            // navigate(`/result/${sessionId}`);
+        } catch (err: any) {
+            console.error(err);
+            toast.error(err.message || 'Failed to proceed.');
+        }
+    };
 
     return (
         <main className="flex flex-row w-full min-h-screen bg-gradient-to-r from-[#003675] to-black">
@@ -167,7 +189,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                                 <Button onClick={handleSubmit} disabled={uploaded || !file || (userType==='lead' && (!orgName||!label))}>
                                     {uploaded ? 'Uploaded ✓' : 'Upload'}
                                 </Button>
-                                {userType === 'lead' && <Button disabled={!isReady} variant={isReady ? 'default' : 'outline'} onClick={handleProceed}>
+                                {<Button disabled={!isReady} variant={isReady ? 'default' : 'outline'} onClick={handleProceed}>
                                     Proceed
                                 </Button>}
                             </div>
@@ -183,7 +205,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                 {/* Top-left Title & Subtitle */}
                 <div className="absolute top-10 left-14 z-20 text-white">
                     <h1 className="text-6xl font-bold">Privus</h1>
-                    <p className="text-yellow-300 text-xl mt-1">Secure collaboration made simple.</p>
+                    <p className="text-yellow-300 italic text-2xl mt-1">Secure collaboration made simple.</p>
                 </div>
 
                 {/* Bottom-right Participant Status */}
@@ -201,6 +223,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                     src={illustrationImg}
                     className="rounded-l-3xl z-0 h-full w-full object-cover"
                     alt="Illustration"
+                    draggable="false"
                 />
             </div>
         </main>
