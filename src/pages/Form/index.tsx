@@ -4,7 +4,7 @@ import { FormApi } from '@/api';
 import { SessionData } from '@/hooks/useSession';
 import { toast } from "react-toastify";
 import { WS_URL, RECONNECT_BASE, MAX_RECONNECT } from '@/constant';
-import illustrationImg from "@/assets/images/side.png";
+import illustrationImg from "@/assets/images/side2.png";
 import UploadImage from "@/assets/icons/upload.png";
 
 export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId, participantCount }) => {
@@ -144,36 +144,45 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
     return (
         <main className="flex flex-row w-full min-h-screen bg-main-dark">
             {/* Left Pane */}
-            <div className="relative w-[45%] h-screen">
-                {/* Top-left Title & Subtitle */}
-                <div className="absolute top-10 left-14 z-20 text-white">
-                    <h1 className="text-6xl font-bold">Privus</h1>
-                    <p className="text-yellow-300 italic text-2xl mt-1">Secure collaboration made simple.</p>
+            <div className="relative w-[47%] h-screen">
+                <div className="absolute border-white bg-white font-semibold border rounded-[3rem] p-2 rounded-xl top-8 left-9 w-32 text-center text-sm z-20">{userType.charAt(0).toUpperCase() + userType.slice(1)}</div>
+
+                {/* Bottom-left Title & Subtitle */}
+                <div className="absolute bottom-20 left-9 z-20 text-white">
+                    <h1 className="text-5xl font-bold bg-gradient-to-r from-[#FFFFFF] to-[#999999] bg-clip-text text-transparent">Your Data.</h1>
+                    <h1 className="text-5xl font-bold bg-gradient-to-r from-[#FFFFFF] to-[#5B5B5B] bg-clip-text text-transparent">Your Insights.</h1>
+                    <h1 className="text-5xl font-bold bg-gradient-to-r from-[#E6E6E6] to-[#454545] bg-clip-text text-transparent">Your Security.</h1>
+                </div>
+                <div className="absolute bottom-8 left-9 z-20 text-white">
+                    <p className="text-sm font-base">Take control of your dataset, ensuring only you and </p>
+                    <p className="text-sm font-base">your team have access to the insights!</p>
                 </div>
 
                 {/* Bottom-right Participant Status */}
-                <div className="absolute bottom-8 right-8 z-20 bg-white/20 p-4 rounded-xl w-[50%] text-white text-sm text-muted-foreground">
-                    <p className="font-semibold mb-2 text-base">Participant Status:</p>
-                    {Object.entries(safeStatusMap).map(([id, status]) => (
-                        <p key={id}>
-                            {id === userId ? 'You' : id}: {status ? '✅ Uploaded' : '⏳ Waiting'}
-                        </p>
-                    ))}
+                <div className="absolute top-24 left-9 z-20 text-white text-muted-foreground">
+                    <p className="font-semibold mb-4 text-[1.4rem] text-base">Participant Status</p>
+                    <div className="space-y-3">
+                        {Object.entries(safeStatusMap).map(([id, status]) => (
+                            <div className={`flex w-full text-sm align-center ${status ? "border-[#00C20A] bg-[#00C20A]/10" : "border-white bg-white/10"} border rounded-[3rem]`} key={id}>
+                                <div className={`p-2 px-4 pt-2.5 ${status ? "border-[#00C20A] bg-[#00C20A]/10" : "border-white bg-white/10"} border rounded-[3rem]`}>{status ? '✅' : '⏳'}</div> 
+                                <div className="p-2 px-4 pt-2.5 pr-5">{id === userId ? 'You' : id}</div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Illustration Image */}
                 <img
                     src={illustrationImg}
-                    className="rounded-l-3xl z-0 h-full w-full object-cover"
+                    className="z-0 h-full w-full object-cover"
                     alt="Illustration"
                     draggable="false"
                 />
             </div>
 
             {/* Right Pane */}
-            <div className="w-[55%] flex flex-col items-center justify-center min-h-screen p-4 space-y-6">
+            <div className="w-[53%] flex flex-col items-center justify-center min-h-screen p-4 space-y-6">
                 <div className="w-full max-w-md">
-                    <div className="absolute border-white bg-slate-900 font-semibold border rounded-3xl p-2 rounded-xl top-8 left-10 w-28 text-center text-white text-sm z-20">{userType.charAt(0).toUpperCase() + userType.slice(1)}</div>
                     <div className="flex flex-col w-full gap-1 mb-4">
                         <p className="text-4xl font-semibold text-white">submit your dataset</p>
                         <p className="text-base mb-4 text-white">ready your data. once all join, we compute together</p>
