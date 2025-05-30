@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence } from "framer-motion";
 import { Input, Button, Label } from '@/components';
 import { FormApi } from '@/api';
 import { SessionData } from '@/hooks/useSession';
@@ -19,6 +20,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
     const socketRef = useRef<WebSocket|null>(null);
     const textRef = useRef<HTMLParagraphElement>(null);
     const infoRef = useRef<HTMLParagraphElement>(null);
+    const [showOverlay, setShowOverlay] = useState(false);
 
     // Safely handle cases where statusMap might be undefined/null
     const safeStatusMap = statusMap || {};
@@ -122,27 +124,11 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
     }
 
     const handleProceed = async () => {
-        try {
-            const res = await fetch(`http://localhost:8080/api/v1/sessions/${sessionId}/proceed`, {
-                method: 'POST',
-            });
-
-            if (!res.ok) {
-                const errorText = await res.text(); // Read actual response
-                console.error('Server responded with:', res.status, errorText);
-                throw new Error(errorText || 'Failed to proceed with the session.');
-            }
-
-            toast.success("Computation started!");
-            // navigate(`/result/${sessionId}`);
-        } catch (err: any) {
-            console.error(err);
-            toast.error(err.message || 'Failed to proceed.');
-        }
+        setShowOverlay(true); // Trigger the sliding overlay
     };
 
     return (
-        <main className="flex flex-row w-full min-h-screen bg-main-dark">
+        <main className="relative flex flex-row w-full min-h-screen bg-main-dark overflow-hidden">
             {/* Left Pane */}
             <div className="relative w-[47%] h-screen">
                 <div className="absolute border-white bg-white font-semibold border rounded-[3rem] p-2 rounded-xl top-8 left-9 w-32 text-center text-sm z-20">{userType.charAt(0).toUpperCase() + userType.slice(1)}</div>
@@ -245,33 +231,32 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                                             </label>
                                         </div>
 
-                                        {userType === 'lead' && 
-                                            <Button
-                                                className="mt-2"
-                                                onClick={() => setStep(2)}
-                                                disabled={!orgName || !file}
-                                            >
-                                                Continue
-                                            </Button>
-                                        }
-
-                                        {userType !== 'lead' && 
+                                        {userType === 'lead' ? (
+                                            step === 1 ? (
+                                                <Button className="mt-2" onClick={() => setStep(2)} disabled={!orgName || !file}>
+                                                    Continue
+                                                </Button>
+                                            ) : (
+                                                <>
+                                                    <Button onClick={handleSubmit} disabled={uploaded || !file}>
+                                                        {uploaded ? 'Uploaded ✓' : 'Upload'}
+                                                    </Button>
+                                                    <Button
+                                                        variant={isReady ? 'default' : 'outline'}
+                                                        disabled={!isReady}
+                                                        onClick={handleProceed}
+                                                    >
+                                                        Proceed
+                                                    </Button>
+                                                </>
+                                            )
+                                            ) : (
                                             <div className="flex flex-row space-x-4">
-                                                <Button
-                                                    onClick={handleSubmit}
-                                                    disabled={uploaded || !file}
-                                                >
+                                                <Button onClick={handleSubmit} disabled={uploaded || !file}>
                                                     {uploaded ? 'Uploaded ✓' : 'Upload'}
                                                 </Button>
-                                                <Button
-                                                    variant={isReady ? 'default' : 'outline'}
-                                                    disabled={!isReady}
-                                                    onClick={handleProceed}
-                                                >
-                                                    Proceed
-                                                </Button>
                                             </div>
-                                        }
+                                        )}
 
                                         {userType !== 'lead' && uploaded && (
                                             <div className="text-sm mt-2 text-yellow-600">⚠️ Wait for the leader to proceed</div>
@@ -330,6 +315,24 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                     </div>
                 </div>
             </div>
+
+            {/* Sliding Overlay Layer */}
+            <AnimatePresence>
+                {showOverlay && (
+                    <motion.div
+                        initial={{ x: "100%" }}
+                        animate={{ x: 0 }}
+                        exit={{ x: "100%" }}
+                        transition={{ type: "tween", duration: 0.4 }}
+                        className="absolute top-0 left-0 w-full h-full bg-white z-50 overflow-hidden"
+                    >
+                        {/* Dummy content for now */}
+                        <div className="flex items-center justify-center h-full">
+                            <h1 className="text-4xl font-bold text-gray-800">New Page Content</h1>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </main>
     );
 };
