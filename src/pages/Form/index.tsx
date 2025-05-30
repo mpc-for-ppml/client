@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from 'react-router-dom';
 import { Input, Button, Label, Switch } from '@/components';
 import {
   Select,
@@ -9,13 +10,16 @@ import {
   SelectItem,
 } from "@/components/ui/select"
 import { FormApi } from '@/api';
-import { SessionData } from '@/hooks/useSession';
+import { SessionData } from '@/types';
 import { toast } from "react-toastify";
 import { WS_URL, RECONNECT_BASE, MAX_RECONNECT } from '@/constant';
 import illustrationImg from "@/assets/images/side2.png";
 import UploadImage from "@/assets/icons/upload.png";
+import { RunConfig } from '@/types';
 
 export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId, participantCount }) => {
+    const navigate = useNavigate();
+
     const [orgName, setOrgName] = useState('');
     const [label, setLabel] = useState('');
     const [file, setFile] = useState<File|null>(null);
@@ -62,10 +66,11 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
 
             socket.onmessage = ({ data }) => {
                 const parsed = JSON.parse(data);
-                const { statusMap, proceed } = parsed;
+                const { statusMap, proceed, training } = parsed;
 
                 if (statusMap) setStatusMap(statusMap);
                 if (proceed) setShowOverlay(true);
+                if (training) navigate("/log");
             };
         
             socket.onclose = () => {
@@ -146,17 +151,25 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
         socketRef.current?.send(JSON.stringify({ userId, proceed: true }));
     };
 
-    const handleTrain = () => {
-        const config = {
-            userId,
-            normalizer,
-            regression,
+    const handleTrain = async () => {
+        const payload: RunConfig = {
+            userId: userId,
+            normalizer: normalizer,
+            regression: regression,
             learningRate: parseFloat(learningRate),
             epochs: parseInt(epochs),
-            isLogging,
-        }
-        console.log("Training Configuration:", config)
-        // submit logic here
+            isLogging: isLogging
+        };
+
+        await FormApi.run(sessionId, payload)
+            .then(() => {
+                toast.success("Dataset added successfully!");
+                socketRef.current?.send(JSON.stringify({ userId, training: true }));
+            })
+            .catch((error: any) => {
+                setError(error.message || 'Train config upload failed');
+                toast.error(error || 'Server is unreachable. Please try again later.');
+            })
     }
 
 

@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import { API_URL_LOCAL } from "@/constant";
+import { RunConfig } from "@/types";
 
 class FormApi {
     private static axiosInstance = axios.create({
@@ -14,6 +15,16 @@ class FormApi {
             });
         } catch (error: any) {
             throw new Error(error.response?.data?.detail || "Upload failed");
+        }
+    }
+
+    static async run(sessionId: string, config: RunConfig): Promise<void> {
+        try {
+            await this.axiosInstance.post(`/sessions/${sessionId}/run`, config, {
+                headers: { "Content-Type": "application/json"  },
+            });
+        } catch (error: any) {
+            throw new Error(error.response?.data?.detail || "Failed to start task");
         }
     }
 }

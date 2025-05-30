@@ -1,5 +1,5 @@
 import { FormUpload } from '@/pages/Form';
-import { useSession } from '@/hooks/useSession';
+import { useSession } from '@/hooks';
 
 export default function FormUploadWrapper() {
     const { session } = useSession();
