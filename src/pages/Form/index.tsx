@@ -1,6 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
-import { Input, Button, Label } from '@/components';
+import { Input, Button, Label, Switch } from '@/components';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select"
 import { FormApi } from '@/api';
 import { SessionData } from '@/hooks/useSession';
 import { toast } from "react-toastify";
@@ -21,6 +28,13 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
     const socketRef = useRef<WebSocket|null>(null);
     const textRef = useRef<HTMLParagraphElement>(null);
     const infoRef = useRef<HTMLParagraphElement>(null);
+
+    /* Usestate for submission */
+    const [normalizer, setNormalizer] = useState("minmax")
+    const [regression, setRegression] = useState("linear")
+    const [learningRate, setLearningRate] = useState("0.01")
+    const [epochs, setEpochs] = useState("100")
+    const [isLogging, setIsLogging] = useState(false)
 
     // Safely handle cases where statusMap might be undefined/null
     const safeStatusMap = statusMap || {};
@@ -131,6 +145,19 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
         // Notify others that lead were proceeding
         socketRef.current?.send(JSON.stringify({ userId, proceed: true }));
     };
+
+    const handleTrain = () => {
+        const config = {
+            userId,
+            normalizer,
+            regression,
+            learningRate: parseFloat(learningRate),
+            epochs: parseInt(epochs),
+            isLogging,
+        }
+        console.log("Training Configuration:", config)
+        // submit logic here
+    }
 
 
     return (
@@ -329,12 +356,90 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                         initial={{ x: "100%" }}
                         animate={{ x: 0 }}
                         exit={{ x: "100%" }}
-                        transition={{ type: "tween", duration: 0.4 }}
-                        className="absolute top-0 left-0 w-full h-full bg-white z-50 overflow-hidden"
+                        transition={{ type: "tween", duration: 0.6 }}
+                        className="absolute top-0 left-0 w-full h-full bg-main-dark z-50 overflow-hidden"
                     >
-                        {/* Dummy content for now */}
-                        <div className="flex items-center justify-center h-full">
-                            <h1 className="text-4xl font-bold text-gray-800">New Page Content</h1>
+                        {/* Blurry Bubbles */}
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: [0.5, 0.7, 0.5] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute -top-20 -right-20 w-[20rem] h-[20rem] bg-main-yellow rounded-full filter blur-[120px] opacity-50 z-0"></motion.div>
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: [0.7, 0.9, 0.7] }} transition={{ duration: 7.5, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-20 -left-20 w-[20rem] h-[20rem] bg-main-blue rounded-full filter blur-[120px] opacity-50 z-0"></motion.div>
+
+                        {/* Main contents */}
+                        <div className="relative z-10 flex items-center justify-center h-full px-6">
+                            {userType !== "lead" ? (
+                                <div className="flex flex-col items-center gap-6 text-white animate-pulse">
+                                    <div className="w-16 h-16 border-4 border-t-transparent border-white rounded-full animate-spin" />
+                                    <p className="text-xl font-semibold text-center max-w-md">
+                                        Initiating... Please wait. The leader is currently selecting training parameters.
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="w-full max-w-lg bg-transparent text-white rounded-2xl shadow-lg p-8 space-y-6">
+                                    <h2 className="text-2xl md:text-3xl font-semibold text-white leading-tight text-center">training configuration</h2>
+
+                                    <div className="space-y-4">
+                                        <div className='space-y-2'>
+                                            <label>Normalizer</label>
+                                            <Select value={normalizer} onValueChange={setNormalizer}>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a normalizer" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="minmax">MinMax</SelectItem>
+                                                    <SelectItem value="zscore">Z-Score</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
+                                        <div className='space-y-2'>
+                                            <label>Regression Type</label>
+                                            <Select value={regression} onValueChange={setRegression}>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select regression type" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="linear">Linear Regression</SelectItem>
+                                                    <SelectItem value="logistic">Logistic Regression</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
+                                        <div className='space-y-2'>
+                                            <label>Learning Rate</label>
+                                            <Input
+                                                type="number"
+                                                min={0}
+                                                value={learningRate}
+                                                onChange={(e) => setLearningRate(e.target.value)}
+                                                placeholder="e.g., 0.01"
+                                            />
+                                        </div>
+
+                                        <div className='space-y-2'>
+                                            <label>Epochs</label>
+                                            <Input
+                                                type="number"
+                                                min={0}
+                                                value={epochs}
+                                                onChange={(e) => setEpochs(e.target.value)}
+                                                placeholder="e.g., 100"
+                                            />
+                                        </div>
+
+                                        <div className="flex items-center justify-between">
+                                            <label htmlFor="logging">Enable Logging</label>
+                                            <Switch
+                                                id="logging"
+                                                checked={isLogging}
+                                                onCheckedChange={setIsLogging}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <Button className="w-full" onClick={handleTrain}>
+                                        Train Data
+                                    </Button>
+                                </div>
+                            )}
                         </div>
                     </motion.div>
                 )}
