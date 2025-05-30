@@ -7,6 +7,11 @@ export interface SessionData {
     participantCount: number;
 }
 
+export type ProgressMessage = {
+    message: string;
+    timestamp: string; // or Date
+};
+
 // Backend-related Types
 // Requests and Responses
 export interface RunConfig {

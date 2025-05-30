@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { WS_URL } from "@/constant"
 import { useSession } from "./useSession";
+import { ProgressMessage } from "@/types";
 
 export function useProgress() {
-    const [messages, setMessages] = useState<string[]>([]);
+    const [messages, setMessages] = useState<ProgressMessage[]>([]);
     const { session } = useSession();
 
     useEffect(() => {
@@ -17,7 +18,11 @@ export function useProgress() {
 
         ws.onmessage = (event) => {
             console.log("📨 WebSocket message", event.data);
-            setMessages((prev) => [...prev, event.data]);
+            const newMessage: ProgressMessage = {
+                message: event.data,
+                timestamp: new Date().toISOString(),
+            };
+            setMessages((prev) => [...prev, newMessage]);
         };
 
         return () => ws.close();

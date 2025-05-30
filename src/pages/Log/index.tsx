@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 // import { motion } from "framer-motion";
 import { useProgress } from '@/hooks';
 import { Button } from '@/components';
+import { ProgressMessage } from '@/types';
 
 const milestones = [
     "Normalization applied",
@@ -17,10 +18,10 @@ const milestones = [
 
 export const Log: React.FC = () => {
     const navigate = useNavigate();
-    const { messages } = useProgress();
+    const { messages }: { messages: ProgressMessage[] } = useProgress();
 
     // Filter logs that contain a green check
-    const successLogs = messages.filter((msg) => msg.includes("✅"));
+    const successLogs = messages.filter(({ message }) => message.includes("✅"));
 
     // Check if each milestone is reached in order based on logs
     const reached = milestones.map((_, idx) => idx < successLogs.length);
@@ -62,10 +63,16 @@ export const Log: React.FC = () => {
             </div>
 
             {/* Optional Raw Logs */}
-            <div className="space-y-1 font-mono text-sm text-start text-gray-700 max-h-40 overflow-y-auto">
+            <div className="space-y-1 font-mono text-sm text-start text-gray-400 max-h-40 overflow-y-auto">
                 {messages.length === 0 && <div>No progress yet.</div>}
-                {messages.map((msg, idx) => (
-                    <div key={idx}>{msg}</div>
+                {messages.map(({ message, timestamp }, idx) => (
+                    <div key={idx} className={`text-sm font-mono ${
+                        message.includes("✅") ? "text-green-500" :
+                        message.includes("🛑") ? "text-red-500" :
+                        "text-gray-400"
+                    }`}>
+                        [{new Date(timestamp).toLocaleTimeString()}] {message.replace("[Party 0] ", "")}
+                    </div>
                 ))}
             </div>
 
