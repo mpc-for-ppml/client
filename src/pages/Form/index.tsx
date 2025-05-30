@@ -17,10 +17,10 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
     const [uploaded, setUploaded] = useState(false);
     const [step, setStep] = useState(1);
     const [headers, setHeaders] = useState<string[]>([]);
+    const [showOverlay, setShowOverlay] = useState(false);
     const socketRef = useRef<WebSocket|null>(null);
     const textRef = useRef<HTMLParagraphElement>(null);
     const infoRef = useRef<HTMLParagraphElement>(null);
-    const [showOverlay, setShowOverlay] = useState(false);
 
     // Safely handle cases where statusMap might be undefined/null
     const safeStatusMap = statusMap || {};
@@ -45,10 +45,13 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                 };
                 socket.send(JSON.stringify(initPayload));
             };
-        
+
             socket.onmessage = ({ data }) => {
-                const { statusMap } = JSON.parse(data);
-                setStatusMap(statusMap);
+                const parsed = JSON.parse(data);
+                const { statusMap, proceed } = parsed;
+
+                if (statusMap) setStatusMap(statusMap);
+                if (proceed) setShowOverlay(true);
             };
         
             socket.onclose = () => {
@@ -124,8 +127,11 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
     }
 
     const handleProceed = async () => {
-        setShowOverlay(true); // Trigger the sliding overlay
+        setShowOverlay(true);
+        // Notify others that lead were proceeding
+        socketRef.current?.send(JSON.stringify({ userId, proceed: true }));
     };
+
 
     return (
         <main className="relative flex flex-row w-full min-h-screen bg-main-dark overflow-hidden">
