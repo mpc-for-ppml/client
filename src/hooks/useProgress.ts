@@ -7,7 +7,9 @@ export function useProgress() {
     const { session } = useSession();
 
     useEffect(() => {
-        const ws = new WebSocket(`${WS_URL}/ws/${session?.sessionId}/progress`);
+        if (!session?.sessionId) return;
+
+        const ws = new WebSocket(`${WS_URL}/ws/${session.sessionId}/progress`);
 
         ws.onopen = () => console.log("✅ WebSocket connected");
         ws.onerror = (err) => console.error("❌ WebSocket error", err);
@@ -19,7 +21,7 @@ export function useProgress() {
         };
 
         return () => ws.close();
-    }, []);
+    }, [session?.sessionId]);
 
     return { messages };
 }
