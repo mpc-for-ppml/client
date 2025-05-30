@@ -360,8 +360,8 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                         className="absolute top-0 left-0 w-full h-full bg-main-dark z-50 overflow-hidden"
                     >
                         {/* Blurry Bubbles */}
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: [0.5, 0.7, 0.5] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute -top-20 -right-20 w-[20rem] h-[20rem] bg-main-yellow rounded-full filter blur-[120px] opacity-50 z-0"></motion.div>
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: [0.7, 0.9, 0.7] }} transition={{ duration: 7.5, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-20 -left-20 w-[20rem] h-[20rem] bg-main-blue rounded-full filter blur-[120px] opacity-50 z-0"></motion.div>
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: [0.3, 0.7, 0.3] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute -top-20 -right-20 w-[30rem] h-[30rem] bg-main-yellow rounded-full filter blur-[120px] opacity-50 z-0"></motion.div>
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: [0.5, 0.9, 0.5] }} transition={{ duration: 7.5, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-20 -left-20 w-[30rem] h-[30rem] bg-main-blue rounded-full filter blur-[120px] opacity-50 z-0"></motion.div>
 
                         {/* Main contents */}
                         <div className="relative z-10 flex items-center justify-center h-full px-6">
@@ -376,7 +376,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                                 <div className="w-full max-w-lg bg-transparent text-white rounded-2xl shadow-lg p-8 space-y-6">
                                     <h2 className="text-2xl md:text-3xl font-semibold text-white leading-tight text-center">training configuration</h2>
 
-                                    <div className="space-y-4">
+                                    <div className="w-full space-y-4">
                                         <div className='space-y-2'>
                                             <label>Normalizer</label>
                                             <Select value={normalizer} onValueChange={setNormalizer}>
@@ -402,27 +402,29 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                                                 </SelectContent>
                                             </Select>
                                         </div>
+                                        
+                                        <div className='w-full flex gap-x-6'>
+                                            <div className='space-y-2 w-1/2'>
+                                                <label>Learning Rate</label>
+                                                <Input
+                                                    type="number"
+                                                    min={0}
+                                                    value={learningRate}
+                                                    onChange={(e) => setLearningRate(e.target.value)}
+                                                    placeholder="e.g., 0.01"
+                                                />
+                                            </div>
 
-                                        <div className='space-y-2'>
-                                            <label>Learning Rate</label>
-                                            <Input
-                                                type="number"
-                                                min={0}
-                                                value={learningRate}
-                                                onChange={(e) => setLearningRate(e.target.value)}
-                                                placeholder="e.g., 0.01"
-                                            />
-                                        </div>
-
-                                        <div className='space-y-2'>
-                                            <label>Epochs</label>
-                                            <Input
-                                                type="number"
-                                                min={0}
-                                                value={epochs}
-                                                onChange={(e) => setEpochs(e.target.value)}
-                                                placeholder="e.g., 100"
-                                            />
+                                            <div className='space-y-2 w-1/2'>
+                                                <label>Epochs</label>
+                                                <Input
+                                                    type="number"
+                                                    min={0}
+                                                    value={epochs}
+                                                    onChange={(e) => setEpochs(e.target.value)}
+                                                    placeholder="e.g., 100"
+                                                />
+                                            </div>
                                         </div>
 
                                         <div className="flex items-center justify-between">
