@@ -1,8 +1,8 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-// import { motion } from "framer-motion";
+// import { useNavigate } from 'react-router-dom';
+import { motion } from "framer-motion";
 import { useProgress } from '@/hooks';
-import { Button } from '@/components';
+// import { Button } from '@/components';
 import { ProgressMessage } from '@/types';
 
 const milestones = [
@@ -17,7 +17,7 @@ const milestones = [
 ];
 
 export const Log: React.FC = () => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const { messages }: { messages: ProgressMessage[] } = useProgress();
 
     // Filter logs that contain a green check
@@ -27,11 +27,15 @@ export const Log: React.FC = () => {
     const reached = milestones.map((_, idx) => idx < successLogs.length);
 
     return (
-        <div className="relative min-h-screen w-full bg-main-dark text-white overflow-hidden">
-            <h2 className="text-xl font-bold mb-4">🧠 Module Progress</h2>
+        <div className="relative flex flex-col items-center bg-main-dark justify-center min-h-screen p-4 px-20 space-y-6 overflow-hidden text-white">
+            {/* Blurry Bubbles */}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: [0.3, 0.7, 0.3] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute -top-20 -right-20 w-[30rem] h-[30rem] bg-main-yellow rounded-full filter blur-[120px] opacity-50 z-0"></motion.div>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: [0.5, 0.9, 0.5] }} transition={{ duration: 7.5, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-20 -left-20 w-[30rem] h-[30rem] bg-main-blue rounded-full filter blur-[120px] opacity-50 z-0"></motion.div>
+
+            <h2 className="text-2xl md:text-3xl font-semibold text-white leading-tight text-center">model training</h2>
 
             {/* Horizontal Progress Bar */}
-            <div className="relative flex items-center justify-between w-full mb-6 px-3">
+            <div className="relative flex items-center justify-between w-full mt-8 mb-10 px-3">
                 {/* Connector Line Behind Dots */}
                 <div className="absolute top-3 left-6 right-6 h-0.5 z-0 flex">
                     {milestones.slice(1).map((_, idx) => (
@@ -63,7 +67,7 @@ export const Log: React.FC = () => {
             </div>
 
             {/* Optional Raw Logs */}
-            <div className="space-y-1 font-mono text-sm text-start text-gray-400 max-h-40 overflow-y-auto">
+            <div className="space-y-1 font-mono text-sm text-start text-gray-400 max-h-80 overflow-y-auto px-20">
                 {messages.length === 0 && <div>No progress yet.</div>}
                 {messages.map(({ message, timestamp }, idx) => (
                     <div key={idx} className={`text-sm font-mono ${
@@ -76,7 +80,7 @@ export const Log: React.FC = () => {
                 ))}
             </div>
 
-            <Button onClick={() => navigate("/")}>Go Back</Button>
+            {/* <Button onClick={() => navigate("/")}>Go Back</Button> */}
         </div>
     );
 };
