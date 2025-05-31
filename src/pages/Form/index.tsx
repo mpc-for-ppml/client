@@ -171,7 +171,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
 
         await FormApi.run(sessionId, payload)
             .then(() => {
-                toast.success("Dataset added successfully!");
+                toast.success("Training parameter configured successfully!");
                 socketRef.current?.send(JSON.stringify({ userId, training: true }));
             })
             .catch((error: any) => {
