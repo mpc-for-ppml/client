@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from "framer-motion";
+import { toast } from "react-toastify";
 import { useProgress } from '@/hooks';
 import { ProgressMessage } from '@/types';
 import { Card } from '@/components';
@@ -16,10 +18,19 @@ const milestones = [
 ];
 
 export const Log: React.FC = () => {
+    const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
     const { messages }: { messages: ProgressMessage[] } = useProgress();
     const logEndRef = useRef<HTMLDivElement | null>(null);
     const scrollContainerRef = useRef<HTMLDivElement | null>(null);
     const [messageRefs, setMessageRefs] = useState<(HTMLDivElement | null)[]>([]);
+
+    useEffect(() => {
+        if (!id) {
+            toast.error('Session invalid!');
+            navigate("/");
+        }
+    }, []);
 
     // Filter logs that contain a green check
     const successLogs = messages.filter(({ message }) => message.includes("✅"));

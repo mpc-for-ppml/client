@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Input, Button, Label, Switch } from '@/components';
 import {
   Select,
@@ -18,6 +18,7 @@ import UploadImage from "@/assets/icons/upload.png";
 import { RunConfig } from '@/types';
 
 export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId, participantCount }) => {
+    const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
 
     const [orgName, setOrgName] = useState('');
@@ -45,6 +46,13 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
     const isReady = Object.keys(safeStatusMap).length === participantCount && Object.values(safeStatusMap).every(Boolean);
 
     useEffect(() => {
+        if (id != sessionId) {
+            toast.error('Session invalid!');
+            navigate("/");
+        }
+    }, []);
+
+    useEffect(() => {
         let socket: WebSocket;
         let retries = 0;
       
@@ -70,7 +78,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
 
                 if (statusMap) setStatusMap(statusMap);
                 if (proceed) setShowOverlay(true);
-                if (training) navigate("/log");
+                if (training) navigate(`/log/${sessionId}`);
             };
         
             socket.onclose = () => {
@@ -87,7 +95,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
         connect();
       
         return () => socket && socket.close();
-    }, [sessionId]);   // 🔑 only re-run when the sessionId changes
+    }, [sessionId]);
 
     const handleSubmit = async () => {
         setError(null);
