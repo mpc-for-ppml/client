@@ -6,7 +6,6 @@ import { TimeData } from "@/types"
 import {
     Card,
     CardContent,
-    CardFooter,
     CardHeader,
 } from "@/components/ui/card"
 import {
@@ -22,7 +21,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { TrendingUp } from "lucide-react"
 
 const chartConfig = {
     time: {
@@ -103,7 +101,7 @@ export const ChartPieInteractive: React.FC<{ timeData: TimeData[] }> = ({ timeDa
                 <ChartContainer
                     id={id}
                     config={chartConfig}
-                    className="mx-auto aspect-square w-full max-w-[450px]"
+                    className="mx-auto aspect-square w-full min-h-[325px]"
                 >
                     <PieChart>
                         <ChartTooltip
@@ -158,11 +156,6 @@ export const ChartPieInteractive: React.FC<{ timeData: TimeData[] }> = ({ timeDa
                     </PieChart>
                 </ChartContainer>
             </CardContent>
-            <CardFooter className="justify-start flex-col items-start gap-2 text-sm text-white p-0">
-                <div className="flex gap-1">
-                    Model trained in total<span className="font-bold">{timeData.reduce((acc, item) => acc + item.time, 0).toFixed(2)}</span>seconds <TrendingUp className="h-4 w-4" />
-                </div>
-            </CardFooter>
         </Card>
     )
 }

@@ -89,7 +89,7 @@ export const ChartLineLinear: React.FC<{ data: ActualvsPredicted }> = ({ data })
                             dataKey="actual"
                             name="Actual"
                             label={{ value: "Actual", position: "bottom", fill: "white", fontSize: 14, dx:-20 }}
-                            tick={{ fill: "white" }}
+                            tick={{ fill: "white", opacity: 0.7 }}
                         />
                         <YAxis
                             dataKey="predicted"
@@ -102,7 +102,7 @@ export const ChartLineLinear: React.FC<{ data: ActualvsPredicted }> = ({ data })
                                 fontSize: 14,
                                 dy: 20,
                             }}
-                            tick={{ fill: "white" }}
+                            tick={{ fill: "white", opacity: 0.7 }}
                         />
                         <Tooltip
                             cursor={{ strokeDasharray: "3 3" }}
