@@ -12,6 +12,17 @@ export type ProgressMessage = {
     timestamp: string; // or Date
 };
 
+export type TimeData = {
+    phase: string;
+    time: number;
+    fill: string;
+};
+
+export type ActualvsPredicted = {
+    actual: number[];
+    predicted: number[];
+}
+
 // Backend-related Types
 // Requests and Responses
 export interface RunConfig {

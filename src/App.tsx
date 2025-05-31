@@ -1,4 +1,5 @@
 import { RouterProvider } from "react-router-dom";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 // styles
 import "./App.css";
@@ -22,7 +23,9 @@ function App() {
         pauseOnHover
         theme="light"
       />
-      <RouterProvider router={router} />
+      <TooltipProvider>
+        <RouterProvider router={router} />
+      </TooltipProvider>
     </>
   );
 }
