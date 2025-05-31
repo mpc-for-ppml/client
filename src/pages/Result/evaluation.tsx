@@ -18,6 +18,16 @@ const chartConfig = {
     },
 } satisfies ChartConfig
 
+// Format large numbers with scientific notation
+const formatNumber = (num: number): string => {
+    if (Math.abs(num) >= 1e6) {
+        return num.toExponential(2);
+    } else if (Math.abs(num) >= 1000) {
+        return num.toLocaleString(undefined, { maximumFractionDigits: 2 });
+    }
+    return num.toFixed(2);
+}
+
 const CustomScatterTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
         const data = payload[0].payload
@@ -25,11 +35,11 @@ const CustomScatterTooltip = ({ active, payload }: any) => {
             <div className="flex flex-col gap-1 rounded-md bg-background px-3 py-2 shadow-sm border text-xs w-max">
                 <div className="flex justify-between gap-4 text-muted-foreground">
                     <span>Actual</span>
-                    <span className="text-foreground font-medium">{data.actual.toFixed(2)}</span>
+                    <span className="text-foreground font-medium">{formatNumber(data.actual)}</span>
                 </div>
                 <div className="flex justify-between gap-4 text-muted-foreground">
                     <span>Predicted</span>
-                    <span className="text-foreground font-medium">{data.predicted.toFixed(2)}</span>
+                    <span className="text-foreground font-medium">{formatNumber(data.predicted)}</span>
                 </div>
             </div>
         )
@@ -58,16 +68,18 @@ export const ChartLineLinear: React.FC<{ data: ActualvsPredicted }> = ({ data })
     }));
 
     const { a, b } = computeLinearRegression(data.actual, data.predicted);
-    // Add regression line data to each point
-    const dataWithRegression = scatterData.map(point => ({
-        ...point,
-        regression: a * point.actual + b,
-    }));
-
-    // Add y=x reference line data to each point
-    const dataWithRegressionAndReference = dataWithRegression.map(point => ({
+    
+    // Sort the scatter data by actual values
+    const sortedData = [...scatterData].sort((a, b) => a.actual - b.actual);
+    
+    // Add reference line and regression values to data
+    const chartData = sortedData.map((point, index) => ({
         ...point,
         reference: point.actual, // y=x line
+        // Only add regression values to first and last points for a straight line
+        regression: (index === 0 || index === sortedData.length - 1) 
+            ? a * point.actual + b 
+            : undefined
     }));
 
     return (
@@ -76,7 +88,7 @@ export const ChartLineLinear: React.FC<{ data: ActualvsPredicted }> = ({ data })
                 <ChartContainer config={chartConfig}>
                     <ComposedChart
                         height={1000}
-                        data={dataWithRegressionAndReference}
+                        data={chartData}
                         margin={{
                             top: 10,
                             right: 10,
@@ -88,12 +100,17 @@ export const ChartLineLinear: React.FC<{ data: ActualvsPredicted }> = ({ data })
                         <XAxis
                             dataKey="actual"
                             name="Actual"
+                            type="number"
+                            domain={['dataMin', 'dataMax']}
                             label={{ value: "Actual", position: "bottom", fill: "white", fontSize: 14, dx:-20 }}
                             tick={{ fill: "white", opacity: 0.7 }}
+                            tickFormatter={formatNumber}
                         />
                         <YAxis
                             dataKey="predicted"
                             name="Predicted"
+                            type="number"
+                            domain={['dataMin', 'dataMax']}
                             label={{
                                 value: "Predicted",
                                 angle: -90,
@@ -103,6 +120,7 @@ export const ChartLineLinear: React.FC<{ data: ActualvsPredicted }> = ({ data })
                                 dy: 20,
                             }}
                             tick={{ fill: "white", opacity: 0.7 }}
+                            tickFormatter={formatNumber}
                         />
                         <Tooltip
                             cursor={{ strokeDasharray: "3 3" }}
@@ -110,7 +128,7 @@ export const ChartLineLinear: React.FC<{ data: ActualvsPredicted }> = ({ data })
                         />
                         <Scatter
                             name="Prediction"
-                            data={dataWithRegressionAndReference}
+                            data={chartData}
                             fill="#3b82f6"
                             shape="circle"
                         />

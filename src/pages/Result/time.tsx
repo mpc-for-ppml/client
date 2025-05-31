@@ -141,7 +141,7 @@ export const ChartPieInteractive: React.FC<{ timeData: TimeData[] }> = ({ timeDa
                                                 className="fill-white"
                                             >
                                                 <tspan className="text-3xl font-bold" x={viewBox.cx} dy="-0.2em">
-                                                    {timeData[activeIndex].time.toLocaleString()}
+                                                    {timeData[activeIndex].time.toFixed(2).toLocaleString()}
                                                 </tspan>
                                                 <tspan className="text-sm" x={viewBox.cx} dy="1.6em">
                                                     Seconds

@@ -2,88 +2,152 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { DivideSquare, Sigma, Activity, Repeat, Info, Download, FlaskConical, Eye, Database } from "lucide-react"
+import { DivideSquare, Sigma, Activity, Repeat, Info, Download, FlaskConical, Eye, Database, Loader2, Target, BarChart3 } from "lucide-react"
 import Model from "@/assets/icons/model.png";
 import Session from "@/assets/icons/session.png";
 import { ChartPieInteractive } from "./time";
 import { ChartLineLinear } from "./evaluation";
 import { Button } from "@/components";
+import { useState, useEffect } from "react";
+import FormApi from "@/api/form-api";
+import { SessionResult } from "@/types";
 
-const dummyData = {
-    summary: {
-        model: "Linear Regression",
-        milestoneData: [
-            { phase: "Data Normalization", time: 1.2, fill: "#1B4F91" },        // Slightly lighter navy
-            { phase: "Secure ID Exchange", time: 0.8, fill: "#336699" },        // Mid blue
-            { phase: "Data Intersection", time: 1.0, fill: "#005B8F" },         // Cool blue
-            { phase: "Privacy Filtering", time: 0.6, fill: "#4A80B3" },         // Muted blue
-            { phase: "Model Initialization", time: 1.4, fill: "#003675" },      // Core navy
-            { phase: "Federated Training", time: 2.5, fill: "#002B5B" },        // Deep navy
-            { phase: "Model Evaluation", time: 0.7, fill: "#3C6E91" },          // Soft steel blue
-            { phase: "Result Aggregation", time: 1.0, fill: "#2F5D88" },        // Desaturated cool blue
-        ],
-        rmse: 1382.12,
-        r2: 0.87,
-        epochs: 1000,
-        lr: 0.5,
-    },
-    config: {
-        dataCount: 6,
-        parties: 3,
-    },
-    coefficients: [
-        { feature: "age", value: 3.12, type: "feature" },
-        { feature: "income", value: 0.52, type: "feature" },
-        { feature: "web_visits", value: 1.87, type: "feature" },
-        { feature: "location_score", value: -0.23, type: "feature" },
-        { feature: "engagement_rate", value: 2.45, type: "feature" },
-        { feature: "intercept", value: 15.67, type: "label" },
-    ],
-    actualVsPredicted: {
-        actual: [100, 150, 200, 250, 300, 350],
-        predicted: [110, 145, 195, 260, 310, 340],
-    },
-};
 
-const buildStatsFromSummary = (summary: typeof dummyData.summary, config: typeof dummyData.config) => [
-    {
-        icon: <DivideSquare className="size-4 text-white/80" />,
-        label: "RMSE",
-        value: summary.rmse.toFixed(3),
-    },
-    {
-        icon: <Sigma className="size-4 text-white/80" />,
-        label: "R²",
-        value: summary.r2.toFixed(2),
-    },
-    {
-        icon: <Activity className="size-4 text-white/80" />,
-        label: "Learning Rate",
-        value: summary.lr.toString(),
-    },
-    {
-        icon: <Repeat className="size-4 text-white/80" />,
-        label: "Epochs",
-        value: summary.epochs.toString(),
-    },
-    {
-        icon: <Database className="size-4 text-white/80" />,
-        label: "Data Points",
-        value: config.dataCount.toString(),
-    }
-]
+const buildStatsFromSummary = (summary: SessionResult['summary'], config: SessionResult['config']) => {
+    const isLinearRegression = summary.model.toLowerCase().includes('linear');
+    
+    const modelSpecificStats = isLinearRegression ? [
+        {
+            icon: <DivideSquare className="size-4 text-white/80" />,
+            label: "RMSE",
+            value: summary.rmse?.toFixed(3) || 'N/A',
+        },
+        {
+            icon: <Sigma className="size-4 text-white/80" />,
+            label: "R²",
+            value: summary.r2?.toFixed(2) || 'N/A',
+        }
+    ] : [
+        {
+            icon: <Target className="size-4 text-white/80" />,
+            label: "Accuracy",
+            value: summary.accuracy ? (summary.accuracy * 100).toFixed(2) + "%" : 'N/A',
+        },
+        {
+            icon: <BarChart3 className="size-4 text-white/80" />,
+            label: "F1 Score",
+            value: summary.f1?.toFixed(3) || 'N/A',
+        }
+    ];
+    
+    return [
+        ...modelSpecificStats,
+        {
+            icon: <Activity className="size-4 text-white/80" />,
+            label: "Learning Rate",
+            value: summary.lr.toString(),
+        },
+        {
+            icon: <Repeat className="size-4 text-white/80" />,
+            label: "Epochs",
+            value: summary.epochs.toString(),
+        },
+        {
+            icon: <Database className="size-4 text-white/80" />,
+            label: "Data Points",
+            value: config.dataCount.toString(),
+        }
+    ];
+}
 
 export const Result: React.FC = () => {
     const { id } = useParams<{ id: string }>();
-    const { summary, config, coefficients, actualVsPredicted } = dummyData;
+    const navigate = useNavigate();
+    const [data, setData] = useState<SessionResult | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    // validate sessionId valid
+    useEffect(() => {
+        const fetchResult = async () => {
+            if (!id) {
+                toast.error('Session ID is required');
+                navigate('/');
+                return;
+            }
+
+            try {
+                setLoading(true);
+                const result = await FormApi.result(id);
+                setData(result);
+            } catch (err: any) {
+                setError(err.message || 'Failed to fetch results');
+                toast.error(err.message || 'Failed to fetch results');
+                navigate('/');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchResult();
+    }, [id, navigate]);
 
     const handleSave = async () => {
-        toast.success("Model downloaded successfully!");
+        if (!id) return;
+        
+        try {
+            await FormApi.downloadModel(id);
+            toast.success("Model downloaded successfully!");
+        } catch (err: any) {
+            toast.error(err.message || "Failed to download model");
+        }
     }
+
+    if (loading) {
+        return (
+            <div className="fixed inset-0 bg-main-dark text-white flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                    <p className="text-white/60">Loading results...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error || !data) {
+        return (
+            <div className="fixed inset-0 bg-main-dark text-white flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <p className="text-red-400">Error: {error || 'No data available'}</p>
+                    <Button onClick={() => navigate('/')} className="bg-white/20 hover:bg-white/30">
+                        Go Back
+                    </Button>
+                </div>
+            </div>
+        );
+    }
+
+    const { summary, config, coefficients, actualVsPredicted } = data;
+    
+    // Normalize coefficient values for bar visualization
+    const maxCoefficient = Math.max(...coefficients.map(c => Math.abs(c.value)));
+    const normalizeCoefficient = (value: number) => {
+        return (Math.abs(value) / maxCoefficient) * 350; // Scale to 0-150 for longer bars
+    };
+    
+    // Format coefficient values for display
+    const formatCoefficient = (value: number, precision: number = 2) => {
+        const absValue = Math.abs(value);
+        const sign = value > 0 ? '+' : '';
+        
+        if (absValue >= 1e6) {
+            return sign + value.toExponential(precision);
+        } else if (absValue >= 1000) {
+            return sign + value.toLocaleString(undefined, { maximumFractionDigits: precision });
+        }
+        return sign + value.toFixed(precision);
+    };
 
     return (
         <div className="fixed inset-0 bg-main-dark text-white flex flex-col overflow-y-auto overflow-x-hidden">
@@ -262,7 +326,7 @@ export const Result: React.FC = () => {
                                     <div className="bg-white/5 rounded-lg p-3">
                                         <div className="flex items-center justify-between text-sm mb-1">
                                             <span className="text-white/60">Model size</span>
-                                            <span className="text-white font-medium">2.4 KB</span>
+                                            <span className="text-white font-medium">{summary.modelSize || 'N/A'}</span>
                                         </div>
                                         <div className="flex items-center justify-between text-sm">
                                             <span className="text-white/60">Format</span>
@@ -286,7 +350,7 @@ export const Result: React.FC = () => {
                                         <Download className="h-4 w-4" />
                                         Save model to .pkl
                                     </Button>
-                                    <Button className="w-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center gap-2" onClick={handleSave}>
+                                    <Button className="w-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center gap-2" onClick={() => toast.info("Test feature coming soon!")}>
                                         <FlaskConical className="h-4 w-4" />
                                         Test model using your data
                                     </Button>
@@ -333,16 +397,17 @@ export const Result: React.FC = () => {
                                     {coefficients.filter(c => c.type === 'feature').slice(0, 3).map((coef, index) => (
                                         <div key={index} className="flex items-center justify-between">
                                             <div className="flex items-center gap-2">
-                                                <div className="w-2 h-2 rounded-full bg-main-blue" />
+                                                <div className={`w-2 h-2 rounded-full ${coef.value < 0 ? 'bg-red-500' : 'bg-main-blue'}`} />
                                                 <span className="text-sm text-white/80">{coef.feature.replace('_', ' ')}</span>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                <div className="h-2 bg-main-blue/30 rounded-full" style={{
-                                                    width: `${Math.abs(coef.value) * 20}px`
-                                                }} />
-                                                <span className="text-sm font-medium text-white tabular-nums">
-                                                    {coef.value > 0 ? '+' : ''}{coef.value.toFixed(2)}
+                                                <span className="text-sm font-medium text-white tabular-nums text-right" style={{ minWidth: '90px' }}>
+                                                    {formatCoefficient(coef.value)}
                                                 </span>
+                                                <div className={`h-2 rounded-full ${coef.value < 0 ? 'bg-red-500/30' : 'bg-main-blue/30'}`} style={{
+                                                    width: `${normalizeCoefficient(coef.value)}px`,
+                                                    maxWidth: '350px'
+                                                }} />
                                             </div>
                                         </div>
                                     ))}
@@ -369,19 +434,21 @@ export const Result: React.FC = () => {
                                         </DialogHeader>
                                         <div className="mt-2">
                                             <div className={`space-y-4 ${coefficients.length > 3 ? 'max-h-[300px] overflow-y-auto pr-2' : ''}`}>
-                                                {coefficients.map((coef, index) => (
-                                                    <div 
-                                                        key={index} 
-                                                        className="bg-white/10 rounded-lg p-4 flex items-center justify-between hover:bg-white/15 transition-colors"
-                                                    >
-                                                        <div className="flex items-center gap-3">
-                                                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                                                                coef.type === 'label' ? 'bg-main-yellow/20' : 'bg-main-blue/20'
-                                                            }`}>
-                                                                <span className={`font-semibold ${
-                                                                    coef.type === 'label' ? 'text-main-yellow' : 'text-main-blue'
-                                                                }`}>{coef.type === 'label' ? 'β₀' : index + 1}</span>
-                                                            </div>
+                                                {coefficients.map((coef, index) => {
+                                                    const featureIndex = coefficients.slice(0, index).filter(c => c.type === 'feature').length + 1;
+                                                    return (
+                                                        <div 
+                                                            key={index} 
+                                                            className="bg-white/10 rounded-lg p-4 flex items-center justify-between hover:bg-white/15 transition-colors"
+                                                        >
+                                                            <div className="flex items-center gap-3">
+                                                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                                                                    coef.type === 'label' ? 'bg-main-yellow/20' : 'bg-main-blue/20'
+                                                                }`}>
+                                                                    <span className={`font-semibold ${
+                                                                        coef.type === 'label' ? 'text-main-yellow' : 'text-main-blue'
+                                                                    }`}>{coef.type === 'label' ? 'β₀' : featureIndex}</span>
+                                                                </div>
                                                             <div>
                                                                 <h3 className="font-medium text-white capitalize">{coef.feature.replace('_', ' ')}</h3>
                                                                 <p className="text-sm text-white/60">
@@ -391,11 +458,12 @@ export const Result: React.FC = () => {
                                                         </div>
                                                         <div className="text-right">
                                                             <span className="text-2xl font-bold text-white tabular-nums">
-                                                                {coef.value > 0 ? '+' : ''}{coef.value.toFixed(3)}
+                                                                {formatCoefficient(coef.value, 3)}
                                                             </span>
                                                         </div>
                                                     </div>
-                                                ))}
+                                                    );
+                                                })}
                                             </div>
                                             <div className="mt-6 pt-4 border-t border-white/10">
                                                 <div className="flex items-center justify-between text-sm">

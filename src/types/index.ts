@@ -23,6 +23,49 @@ export type ActualvsPredicted = {
     predicted: number[];
 }
 
+// Backend Model Types
+export interface MilestoneData {
+    phase: string;
+    time: number;
+    fill: string;
+}
+
+export interface Summary {
+    model: string;
+    milestoneData: MilestoneData[];
+    rmse?: number;  // Optional for linear regression
+    r2?: number;  // Optional for linear regression
+    accuracy?: number;  // Optional for logistic regression
+    f1?: number;  // Optional for logistic regression
+    epochs: number;
+    lr: number;
+    modelPath?: string;  // Path to saved model pickle file
+    modelSize?: string;  // Size of model file (e.g., "1.5 KB", "2.3 MB")
+}
+
+export interface Config {
+    dataCount: number;
+    parties: number;
+}
+
+export interface Coefficient {
+    feature: string;
+    value: number;
+    type: string;
+}
+
+export interface ActualVsPredicted {
+    actual: number[];
+    predicted: number[];
+}
+
+export interface SessionResult {
+    summary: Summary;
+    config: Config;
+    coefficients: Coefficient[];
+    actualVsPredicted: ActualVsPredicted;
+}
+
 // Backend-related Types
 // Requests and Responses
 export interface RunConfig {
