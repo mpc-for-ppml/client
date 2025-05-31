@@ -2,19 +2,22 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
+import confetti from 'canvas-confetti';
 import { useProgress } from '@/hooks';
 import { ProgressMessage } from '@/types';
-import { Card } from '@/components';
+import { Card, Button } from '@/components';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { CheckCircle2, Sparkles, Copy, Check } from "lucide-react";
 
 const milestones = [
-    "Normalization applied",
-    "Data ID list distributed",
-    "Intersected data found",
-    "Data filtering completed",
-    "Data loaded to model",
-    "Training completed",
-    "Evaluation completed",
-    "MPC task completed",
+    "Data Normalization",
+    "Secure ID Exchange",
+    "Data Intersection",
+    "Privacy Filtering",
+    "Model Initialization",
+    "Federated Training",
+    "Model Evaluation",
+    "Result Aggregation",
 ];
 
 export const Log: React.FC = () => {
@@ -24,6 +27,9 @@ export const Log: React.FC = () => {
     const logEndRef = useRef<HTMLDivElement | null>(null);
     const scrollContainerRef = useRef<HTMLDivElement | null>(null);
     const [messageRefs, setMessageRefs] = useState<(HTMLDivElement | null)[]>([]);
+    const [showCompletionDialog, setShowCompletionDialog] = useState(false);
+    const [hasTriggeredCompletion, setHasTriggeredCompletion] = useState(false);
+    const [copied, setCopied] = useState(false);
 
     useEffect(() => {
         if (!id) {
@@ -32,11 +38,62 @@ export const Log: React.FC = () => {
         }
     }, []);
 
+    const handleCopySessionId = () => {
+        if (id) {
+            navigator.clipboard.writeText(id);
+            setCopied(true);
+            toast.success("Session ID copied!");
+            setTimeout(() => setCopied(false), 2000);
+        }
+    };
+
     // Filter logs that contain a green check
     const successLogs = messages.filter(({ message }) => message.includes("✅"));
 
     // Check if each milestone is reached in order based on logs
     const reached = milestones.map((_, idx) => idx < successLogs.length);
+    
+    // Check if MPC task is completed
+    useEffect(() => {
+        const isMPCCompleted = messages.some(msg => 
+            msg.message.includes("MPyC task complete") && msg.message.includes("✅")
+        );
+        
+        if (isMPCCompleted && !hasTriggeredCompletion) {
+            setHasTriggeredCompletion(true);
+            setShowCompletionDialog(true);
+            
+            // Trigger confetti
+            const duration = 3 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10000 };
+
+            function randomInRange(min: number, max: number) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval: any = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 50 * (timeLeft / duration);
+                // since particles fall down, start a bit higher than random
+                confetti({
+                    ...defaults,
+                    particleCount,
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+                });
+                confetti({
+                    ...defaults,
+                    particleCount,
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+                });
+            }, 250);
+        }
+    }, [messages, hasTriggeredCompletion]);
 
     // Update refs array when messages change
     useEffect(() => {
@@ -163,10 +220,7 @@ export const Log: React.FC = () => {
 
             {/* Scrollable Logs Section */}
             <div className="flex-1 px-4 pb-6 overflow-hidden z-50">
-                <Card className="w-full max-w-6xl mx-auto pb-6 pt-4 px-4 bg-transparent relative h-full flex flex-col">
-                    {/* Gradient overlay at the top - adjusted for transparent background */}
-                    {/* <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-black/60 via-black/30 to-transparent z-10 pointer-events-none" /> */}
-                    
+                <Card className="w-full max-w-6xl mx-auto pb-6 pt-4 px-4 bg-transparent relative h-full flex flex-col">             
                     {/* Log container with padding to account for gradient */}
                     <div 
                         ref={scrollContainerRef}
@@ -196,6 +250,64 @@ export const Log: React.FC = () => {
                     </div>
                 </Card>
             </div>
+            
+            {/* Completion Dialog */}
+            <Dialog open={showCompletionDialog} onOpenChange={setShowCompletionDialog}>
+                <DialogContent className="bg-main-dark border border-white/20 text-white max-w-md">
+                    <DialogHeader>
+                        <div className="flex items-center justify-center mb-4">
+                            <div className="relative">
+                                <CheckCircle2 className="w-16 h-16 text-green-400" />
+                                <Sparkles className="w-6 h-6 text-yellow-400 absolute -top-1 -right-1" />
+                            </div>
+                        </div>
+                        <DialogTitle className="text-2xl font-semibold text-white text-center">
+                            Training Completed! 🎉
+                        </DialogTitle>
+                        <DialogDescription className="text-white/60 text-center mt-2">
+                            Your model has been successfully trained using secure multi-party computation. 
+                            The results are now ready for viewing.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="mt-2 space-y-3">
+                        <div className="bg-white/10 rounded-lg p-4">
+                            <div className="flex items-center justify-between text-sm mb-2">
+                                <span className="text-white/60">Session ID</span>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-white font-mono">{id?.slice(0, 18)}...</span>
+                                    <button
+                                        onClick={handleCopySessionId}
+                                        className="text-white/60 hover:text-white transition-colors"
+                                        title="Copy full Session ID"
+                                    >
+                                        {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="flex items-center justify-between text-sm">
+                                <span className="text-white/60">Status</span>
+                                <span className="text-green-400 font-medium">✓ Completed</span>
+                            </div>
+                        </div>
+                        <div className="text-xs text-white/50 text-center px-2">
+                            <p>Save this Session ID to view your results later at</p>
+                            <p className="font-mono mt-1">/result/[your-session-id]</p>
+                        </div>
+                        <Button 
+                            className="w-full bg-main-yellow hover:bg-main-yellow/90 text-black font-medium"
+                            onClick={() => navigate(`/result/${id}`)}
+                        >
+                            View Results
+                        </Button>
+                        <Button 
+                            className="w-full bg-white/20 hover:bg-white/30 text-white"
+                            onClick={() => setShowCompletionDialog(false)}
+                        >
+                            Continue Watching Logs
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };

@@ -130,7 +130,7 @@ export const Result: React.FC = () => {
                                     />
                                     Session
                                 </span>
-                                {id?.slice(0, 18)}...
+                                {id?.slice(0, 15)}...
                             </div>
                         </div>
                     </CardContent>
@@ -193,13 +193,13 @@ export const Result: React.FC = () => {
                                         <div className="flex items-center justify-between text-sm">
                                             <span className="text-white/60">Longest</span>
                                             <span className="text-white font-medium">
-                                                {summary.milestoneData.reduce((max, phase) => phase.time > max.time ? phase : max).phase.split(' ')[0]}
+                                                {summary.milestoneData.reduce((max, phase) => phase.time > max.time ? phase : max).phase}
                                             </span>
                                         </div>
                                         <div className="flex items-center justify-between text-sm">
                                             <span className="text-white/60">Fastest</span>
                                             <span className="text-white font-medium">
-                                                {summary.milestoneData.reduce((min, phase) => phase.time < min.time ? phase : min).phase.split(' ')[0]}
+                                                {summary.milestoneData.reduce((min, phase) => phase.time < min.time ? phase : min).phase}
                                             </span>
                                         </div>
                                     </div>
