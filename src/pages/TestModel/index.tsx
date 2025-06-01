@@ -35,14 +35,31 @@ export default function TestModel() {
 	const infoRef = useRef<HTMLParagraphElement>(null);
 
 	useEffect(() => {
-		if (!id || (session && id !== session.sessionId)) {
+		// Early return if no id
+		if (!id) {
 			navigate("/");
 			return;
 		}
 
+		// Early return if session exists but doesn't match
+		if (session && session.sessionId !== id) {
+			navigate("/");
+			return;
+		}
+
+		// Don't fetch if no session yet (still loading)
+		if (!session) {
+			return;
+		}
+
+		let isMounted = true;
+
 		const fetchModelData = async () => {
 			try {
 				const result = await FormApi.result(id);
+				
+				if (!isMounted) return;
+				
 				setModelData(result);
 				
 				// Initialize manual inputs with empty values for each feature
@@ -55,14 +72,22 @@ export default function TestModel() {
 				});
 				setManualInputs(initialInputs);
 			} catch {
+				if (!isMounted) return;
+				
 				toast.error("Failed to load model data");
 				navigate(`/result/${id}`);
 			} finally {
-				setLoading(false);
+				if (isMounted) {
+					setLoading(false);
+				}
 			}
 		};
 
 		fetchModelData();
+
+		return () => {
+			isMounted = false;
+		};
 	}, [id, session?.sessionId, navigate]);
 
 
@@ -122,6 +147,7 @@ export default function TestModel() {
 			
 			toast.success("Prediction completed successfully!");
 		} catch (error: any) {
+			console.log(error.message);
 			toast.error(error.message);
 		} finally {
 			setPredicting(false);
@@ -156,7 +182,8 @@ export default function TestModel() {
 	const features = modelData.coefficients
 		.filter(coef => coef.type === 'feature')
 		.map(coef => coef.feature);
-	const modelType = modelData.summary.model === "logistic_regression" ? "Logistic Regression" : "Linear Regression";
+	const isLogisticRegression = modelData.summary.model.toLowerCase().includes('logistic') || modelData.summary.model.toLowerCase().includes('logreg');
+	const modelType = isLogisticRegression ? "Logistic Regression" : "Linear Regression";
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
@@ -345,12 +372,12 @@ export default function TestModel() {
 														<div className="bg-primary/10 rounded-lg p-6 text-center">
 															<p className="text-sm text-muted-foreground mb-2">Prediction Result</p>
 															<p className="text-4xl font-bold text-primary">
-																{modelType === "Logistic Regression" 
+																{isLogisticRegression 
 																? predictionResult.predictions[0] === 1 ? "Positive" : "Negative"
 																: predictionResult.predictions[0].toFixed(4)
 																}
 															</p>
-															{modelType === "Logistic Regression" && (
+															{isLogisticRegression && (
 																<p className="text-sm text-muted-foreground mt-2">
 																Class: {predictionResult.predictions[0]}
 																</p>
@@ -381,7 +408,7 @@ export default function TestModel() {
 																	<div className="mt-1 space-y-1">
 																		{predictionResult.predictions.slice(0, 5).map((pred, idx) => (
 																			<p key={idx} className="text-sm font-mono">
-																				Sample {idx + 1}: {modelType === "Logistic Regression" ? (pred === 1 ? "Positive" : "Negative") : pred.toFixed(4)}
+																				Sample {idx + 1}: {isLogisticRegression ? (pred === 1 ? "Positive" : "Negative") : pred.toFixed(4)}
 																			</p>
 																		))}
 																	</div>
@@ -424,7 +451,7 @@ export default function TestModel() {
 										<p className="text-sm text-muted-foreground">Performance</p>
 										<p className="font-medium">
 											{modelData.summary.accuracy 
-												? `${(modelData.summary.accuracy * 100).toFixed(2)}%`
+												? `Accuracy: ${(modelData.summary.accuracy * 100).toFixed(2)}%`
 												: modelData.summary.rmse 
 												? `RMSE: ${modelData.summary.rmse.toFixed(3)}`
 												: 'N/A'
