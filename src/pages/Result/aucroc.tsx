@@ -18,7 +18,17 @@ const chartConfig = {
     },
 } satisfies ChartConfig
 
-const CustomTooltip = ({ active, payload }: any) => {
+interface CustomTooltipProps {
+    active?: boolean;
+    payload?: Array<{
+        payload: {
+            fpr: number;
+            tpr: number;
+        };
+    }>;
+}
+
+const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
     if (active && payload && payload.length) {
         const data = payload[0].payload
         return (

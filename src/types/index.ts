@@ -83,3 +83,19 @@ export interface RunConfig {
     epochs: number;
     isLogging: boolean;
 }
+
+export interface SessionInfo {
+    session_id: string;
+    participant_count: number;
+    joined_count: number;
+    uploaded_count: number;
+    is_lead: boolean;
+    has_results: boolean;
+}
+
+export interface SessionStateCheck {
+    allowed: boolean;
+    reason: string;
+    current_state: 'created' | 'uploading' | 'ready' | 'processing' | 'completed' | 'failed';
+    session_info: SessionInfo;
+}

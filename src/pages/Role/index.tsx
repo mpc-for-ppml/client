@@ -56,7 +56,7 @@ export const Role: React.FC = () => {
         }
 
         const session: SessionData = { userType, userId, sessionId, participantCount };
-        navigate(`/form-upload/${sessionId}`, { state: { session } });
+        navigate(`/form/${sessionId}`, { state: { session } });
     };
 
     return (

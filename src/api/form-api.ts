@@ -1,7 +1,7 @@
 import axios from "axios";
 
 import { API_URL_LOCAL } from "@/constant";
-import { RunConfig, SessionResult } from "@/types";
+import { RunConfig, SessionResult, SessionStateCheck } from "@/types";
 
 class FormApi {
     private static axiosInstance = axios.create({
@@ -68,6 +68,19 @@ class FormApi {
             window.URL.revokeObjectURL(url);
         } catch (error: any) {
             throw new Error(error.response?.data?.detail || "Failed to download model");
+        }
+    }
+
+    static async checkState(sessionId: string, path: string, userId: string): Promise<SessionStateCheck> {
+        try {
+            const response = await this.axiosInstance.post<SessionStateCheck>(
+                `/sessions/${sessionId}/check-state`,
+                { path, user_id: userId },
+                { headers: { "Content-Type": "application/json" } }
+            );
+            return response.data;
+        } catch (error: any) {
+            throw new Error(error.response?.data?.detail || "Failed to check session state");
         }
     }
 }
