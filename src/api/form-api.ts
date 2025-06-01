@@ -83,6 +83,33 @@ class FormApi {
             throw new Error(error.response?.data?.detail || "Failed to check session state");
         }
     }
+
+    static async predict(sessionId: string, data: { data: Record<string, number>[] }): Promise<{ predictions: number[] }> {
+        try {
+            const response = await this.axiosInstance.post<{ predictions: number[] }>(
+                `/sessions/${sessionId}/predict`,
+                data,
+                { headers: { "Content-Type": "application/json" } }
+            );
+            return response.data;
+        } catch (error: any) {
+            throw new Error(error.response?.data?.detail || "Failed to make prediction");
+        }
+    }
+
+    static async predictBatch(sessionId: string, formData: FormData): Promise<{ predictions: number[] }> {
+        try {
+            const response = await this.axiosInstance.post<{ predictions: number[] }>(
+                `/sessions/${sessionId}/predict-batch`,
+                formData,
+                { headers: { "Content-Type": "multipart/form-data" } }
+            );
+            return response.data;
+        } catch (error: any) {
+            console.log(error);
+            throw new Error(error.response?.data?.detail || "Failed to make batch prediction");
+        }
+    }
 }
 
 export default FormApi;

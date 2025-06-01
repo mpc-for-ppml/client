@@ -353,7 +353,7 @@ export const Result: React.FC = () => {
                                         <Download className="h-4 w-4" />
                                         Save model to .pkl
                                     </Button>
-                                    <Button className="w-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center gap-2" onClick={() => toast.info("Test feature coming soon!")}>
+                                    <Button className="w-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center gap-2" onClick={() => navigate(`/test/${id}`)}>
                                         <FlaskConical className="h-4 w-4" />
                                         Test model using your data
                                     </Button>

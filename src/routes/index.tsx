@@ -1,6 +1,7 @@
 import React from 'react';
 import { createBrowserRouter, Outlet, RouteObject } from 'react-router-dom';
 import { Home, Log, Role, Result } from '@/pages';
+import TestModel from '@/pages/TestModel';
 import FormUploadWrapper from '@/wrappers/FormUploadWrapper';
 import { RouteGuard } from '@/components';
 
@@ -38,6 +39,14 @@ const routes: RouteObject[] = [
                 element: (
                     <RouteGuard requiredPath="form-upload">
                         <FormUploadWrapper />
+                    </RouteGuard>
+                ) 
+            },
+            { 
+                path: 'test/:id', 
+                element: (
+                    <RouteGuard requiredPath="test">
+                        <TestModel />
                     </RouteGuard>
                 ) 
             },

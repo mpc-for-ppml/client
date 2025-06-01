@@ -53,14 +53,14 @@ CustomDialogContent.displayName = "CustomDialogContent";
 
 interface RouteGuardProps {
     children: React.ReactNode;
-    requiredPath: "form-upload" | "log" | "result";
+    requiredPath: "form-upload" | "log" | "result" | "test";
 }
 
-const pathOrder = ["form-upload", "log", "result"];
+const pathOrder = ["form-upload", "log", "result", "test"];
 
 const getPathIndex = (path: string) => pathOrder.indexOf(path);
 
-const getRedirectPath = (currentState: string, sessionId: string): string => {
+const getRedirectPath = (currentState: string, sessionId: string, requiredPath?: string): string => {
     switch (currentState) {
         case "created":
         case "uploading":
@@ -69,7 +69,7 @@ const getRedirectPath = (currentState: string, sessionId: string): string => {
         case "processing":
             return `/log/${sessionId}`;
         case "completed":
-            return `/result/${sessionId}`;
+            return requiredPath === "test" ? `/test/${sessionId}` : `/result/${sessionId}`;
         case "failed":
             return "/";
         default:
@@ -156,7 +156,7 @@ export const RouteGuard: React.FC<RouteGuardProps> = ({ children, requiredPath }
 
                 // Check if we should show dialog even if access is allowed
                 // This handles the case where backend allows log access but results are ready
-                if (stateCheck.current_state === 'completed' && requiredPath !== 'result') {
+                if (stateCheck.current_state === 'completed' && requiredPath !== 'result' && requiredPath !== 'test') {
                     // Results are ready but user is trying to access form or log
                     setRedirectInfo({
                         path: `/result/${sessionId}`,
@@ -165,8 +165,11 @@ export const RouteGuard: React.FC<RouteGuardProps> = ({ children, requiredPath }
                     });
                     setShowRedirectDialog(true);
                     setLoading(false);
+                } else if (requiredPath === 'test' && stateCheck.current_state === 'completed') {
+                    // Allow access to test page for completed sessions
+                    setLoading(false);
                 } else if (!stateCheck.allowed) {
-                    const redirectPath = getRedirectPath(stateCheck.current_state, sessionId);
+                    const redirectPath = getRedirectPath(stateCheck.current_state, sessionId, requiredPath);
                     
                     // Show dialog for both forward and backward navigation attempts
                     setRedirectInfo({
@@ -229,14 +232,18 @@ export const RouteGuard: React.FC<RouteGuardProps> = ({ children, requiredPath }
                         <DialogDescription className="text-white/80">
                             {(() => {
                                 if (redirectInfo?.currentState === 'completed') {
-                                    return requiredPath === 'log' 
-                                        ? 'The training has already been completed. You can view the results now.'
-                                        : 'The training has been completed and results are ready to view.';
+                                    if (requiredPath === 'log') {
+                                        return 'The training has already been completed. You can view the results now.';
+                                    } else if (requiredPath === 'test') {
+                                        return 'Please view the results first before testing the model.';
+                                    } else {
+                                        return 'The training has been completed and results are ready to view.';
+                                    }
                                 }
                                 
                                 // Check if trying to skip ahead
                                 const currentPathIndex = getPathIndex(requiredPath);
-                                const correctPath = getRedirectPath(redirectInfo?.currentState || '', sessionId || '');
+                                const correctPath = getRedirectPath(redirectInfo?.currentState || '', sessionId || '', requiredPath);
                                 const correctPathIndex = pathOrder.findIndex(p => correctPath.includes(p));
                                 
                                 if (currentPathIndex > correctPathIndex) {
