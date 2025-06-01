@@ -243,40 +243,40 @@ export const Result: React.FC = () => {
                             <div className="mt-4 pt-4 border-t border-white/10">
                                 <h2 className="text-sm font-medium text-white mb-3">Time Statistics</h2>
                                 <div className="space-y-3">
-                                    <div className="bg-white/5 rounded-lg p-3">
+                                    <div className="bg-gradient-to-br from-white/10 via-white/10 to-white/5 border border-white/20 rounded-xl px-4 p-3">
                                         <h3 className="text-sm font-medium text-white mb-2">Performance Summary</h3>
-                                    <div className="space-y-2">
-                                        <div className="flex items-center justify-between text-sm">
-                                            <span className="text-white/60">Total time</span>
-                                            <span className="text-white font-medium">{formatDuration(summary.milestoneData.reduce((a, b) => a + b.time, 0))}</span>
+                                        <div className="space-y-2">
+                                            <div className="flex items-center justify-between text-sm">
+                                                <span className="text-white/60">Total time</span>
+                                                <span className="text-white font-medium">{formatDuration(summary.milestoneData.reduce((a, b) => a + b.time, 0))}</span>
+                                            </div>
+                                            <div className="flex items-center justify-between text-sm">
+                                                <span className="text-white/60">Avg. per phase</span>
+                                                <span className="text-white font-medium">
+                                                    {formatDuration(summary.milestoneData.reduce((a, b) => a + b.time, 0) / summary.milestoneData.length)}
+                                                </span>
+                                            </div>
                                         </div>
-                                        <div className="flex items-center justify-between text-sm">
-                                            <span className="text-white/60">Avg. per phase</span>
-                                            <span className="text-white font-medium">
-                                                {formatDuration(summary.milestoneData.reduce((a, b) => a + b.time, 0) / summary.milestoneData.length)}
-                                            </span>
+                                    </div>
+                                    
+                                    <div className="bg-gradient-to-br from-white/10 via-white/10 to-white/5 border border-white/20 rounded-xl px-4 p-3">
+                                        <h3 className="text-sm font-medium text-white mb-2">Critical Phases</h3>
+                                        <div className="space-y-2">
+                                            <div className="flex items-center justify-between text-sm">
+                                                <span className="text-white/60">Longest</span>
+                                                <span className="text-white font-medium">
+                                                    {summary.milestoneData.reduce((max, phase) => phase.time > max.time ? phase : max).phase}
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center justify-between text-sm">
+                                                <span className="text-white/60">Fastest</span>
+                                                <span className="text-white font-medium">
+                                                    {summary.milestoneData.reduce((min, phase) => phase.time < min.time ? phase : min).phase}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                
-                                <div className="bg-white/5 rounded-lg p-3">
-                                    <h3 className="text-sm font-medium text-white mb-2">Critical Phases</h3>
-                                    <div className="space-y-2">
-                                        <div className="flex items-center justify-between text-sm">
-                                            <span className="text-white/60">Longest</span>
-                                            <span className="text-white font-medium">
-                                                {summary.milestoneData.reduce((max, phase) => phase.time > max.time ? phase : max).phase}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center justify-between text-sm">
-                                            <span className="text-white/60">Fastest</span>
-                                            <span className="text-white font-medium">
-                                                {summary.milestoneData.reduce((min, phase) => phase.time < min.time ? phase : min).phase}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                             </div>
                         </motion.div>
                         <motion.div 
@@ -298,11 +298,11 @@ export const Result: React.FC = () => {
                                     </Tooltip>
                                 </h1>
                                 <h1 className="text-sm mb-6 text-white/80">Metrics and training parameters used and produced during model training.</h1>
-                                <div className="flex flex-col gap-2">
+                                <div className="flex flex-col gap-2.5">
                                     {buildStatsFromSummary(summary, config).map((stat, i) => (
                                         <div
                                             key={i}
-                                            className="flex items-center justify-between bg-white/10 rounded-xl px-3 py-2 text-sm"
+                                            className="flex items-center justify-between bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-sm"
                                         >
                                             <div className="flex items-center gap-3 text-white">
                                                 {stat.icon}
@@ -331,7 +331,7 @@ export const Result: React.FC = () => {
                                 
                                 {/* Model info */}
                                 <div className="mb-6 space-y-3">
-                                    <div className="bg-white/5 rounded-lg p-3">
+                                    <div className="bg-gradient-to-br from-white/10 via-white/10 to-white/5 border border-white/20 rounded-xl px-4 p-3">
                                         <div className="flex items-center justify-between text-sm mb-1">
                                             <span className="text-white/60">Model size</span>
                                             <span className="text-white font-medium">{summary.modelSize || 'N/A'}</span>
@@ -341,7 +341,7 @@ export const Result: React.FC = () => {
                                             <span className="text-white font-medium">Pickle (.pkl)</span>
                                         </div>
                                     </div>
-                                    <div className="bg-white/5 rounded-lg p-3">
+                                    <div className="bg-gradient-to-br from-white/10 via-white/10 to-white/5 border border-white/20 rounded-xl px-4 p-3">
                                         <div className="flex items-center justify-between text-sm mb-1">
                                             <span className="text-white/60">Parties involved</span>
                                             <span className="text-white font-medium">{config.parties}</span>     
@@ -354,11 +354,11 @@ export const Result: React.FC = () => {
                                 </div>
                                 
                                 <div className="flex flex-col gap-2 mt-auto">
-                                    <Button className="w-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center gap-2" onClick={handleSave}>
+                                    <Button className="w-full bg-gradient-to-r from-white/30 to-white/20 hover:from-white/20 hover:to-white/10 text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2" onClick={handleSave}>
                                         <Download className="h-4 w-4" />
                                         Save model to .pkl
                                     </Button>
-                                    <Button className="w-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center gap-2" onClick={() => navigate(`/test/${id}`)}>
+                                    <Button className="w-full bg-gradient-to-r from-main-blue to-main-blue/80 hover:from-main-blue/90 hover:to-main-blue/70 text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2" onClick={() => navigate(`/test/${id}`)}>
                                         <FlaskConical className="h-4 w-4" />
                                         Test model using your data
                                     </Button>
@@ -416,7 +416,7 @@ export const Result: React.FC = () => {
                                                 <span className="text-sm font-medium text-white tabular-nums text-right" style={{ minWidth: '90px' }}>
                                                     {formatCoefficient(coef.value)}
                                                 </span>
-                                                <div className={`h-2 rounded-full ${coef.value < 0 ? 'bg-red-500/30' : 'bg-main-blue/30'}`} style={{
+                                                <div className={`h-2 rounded-full ${coef.value < 0 ? 'bg-red-500/50' : 'bg-main-blue/50'}`} style={{
                                                     width: `${normalizeCoefficient(coef.value)}px`,
                                                     maxWidth: '200px'
                                                 }} />
@@ -432,7 +432,7 @@ export const Result: React.FC = () => {
 
                                 <Dialog>
                                     <DialogTrigger asChild>
-                                        <Button className="w-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center gap-2">
+                                        <Button className="w-full bg-gradient-to-r from-main-yellow/80 to-main-yellow/60 hover:from-main-yellow/70 hover:to-main-yellow/50 text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2">
                                             <Eye className="h-4 w-4" />
                                             View All Parameters
                                         </Button>
