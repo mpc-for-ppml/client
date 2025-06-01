@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { motion } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { DivideSquare, Sigma, Activity, Repeat, Info, Download, FlaskConical, Eye, Database, Loader2, Target, BarChart3 } from "lucide-react"
+import { DivideSquare, Sigma, Activity, Repeat, Info, Download, FlaskConical, Eye, Database, Loader2, Target, BarChart3, Sparkle } from "lucide-react"
 import Model from "@/assets/icons/model.png";
 import Session from "@/assets/icons/session.png";
 import { ChartPieInteractive } from "./time";
@@ -164,18 +164,23 @@ export const Result: React.FC = () => {
                 transition={{ duration: 0.6 }}
                 className="z-50"
             >
-                <Card className="bg-transparent mt-4 w-full p-5">
+                <Card className="bg-transparent mt-4 w-full p-5 pb-3">
                     <CardContent className="flex items-center items-center justify-between w-full">
                         <div className="flex flex-col w-[40%]">
-                            <h1 className="text-5xl font-semibold leading-tight mb-1.5 text-white">
-                                training summary.
-                            </h1>
+                            <div className="flex items-center gap-5 mb-1">
+                                <div className="p-2 bg-white/20 rounded-lg">
+                                    <Sparkle className="w-8 h-8 text-primary text-white" />
+                                </div>
+                                <h1 className="text-5xl font-semibold leading-tight mb-1.5 text-white">
+                                    training summary.
+                                </h1>
+                            </div>
                             <h1 className="text-white">
                                 model final result and statistic displayed below
                             </h1>
                         </div>
                         <div className="flex space-x-4 w-[50%] justify-end text-white">
-                            <div className="p-4 bg-white/20 hover:bg-white/10 w-[50%] rounded-xl text-2xl font-bold px-5">
+                            <div className="bg-gradient-to-r from-white/10 to-white/5 border-b border-white/10 p-4 bg-white/20 w-[50%] rounded-2xl text-2xl font-bold px-5">
                                 <span className="flex items-center gap-2 font-normal mb-1 text-base text-white/80">
                                     <img
                                         src={Model}
@@ -187,7 +192,7 @@ export const Result: React.FC = () => {
                                 </span>
                                 {summary.model}
                             </div>
-                            <div className="p-4 bg-white/20 hover:bg-white/10 w-[50%] rounded-xl text-2xl font-bold px-5">
+                            <div className="bg-gradient-to-r from-white/10 to-white/5 border-b border-white/10 p-4 bg-white/20 w-[50%] rounded-2xl text-2xl font-bold px-5">
                                 <span className="flex items-center gap-2 font-normal mb-1 text-base text-white/80">
                                     <img
                                         src={Session}
@@ -216,7 +221,7 @@ export const Result: React.FC = () => {
                             initial={{ opacity: 0, x: -50 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.6, delay: 0.2 }}
-                            className="flex flex-col w-[30%] bg-white/10 hover:bg-white/5 p-6 pb-8 px-8 rounded-xl"
+                            className="border border-white/20 rounded-2xl flex flex-col w-[30%] bg-white/10 p-6 pb-8 px-8"
                         >
                             <h1 className="text-xl font-semibold mb-1 flex items-center gap-3">
                                 Model training time
@@ -280,7 +285,7 @@ export const Result: React.FC = () => {
                             transition={{ duration: 0.6, delay: 0.4 }}
                             className="flex flex-col flex-1 space-y-4"
                         >
-                            <div className="bg-white/10 hover:bg-white/5 p-6 pb-8 px-8 rounded-xl flex-1">
+                            <div className="border border-white/20 rounded-2xl flex flex-col bg-white/10 p-6 pb-8 px-8 flex-1">
                                 <h1 className="text-xl font-semibold mb-1 flex items-center gap-3">
                                     Model statistic
                                     <Tooltip delayDuration={0}>
@@ -310,7 +315,7 @@ export const Result: React.FC = () => {
                                     ))}
                                 </div>
                             </div>
-                            <div className="bg-white/10 hover:bg-white/5 p-6 pb-8 px-8 rounded-xl flex flex-col flex-1">
+                            <div className="border border-white/20 rounded-2xl flex flex-col bg-white/10 p-6 pb-8 px-8 flex-1">
                                 <h1 className="text-xl font-semibold mb-1 flex items-center gap-3">
                                     Process Model
                                     <Tooltip delayDuration={0}>
@@ -366,7 +371,7 @@ export const Result: React.FC = () => {
                             transition={{ duration: 0.6, delay: 0.6 }}
                             className="flex flex-col w-[40%] flex-1 space-y-4"
                         >
-                            <div className="bg-white/10 hover:bg-white/5 p-6 pb-8 px-8 rounded-xl flex-1">
+                            <div className="border border-white/20 rounded-2xl flex flex-col bg-white/10 p-6 pb-8 px-8 flex-1">
                                 <h1 className="text-xl font-semibold mb-1 flex items-center gap-3">
                                     Evaluation report
                                     <Tooltip delayDuration={0}>
@@ -385,7 +390,7 @@ export const Result: React.FC = () => {
                                     <ChartLineLinear data={actualVsPredicted} />
                                 )}
                             </div>
-                            <div className="bg-white/10 hover:bg-white/5 p-6 pb-8 px-8 rounded-xl flex flex-col flex-1">
+                            <div className="border border-white/20 rounded-2xl flex flex-col bg-white/10 p-6 pb-8 px-8 flex flex-col flex-1">
                                 <h1 className="text-xl font-semibold mb-1 flex items-center gap-3">
                                     Model Weight
                                     <Tooltip delayDuration={0}>
