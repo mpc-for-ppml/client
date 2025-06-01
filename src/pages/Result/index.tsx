@@ -13,6 +13,7 @@ import { Button } from "@/components";
 import { useState, useEffect } from "react";
 import FormApi from "@/api/form-api";
 import { SessionResult } from "@/types";
+import { formatDuration } from "@/lib/utils";
 
 
 const buildStatsFromSummary = (summary: SessionResult['summary'], config: SessionResult['config']) => {
@@ -133,7 +134,7 @@ export const Result: React.FC = () => {
     // Normalize coefficient values for bar visualization
     const maxCoefficient = Math.max(...coefficients.map(c => Math.abs(c.value)));
     const normalizeCoefficient = (value: number) => {
-        return (Math.abs(value) / maxCoefficient) * 350; // Scale to 0-150 for longer bars
+        return (Math.abs(value) / maxCoefficient) * 200; // Scale
     };
     
     // Format coefficient values for display
@@ -240,12 +241,12 @@ export const Result: React.FC = () => {
                                     <div className="space-y-2">
                                         <div className="flex items-center justify-between text-sm">
                                             <span className="text-white/60">Total time</span>
-                                            <span className="text-white font-medium">{summary.milestoneData.reduce((a, b) => a + b.time, 0).toFixed(1)}s</span>
+                                            <span className="text-white font-medium">{formatDuration(summary.milestoneData.reduce((a, b) => a + b.time, 0))}</span>
                                         </div>
                                         <div className="flex items-center justify-between text-sm">
                                             <span className="text-white/60">Avg. per phase</span>
                                             <span className="text-white font-medium">
-                                                {(summary.milestoneData.reduce((a, b) => a + b.time, 0) / summary.milestoneData.length).toFixed(2)}s
+                                                {formatDuration(summary.milestoneData.reduce((a, b) => a + b.time, 0) / summary.milestoneData.length)}
                                             </span>
                                         </div>
                                     </div>
@@ -397,7 +398,7 @@ export const Result: React.FC = () => {
                                     {coefficients.filter(c => c.type === 'feature').slice(0, 3).map((coef, index) => (
                                         <div key={index} className="flex items-center justify-between">
                                             <div className="flex items-center gap-2">
-                                                <div className={`w-2 h-2 rounded-full ${coef.value < 0 ? 'bg-red-500' : 'bg-main-blue'}`} />
+                                                <div className={`min-w-[8px] w-2 h-2 rounded-full flex-shrink-0 ${coef.value < 0 ? 'bg-red-500' : 'bg-main-blue'}`} />
                                                 <span className="text-sm text-white/80">{coef.feature.replace('_', ' ')}</span>
                                             </div>
                                             <div className="flex items-center gap-2">
@@ -406,7 +407,7 @@ export const Result: React.FC = () => {
                                                 </span>
                                                 <div className={`h-2 rounded-full ${coef.value < 0 ? 'bg-red-500/30' : 'bg-main-blue/30'}`} style={{
                                                     width: `${normalizeCoefficient(coef.value)}px`,
-                                                    maxWidth: '350px'
+                                                    maxWidth: '200px'
                                                 }} />
                                             </div>
                                         </div>
@@ -442,7 +443,7 @@ export const Result: React.FC = () => {
                                                             className="bg-white/10 rounded-lg p-4 flex items-center justify-between hover:bg-white/15 transition-colors"
                                                         >
                                                             <div className="flex items-center gap-3">
-                                                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                                                                <div className={`min-w-[40px] w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
                                                                     coef.type === 'label' ? 'bg-main-yellow/20' : 'bg-main-blue/20'
                                                                 }`}>
                                                                     <span className={`font-semibold ${

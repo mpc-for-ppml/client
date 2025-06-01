@@ -2,6 +2,7 @@ import * as React from "react"
 import { Label, Pie, PieChart, Sector } from "recharts"
 import { PieSectorDataItem } from "recharts/types/polar/Pie"
 import { TimeData } from "@/types"
+import { formatDuration } from "@/lib/utils"
 
 import {
     Card,
@@ -49,7 +50,7 @@ const CustomTooltip = ({ active, payload }: any) => {
 
                 {/* Time Value */}
                 <span className="text-xs font-medium text-foreground">
-                    {data.time.toLocaleString()}s
+                    {formatDuration(data.time)}
                 </span>
             </div>
         )
@@ -60,7 +61,12 @@ const CustomTooltip = ({ active, payload }: any) => {
 
 export const ChartPieInteractive: React.FC<{ timeData: TimeData[] }> = ({ timeData }) => {
     const id = "pie-interactive"
-    const [activePhase, setActivePhase] = React.useState(timeData[0].phase)
+    // Find the phase with the longest time
+    const longestPhase = React.useMemo(
+        () => timeData.reduce((max, phase) => phase.time > max.time ? phase : max).phase,
+        [timeData]
+    )
+    const [activePhase, setActivePhase] = React.useState(longestPhase)
 
     const activeIndex = React.useMemo(
         () => timeData.findIndex((item) => item.phase === activePhase),
@@ -141,10 +147,10 @@ export const ChartPieInteractive: React.FC<{ timeData: TimeData[] }> = ({ timeDa
                                                 className="fill-white"
                                             >
                                                 <tspan className="text-3xl font-bold" x={viewBox.cx} dy="-0.2em">
-                                                    {timeData[activeIndex].time.toFixed(2).toLocaleString()}
+                                                    {formatDuration(timeData[activeIndex].time)}
                                                 </tspan>
                                                 <tspan className="text-sm" x={viewBox.cx} dy="1.6em">
-                                                    Seconds
+                                                    Duration
                                                 </tspan>
                                             </text>
                                         )
