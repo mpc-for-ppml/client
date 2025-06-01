@@ -81,6 +81,7 @@ export interface RunConfig {
     regression: string;
     learningRate: number;
     epochs: number;
+    label: string;
     isLogging: boolean;
 }
 

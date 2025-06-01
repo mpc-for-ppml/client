@@ -75,7 +75,7 @@ export const Role: React.FC = () => {
 
             <Card className="w-full max-w-lg p-4 bg-main-dark z">
                 <CardContent className="space-y-4 z-10">
-                    <h1 className="text-2xl md:text-3xl text-center font-semibold leading-tight mb-8 text-white ">choose your role</h1>
+                    <h1 className="text-2xl md:text-3xl text-center font-semibold leading-tight mb-8 text-white ">choose your role.</h1>
                     <div className="flex space-x-10">
                         <Button
                             className={

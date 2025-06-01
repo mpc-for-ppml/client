@@ -173,7 +173,7 @@ export const Log: React.FC = () => {
             {/* Fixed Header Section */}
             <div className="flex-shrink-0 z-30">
                 <Card className="w-full max-w-6xl mx-auto p-4 mt-8 bg-transparent text-white">
-                    <h2 className="text-2xl md:text-3xl mb-8 font-semibold text-white leading-tight text-center">model training</h2>
+                    <h2 className="text-2xl md:text-3xl mb-8 font-semibold text-white leading-tight text-center">model training.</h2>
 
                     {/* Horizontal Progress Bar */}
                     <div className="relative w-full max-w-5xl mx-auto px-4 overflow-hidden">

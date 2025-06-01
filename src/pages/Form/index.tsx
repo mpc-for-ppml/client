@@ -166,6 +166,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
             regression: regression,
             learningRate: parseFloat(learningRate),
             epochs: parseInt(epochs),
+            label: label,
             isLogging: isLogging
         };
 
@@ -224,7 +225,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
             <div className="w-[53%] flex flex-col items-center justify-center min-h-screen p-4 space-y-6">
                 <div className="w-full max-w-md">
                     <div className="flex flex-col w-full gap-1 mb-4">
-                        <p className="text-4xl font-semibold text-white">submit your dataset</p>
+                        <p className="text-4xl font-semibold text-white">submit your dataset.</p>
                         <p className="text-base mb-4 text-white">ready your data. once all join, we compute together</p>
                     </div>
 
