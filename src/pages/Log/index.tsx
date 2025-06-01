@@ -176,28 +176,16 @@ export const Log: React.FC = () => {
                     <h2 className="text-2xl md:text-3xl mb-8 font-semibold text-white leading-tight text-center">model training</h2>
 
                     {/* Horizontal Progress Bar */}
-                    <div className="relative w-full max-w-5xl mx-auto">
+                    <div className="relative w-full max-w-5xl mx-auto px-4 overflow-hidden">
                         {/* Container for dots and lines */}
                         <div className="relative">
-                            {/* Background line */}
-                            <div className="absolute top-3 left-0 right-0 h-0.5 bg-gray-300" />
-                            
-                            {/* Progress line */}
-                            {successLogs.length > 0 && (
-                                <div 
-                                    className="absolute top-3 left-0 h-0.5 bg-main-yellow transition-all duration-500"
-                                    style={{
-                                        width: `${(successLogs.length - 1) * (100 / (milestones.length - 1))}%`
-                                    }}
-                                />
-                            )}
-                            
                             {/* Milestones */}
                             <div className="relative flex items-start justify-between">
                                 {milestones.map((milestone, idx) => (
                                     <div 
                                         key={milestone} 
-                                        className="flex flex-col items-center flex-1"
+                                        className="flex flex-col items-center"
+                                        style={{ width: `${100 / milestones.length}%` }}
                                     >
                                         {/* Dot */}
                                         <div
@@ -207,11 +195,31 @@ export const Log: React.FC = () => {
                                             `}
                                         />
                                         {/* Label */}
-                                        <span className="text-xs mt-2 text-center" style={{ width: '90px' }}>
+                                        <span className="text-xs mt-2 text-center max-w-[80px] leading-tight">
                                             {milestone}
                                         </span>
                                     </div>
                                 ))}
+                                
+                                {/* Background line */}
+                                <div className="absolute top-3 left-0 right-0 h-0.5 bg-gray-300" style={{
+                                    left: `${50 / milestones.length}%`,
+                                    right: `${50 / milestones.length}%`
+                                }} />
+                                
+                                {/* Progress line */}
+                                {successLogs.length > 1 && (
+                                    <div 
+                                        className="absolute top-3 h-0.5 bg-main-yellow transition-all duration-500"
+                                        style={{
+                                            left: `${50 / milestones.length}%`,
+                                            width: `${Math.min(
+                                                (successLogs.length - 1) * (100 - (100 / milestones.length)) / (milestones.length - 1),
+                                                100 - (100 / milestones.length)
+                                            )}%`
+                                        }}
+                                    />
+                                )}
                             </div>
                         </div>
                     </div>
