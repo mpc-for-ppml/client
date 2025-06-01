@@ -59,11 +59,18 @@ export interface ActualVsPredicted {
     predicted: number[];
 }
 
+export interface AucRocData {
+    fpr: number[];  // False Positive Rate
+    tpr: number[];  // True Positive Rate
+    auc: number;    // Area Under Curve
+}
+
 export interface SessionResult {
     summary: Summary;
     config: Config;
     coefficients: Coefficient[];
     actualVsPredicted: ActualVsPredicted;
+    aucRocData?: AucRocData;  // Optional, only for logistic regression
 }
 
 // Backend-related Types

@@ -9,6 +9,7 @@ import Model from "@/assets/icons/model.png";
 import Session from "@/assets/icons/session.png";
 import { ChartPieInteractive } from "./time";
 import { ChartLineLinear } from "./evaluation";
+import { ChartAucRoc } from "./aucroc";
 import { Button } from "@/components";
 import { useState, useEffect } from "react";
 import FormApi from "@/api/form-api";
@@ -129,7 +130,8 @@ export const Result: React.FC = () => {
         );
     }
 
-    const { summary, config, coefficients, actualVsPredicted } = data;
+    const { summary, config, coefficients, actualVsPredicted, aucRocData } = data;
+    const isLogisticRegression = summary.model.toLowerCase().includes('logistic') || summary.model.toLowerCase().includes('logreg');
     
     // Normalize coefficient values for bar visualization
     const maxCoefficient = Math.max(...coefficients.map(c => Math.abs(c.value)));
@@ -372,12 +374,16 @@ export const Result: React.FC = () => {
                                             <Info className="h-4 w-4 text-white/60 hover:text-white/80 transition-colors" />
                                         </TooltipTrigger>
                                         <TooltipContent className="bg-white text-black max-w-[200px]">
-                                            <p>Visual comparison of actual vs predicted values with regression analysis</p>
+                                            <p>{isLogisticRegression ? "ROC curve showing model's ability to distinguish between classes" : "Visual comparison of actual vs predicted values with regression analysis"}</p>
                                         </TooltipContent>
                                     </Tooltip>
                                 </h1>
                                 <h1 className="text-sm mb-6 text-white/80">Calculated for <span className="text-white font-semibold">{config.dataCount}</span> data points, gathered from <span className="text-white font-semibold">{config.parties}</span> different parties.</h1>
-                                <ChartLineLinear data={actualVsPredicted} />
+                                {isLogisticRegression && aucRocData ? (
+                                    <ChartAucRoc data={aucRocData} />
+                                ) : (
+                                    <ChartLineLinear data={actualVsPredicted} />
+                                )}
                             </div>
                             <div className="bg-white/10 hover:bg-white/5 p-6 pb-8 px-8 rounded-xl flex flex-col flex-1">
                                 <h1 className="text-xl font-semibold mb-1 flex items-center gap-3">
