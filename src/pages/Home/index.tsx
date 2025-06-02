@@ -142,7 +142,7 @@ export const Home: React.FC = () => {
                 whileHover={{ scale: 1.05 }}
                 className="absolute top-16 right-20 z-20 group"
             >
-                <Card className={`bg-white/10 border border-white/20 backdrop-blur-md hover:shadow-xl transition-all duration-300 rounded-2xl hover:rounded-3xl w-64`}>
+                <Card className={`bg-white/15 border border-white/20 backdrop-blur-md hover:shadow-xl transition-all duration-300 rounded-2xl hover:rounded-3xl w-64`}>
                     <CardContent className="p-4">
                         <div className={`p-2 bg-black/20 rounded-lg inline-block mb-3 border ${features[0].iconBorder}`}>
                             {features[0].icon}
@@ -160,7 +160,7 @@ export const Home: React.FC = () => {
                 whileHover={{ scale: 1.05 }}
                 className="absolute bottom-44 right-32 z-20 group"
             >
-                <Card className={`bg-white/10 border border-white/20 backdrop-blur-md hover:shadow-xl transition-all duration-300 rounded-2xl hover:rounded-3xl w-64`}>
+                <Card className={`bg-white/15 border border-white/20 backdrop-blur-md hover:shadow-xl transition-all duration-300 rounded-2xl hover:rounded-3xl w-64`}>
                     <CardContent className="p-4">
                         <div className={`p-2 bg-black/20 rounded-lg inline-block mb-3 border ${features[1].iconBorder}`}>
                             {features[1].icon}
@@ -178,7 +178,7 @@ export const Home: React.FC = () => {
                 whileHover={{ scale: 1.05 }}
                 className="absolute bottom-16 right-[27rem] transform z-20 group"
             >
-                <Card className={`bg-white/10 border border-white/20 backdrop-blur-md hover:shadow-xl transition-all duration-300 rounded-2xl hover:rounded-3xl w-64`}>
+                <Card className={`bg-white/15 border border-white/20 backdrop-blur-md hover:shadow-xl transition-all duration-300 rounded-2xl hover:rounded-3xl w-64`}>
                     <CardContent className="p-4">
                         <div className={`p-2 bg-black/20 rounded-lg inline-block mb-3 border ${features[2].iconBorder}`}>
                             {features[2].icon}
