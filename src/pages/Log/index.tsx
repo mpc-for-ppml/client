@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { CheckCircle2, Sparkles, Copy, Check } from "lucide-react";
 
 const milestones = [
-    "Data Normalization",
+    "Data Preprocessing",
     "Secure ID Exchange",
     "Data Intersection",
     "Privacy Filtering",
