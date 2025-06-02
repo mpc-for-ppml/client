@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useParams } from 'react-router-dom';
 import { Input, Button, Label, Switch, Card } from '@/components';
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Select,
   SelectTrigger,
@@ -17,7 +18,7 @@ import illustrationImg from "@/assets/images/side2.png";
 import UploadImage from "@/assets/icons/upload.png";
 import { RunConfig } from '@/types';
 import { CardContent } from '@/components/ui/card';
-import { CheckCircle2, Clock, Crown, User, Users } from 'lucide-react';
+import { Building, CheckCircle2, ChevronRight, Clock, Crown, Database, FileSpreadsheet, Info, Play, Settings, Upload, User, Users } from 'lucide-react';
 
 export const FormUpload2: React.FC<SessionData> = ({ userType, userId, sessionId, participantCount }) => {
     const { id } = useParams<{ id: string }>();
@@ -329,22 +330,29 @@ export const FormUpload2: React.FC<SessionData> = ({ userType, userId, sessionId
 
             {/* Right Pane */}
             <div className="w-[53%] flex flex-col items-center justify-center min-h-screen p-4 space-y-6">
-                <div className="w-full max-w-md">
-                    <div className="flex flex-col w-full gap-1 mb-4">
-                        <p className="text-4xl font-semibold text-white">submit your dataset.</p>
-                        <p className="text-base mb-4 text-white">ready your data. once all join, we compute together</p>
+                <div className="w-full max-w-lg">
+                    <div className="flex items-center gap-5 mb-1">
+                        <div className="p-2 bg-white/20 rounded-lg">
+                            <FileSpreadsheet className="w-8 h-8 text-primary text-white" />
+                        </div>
+                        <h1 className="text-5xl font-semibold leading-tight mb-1.5 text-white">
+                            submit dataset.
+                        </h1>
                     </div>
+                    <h1 className="text-white">
+                        ready your data. once all join, we compute together
+                    </h1>
 
                     {/* Vertical Stepper */}
                     <div className="flex space-x-4 text-white mt-6">
                         {/* Stepper Line */}
-                        <div className="flex flex-col items-center mt-0.5">
+                        <div className="flex flex-col items-center mt-3">
                             {/* Step 1 Circle */}
                             <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm mb-2 ${step === 1 ? 'bg-main-blue text-white' : 'bg-white/30 text-white/50'}`}>
                                 {userType === 'lead' ? 1 : "-"}
                             </div>
                             {/* Vertical Line */}
-                            {userType === 'lead' && <div className={`w-px ${step >= 2 ? 'bg-main-blue h-[0.75rem]' : 'bg-white/30 h-[20.75rem]'}`} />}
+                            {userType === 'lead' && <div className={`w-px ${step >= 2 ? 'bg-main-blue h-[2.75rem]' : 'bg-white/30 h-[21.3rem]'}`} />}
                             {/* Step 2 Circle */}
                             {userType === 'lead' && <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm mt-2 ${step === 2 ? 'bg-main-blue text-white' : 'bg-white/30 text-white/50'}`}>
                                 2
@@ -355,22 +363,63 @@ export const FormUpload2: React.FC<SessionData> = ({ userType, userId, sessionId
                         <div className="flex flex-col space-y-6 w-full">
                             {/* Step 1 Content */}
                             <div className="space-y-4">
-                                <p className={`font-semibold ${step === 1 ? "text-blue-500" : "text-white/50"} py-0.5`}>Organization & File Upload</p>
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className={`p-2 rounded-lg ${step === 1 ? 'bg-main-blue/20 border border-main-blue/30' : 'bg-white/10'}`}>
+                                        {userType === 'lead' ? (
+                                            <Building className={`w-5 h-5 ${step === 1 ? 'text-main-blue' : 'text-white/60'}`} />
+                                        ) : (
+                                            <Upload className={`w-5 h-5 ${step === 1 ? 'text-main-blue' : 'text-white/60'}`} />
+                                        )}
+                                    </div>
+                                    <div>
+                                        <h3 className={`text-lg font-semibold ${step === 1 ? 'text-white' : 'text-white/60'}`}>
+                                            {userType === 'lead' ? 'Organization & Dataset' : 'Dataset Upload'}
+                                        </h3>
+                                        <p className="text-white/60 text-sm">
+                                            {userType === 'lead' ? 'Configure your organization details and upload data' : 'Upload your dataset to join the session'}
+                                        </p>
+                                    </div>
+                                </div>
 
                                 {step === 1 && (
-                                    <>
-                                        <div className="space-y-2">
-                                            <Label>Organization Name</Label>
-                                            <Input
-                                                className="pl-4 py-4"
-                                                placeholder="Enter your organization name..."
-                                                value={orgName}
-                                                onChange={(e) => setOrgName(e.target.value)}
-                                            />
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.4, delay: 0.1 }}
+                                        className="space-y-3"
+                                    >
+                                        <div className="space-y-3">
+                                            <Label className="text-sm font-medium text-white/90 flex items-center gap-2">
+                                                <Building className="w-4 h-4" />
+                                                Organization Name
+                                            </Label>
+                                            <div className="relative">
+                                                <Input
+                                                    placeholder="e.g., Acme Corporation"
+                                                    value={orgName}
+                                                    onChange={(e) => setOrgName(e.target.value)}
+                                                    className="bg-black/20 border-white/20 text-white placeholder:text-white/40 focus:border-main-blue focus:bg-black/30 transition-all duration-300 rounded-xl pl-4 pr-10"
+                                                />
+                                                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                                    <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                                                        orgName ? 'bg-green-400' : 'bg-white/20'
+                                                    }`} />
+                                                </div>
+                                            </div>
                                         </div>
-
-                                        <div>
-                                            <Label>Upload your CSV Dataset</Label>
+                                        <div className="space-y-3">
+                                            <Label className="text-sm font-medium text-white/90 flex items-center gap-2">
+                                                <FileSpreadsheet className="w-4 h-4" />
+                                                CSV Dataset
+                                                <Tooltip delayDuration={0}>
+                                                    <TooltipTrigger>
+                                                        <Info className="h-3 w-3 text-white/40 hover:text-white/60 transition-colors" />
+                                                    </TooltipTrigger>
+                                                    <TooltipContent className="bg-white text-black max-w-[200px]">
+                                                        <p>Upload a CSV file containing your training data</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </Label>
                                             <input
                                                 type="file"
                                                 accept=".csv"
@@ -379,97 +428,172 @@ export const FormUpload2: React.FC<SessionData> = ({ userType, userId, sessionId
                                                 hidden
                                                 id="file-upload"
                                             />
-                                            <label htmlFor="file-upload" className="block cursor-pointer mt-2">
-                                                <div className="border-2 border-dashed border-white/50 rounded-lg p-4 flex flex-col items-center bg-white/10 hover:bg-white/5">
-                                                    <img src={UploadImage} className="h-14" alt="" />
-                                                    <p className="text-sm font-bold text-white/70 text-center">
-                                                        Upload CSV file here...
+                                            <label htmlFor="file-upload" className="block cursor-pointer">
+                                                <div className={`border-2 border-dashed rounded-xl p-6 flex flex-col items-center transition-all duration-300 ${
+                                                    file 
+                                                        ? "border-green-500/50 bg-green-500/10" 
+                                                        : "border-white/30 bg-white/5 hover:border-white/50 hover:bg-white/10"
+                                                }`}>
+                                                    {file ? (
+                                                        <CheckCircle2 className="w-8 h-8 text-green-400 mb-3" />
+                                                    ) : (
+                                                        <Upload className="w-8 h-8 text-white/50 mb-3" />
+                                                    )}
+                                                    <p className={`text-sm font-semibold mb-1 ${
+                                                        file ? "text-green-400" : "text-white/70"
+                                                    }`}>
+                                                        {file ? "File uploaded successfully!" : "Click to upload CSV dataset"}
                                                     </p>
-                                                    <p className="text-sm font-normal text-white/70 text-center mt-1">
-                                                        {file ? file.name : "You haven't uploaded anything!"}
+                                                    <p className="text-xs text-white/60 text-center">
+                                                        {file ? file.name : "Drag and drop or click to browse"}
                                                     </p>
                                                 </div>
                                             </label>
                                         </div>
 
-                                        {userType === 'lead' ? (
-                                            step === 1 ? (
-                                                <Button className="mt-2" onClick={() => setStep(2)} disabled={!orgName || !file}>
-                                                    Continue
-                                                </Button>
-                                            ) : (
-                                                <>
-                                                    <Button onClick={handleSubmit} disabled={uploaded || !file}>
-                                                        {uploaded ? 'Uploaded ✓' : 'Upload'}
-                                                    </Button>
-                                                    <Button
-                                                        variant={isReady ? 'default' : 'outline'}
-                                                        disabled={!isReady}
-                                                        onClick={handleProceed}
+                                        <div className="flex gap-3 pt-2">
+                                            {userType === 'lead' ? (
+                                                step === 1 ? (
+                                                    <Button 
+                                                        className="flex items-center gap-2 bg-gradient-to-r from-main-blue to-main-blue/80 hover:from-main-blue/90 hover:to-main-blue/70 text-white font-semibold rounded-xl transition-all duration-300" 
+                                                        onClick={() => setStep(2)} 
+                                                        disabled={!orgName || !file}
                                                     >
-                                                        Proceed
+                                                        <ChevronRight className="w-4 h-4" />
+                                                        Continue to Label Selection
                                                     </Button>
-                                                </>
-                                            )
+                                                ) : (
+                                                    <div className="flex gap-3 w-full">
+                                                        <Button 
+                                                            onClick={handleSubmit} 
+                                                            disabled={uploaded || !file}
+                                                            className="flex items-center gap-2 bg-gradient-to-r from-main-yellow to-main-yellow/80 hover:from-main-yellow/90 hover:to-main-yellow/70 text-black font-semibold rounded-xl transition-all duration-300"
+                                                        >
+                                                            {uploaded ? <CheckCircle2 className="w-4 h-4" /> : <Upload className="w-4 h-4" />}
+                                                            {uploaded ? 'Uploaded Successfully' : 'Upload Dataset'}
+                                                        </Button>
+                                                        <Button
+                                                            disabled={!isReady}
+                                                            onClick={handleProceed}
+                                                            className={`flex items-center gap-2 font-semibold rounded-xl transition-all duration-300 ${
+                                                                isReady 
+                                                                    ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white'
+                                                                    : 'bg-white/10 text-white/50 cursor-not-allowed'
+                                                            }`}
+                                                        >
+                                                            <Play className="w-4 h-4" />
+                                                            Proceed to Training
+                                                        </Button>
+                                                    </div>
+                                                )
                                             ) : (
-                                            <div className="flex flex-row space-x-4">
-                                                <Button onClick={handleSubmit} disabled={uploaded || !file}>
-                                                    {uploaded ? 'Uploaded ✓' : 'Upload'}
+                                                <Button 
+                                                    onClick={handleSubmit} 
+                                                    disabled={uploaded || !file} 
+                                                    className="flex items-center gap-2 bg-gradient-to-r from-main-blue to-main-blue/80 hover:from-main-blue/90 hover:to-main-blue/70 text-white font-semibold rounded-xl transition-all duration-300"
+                                                >
+                                                    {uploaded ? <CheckCircle2 className="w-4 h-4" /> : <Upload className="w-4 h-4" />}
+                                                    {uploaded ? 'Uploaded Successfully' : 'Upload Dataset'}
                                                 </Button>
-                                            </div>
-                                        )}
+                                            )}
+                                        </div>
 
                                         {userType !== 'lead' && uploaded && (
-                                            <div className="text-sm mt-2 text-yellow-600">⚠️ Wait for the leader to proceed</div>
+                                            <motion.div
+                                                initial={{ opacity: 0, scale: 0.95 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                className="flex items-center gap-2 mt-1"
+                                            >
+                                                <Clock className="w-4 h-4 text-yellow-400" />
+                                                <p className="text-sm text-yellow-400">Waiting for leader to proceed with training configuration</p>
+                                            </motion.div>
                                         )}
-                                    </>
+                                    </motion.div>
                                 )}
                             </div>
 
                             {/* Step 2 Content */}
                             <div className="space-y-4">
-                                {userType === 'lead' && <p className={`font-semibold ${step === 2 ? "text-blue-500" : "text-white/50"} py-0.5`}>Choose Label</p>}
+                                <div className={`flex items-center gap-3 ${step == 2 && "mb-6"}`}>
+                                    {step == 2 && <div className='p-2 rounded-lg bg-main-blue/20 border border-main-blue/30'>
+                                        <Settings className='w-5 h-5 text-main-blue' />
+                                    </div>}
+                                    <div>
+                                        {userType === 'lead' && <h3 className={`text-lg font-semibold ${step === 2 ? 'text-white' : 'text-white/60'}`}>
+                                            Label Configuration
+                                        </h3>}
+                                        {step == 2 && <p className="text-white/60 text-sm">
+                                            Select the target column for training
+                                        </p>}
+                                    </div>
+                                </div>
 
                                 {step === 2 && (
-                                    <>
-                                        {userType === 'lead' && (
-                                            <div className="space-y-2">
-                                                <Label>Choose the Label</Label>
-                                                <select
-                                                    className="w-full pl-4 pr-[200px] py-1.5 rounded-lg bg-white text-black"
-                                                    value={label}
-                                                    onChange={(e) => setLabel(e.target.value)}
-                                                >
-                                                    <option value="">Select label...</option>
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.4, delay: 0.1 }}
+                                        className="space-y-4"
+                                    >
+                                        <div className="space-y-3">
+                                            <Label className="text-sm font-medium text-white/90 flex items-center gap-2">
+                                                <Database className="w-4 h-4" />
+                                                Target Column (Label)
+                                                <Tooltip delayDuration={0}>
+                                                    <TooltipTrigger>
+                                                        <Info className="h-3 w-3 text-white/40 hover:text-white/60 transition-colors" />
+                                                    </TooltipTrigger>
+                                                    <TooltipContent className="bg-white text-black max-w-[200px]">
+                                                        <p>Choose the column that contains the target values for prediction</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </Label>
+                                            <Select value={label} onValueChange={setLabel}>
+                                                <SelectTrigger className="bg-black/20 border-white/20 text-white">
+                                                    <SelectValue placeholder="Select target column..." />
+                                                </SelectTrigger>
+                                                <SelectContent>
                                                     {headers.map((header, idx) => (
-                                                        <option key={idx} value={header}>{header}</option>
+                                                        <SelectItem key={idx} value={header}>{header}</SelectItem>
                                                     ))}
-                                                </select>
-                                            </div>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
+                                        {error && (
+                                            <motion.div
+                                                initial={{ opacity: 0, scale: 0.95 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                className="flex items-center gap-3 p-3 bg-red-500/10 border border-red-500/20 rounded-xl"
+                                            >
+                                                <Info className="w-4 h-4 text-red-400" />
+                                                <p className="text-sm text-red-400">{error}</p>
+                                            </motion.div>
                                         )}
 
-                                        {error && <p className="text-sm text-red-600">{error}</p>}
-
-                                        {userType === 'lead' && <div className="flex flex-row space-x-4">
-                                            <Button
+                                        <div className="flex gap-3 pt-2">
+                                            <Button 
                                                 onClick={handleSubmit}
-                                                disabled={uploaded || !file || (userType === 'lead' && !label)}
+                                                disabled={uploaded || !file || !label}
+                                                className="flex items-center gap-2 bg-gradient-to-r from-main-yellow to-main-yellow/80 hover:from-main-yellow/90 hover:to-main-yellow/70 text-black font-semibold rounded-xl transition-all duration-300"
                                             >
-                                                {uploaded ? 'Uploaded ✓' : 'Upload'}
+                                                {uploaded ? <CheckCircle2 className="w-4 h-4" /> : <Upload className="w-4 h-4" />}
+                                                {uploaded ? 'Uploaded Successfully' : 'Upload Dataset'}
                                             </Button>
                                             <Button
-                                                variant={isReady ? 'default' : 'outline'}
                                                 disabled={!isReady}
                                                 onClick={handleProceed}
+                                                className={`flex items-center gap-2 font-semibold rounded-xl transition-all duration-300 ${
+                                                    isReady 
+                                                        ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white'
+                                                        : 'bg-white/10 text-white/50 cursor-not-allowed'
+                                                }`}
                                             >
-                                                Proceed
+                                                <Play className="w-4 h-4" />
+                                                Proceed to Training
                                             </Button>
-                                        </div>}
-
-                                        {userType !== 'lead' && uploaded && (
-                                            <div className="text-sm mt-2 text-yellow-600">⚠️ Wait for the leader to proceed</div>
-                                        )}
-                                    </>
+                                        </div>
+                                    </motion.div>
                                 )}
                             </div>
                         </div>
