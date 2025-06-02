@@ -612,7 +612,7 @@ export default function TestModel() {
 												}
 											</p>
 											<p className="text-xs text-white/60">
-												{modelData.summary.accuracy ? 'Classification accuracy' : 'Root mean square error'}
+												{modelData.summary.accuracy ? 'Classification accuracy' : 'Root mean square error (RMSE)'}
 											</p>
 										</div>
 									</div>

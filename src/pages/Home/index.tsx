@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from "framer-motion";
 import Batik from "@/assets/icons/batik.png";
+import { ChevronRight } from 'lucide-react';
 
 export const Home: React.FC = () => {
     const navigate = useNavigate();
@@ -88,8 +89,9 @@ export const Home: React.FC = () => {
                 </div>
 
                 {/* Explore Button */}
-                <button onClick={handleExplore} className="border border-white text-white px-8 py-2 mt-10 rounded hover:bg-white hover:text-black transition">
+                <button onClick={handleExplore} className="flex items-center bg-gradient-to-r from-white/30 to-white/20 hover:from-white/20 hover:to-white/10 text-white rounded-md px-8 pr-7 py-2.5 transition-all duration-300 mt-10">
                     Explore
+                    <ChevronRight className="w-4 h-4 ml-2" />
                 </button>
             </motion.div>
         </div>
