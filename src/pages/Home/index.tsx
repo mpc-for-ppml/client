@@ -1,8 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from "framer-motion";
+import { Card, CardContent } from "@/components/ui/card";
 import Batik from "@/assets/icons/batik.png";
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Shield, Users, Zap, Sparkles } from 'lucide-react';
 
 export const Home: React.FC = () => {
     const navigate = useNavigate();
@@ -11,8 +12,29 @@ export const Home: React.FC = () => {
         navigate('/role');
     };
 
+    const features = [
+        {
+            icon: <Shield className="w-5 h-5 text-blue-400" />,
+            title: "Privacy-Preserving",
+            description: "Train models without exposing raw data",
+            iconBorder: "border-blue-400/30"
+        },
+        {
+            icon: <Users className="w-5 h-5 text-purple-400" />,
+            title: "Federated Learning",
+            description: "Collaborate while keeping data distributed",
+            iconBorder: "border-purple-400/30"
+        },
+        {
+            icon: <Zap className="w-5 h-5 text-yellow-400" />,
+            title: "Real-time Training",
+            description: "Monitor progress with live updates",
+            iconBorder: "border-yellow-400/30"
+        }
+    ];
+
     return (
-        <div className="relative min-h-screen w-full bg-main-dark text-white overflow-hidden">
+        <div className="relative h-screen w-full bg-main-dark text-white overflow-hidden">
             {/* Made with love */}
             <div className="absolute left-[-17rem] top-1/2 -translate-y-1/2 rotate-90 pl-4 mt-16 flex items-center space-x-20">
                 <span className="text-xs tracking-widest text-white/40 mr-[29rem]">MADE WITH LOVE</span>
@@ -41,9 +63,19 @@ export const Home: React.FC = () => {
                 PRIVUS.
             </motion.h1>
 
-            {/* Blurry Bubbles */}
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} transition={{ duration: 1 }} className="absolute -top-16 -right-20 w-[30rem] h-[30rem] bg-main-yellow rounded-full filter blur-[120px] opacity-50 z-0"></motion.div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} transition={{ duration: 0.25 }} className="absolute -top-80 right-72 w-[42rem] h-[38rem] bg-main-blue rounded-full filter blur-[120px] opacity-50 z-0"></motion.div>
+            {/* Animated Blurry Bubbles */}
+            <motion.div 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: [0.3, 0.5, 0.3] }} 
+                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} 
+                className="absolute -top-16 -right-20 w-[30rem] h-[30rem] bg-main-yellow rounded-full filter blur-[120px] opacity-50 z-0"
+            />
+            <motion.div 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: [0.5, 0.7, 0.5] }} 
+                transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} 
+                className="absolute -top-80 right-72 w-[42rem] h-[38rem] bg-main-blue rounded-full filter blur-[120px] opacity-50 z-0"
+            />
 
             {/* Content */}
             <motion.div
@@ -59,40 +91,102 @@ export const Home: React.FC = () => {
                     duration: 0.5,
                     ease: [0.4, 0.0, 0.2, 1],
                 }}
-                className="relative z-10 flex flex-col justify-center items-start h-full mt-28 px-8 max-w-6xl mx-auto"
+                className="relative z-10 flex flex-col justify-center items-start h-full px-8 max-w-7xl mx-auto mr-10"
             >
                 {/* Logo */}
                 <div className="flex space-x-2">
                     <img
                         src={Batik}
-                        className="block h-20"
+                        className="block h-16"
                         draggable="false"
                         alt=""
                     />
                 </div>
 
                 {/* Headline */}
-                <h1 className="text-6xl md:text-7xl font-semibold leading-tight mt-10">
-                    secure collaboration <br /> made simple.
+                <h1 className="text-6xl md:text-7xl font-semibold leading-tight mt-6">
+                    secure collaboration <br /> 
+                    <span className="bg-gradient-to-r from-main-yellow to-main-blue bg-clip-text text-transparent">
+                        made simple.
+                    </span>
                 </h1>
 
                 {/* Subtitle */}
-                <div className="text-xl font-thin text-white/50 space-x-8 mt-4">
-                    <span>tugas</span>
-                    <span>akhir</span>
-                    <span>michael</span>
-                    <span>leon</span>
-                </div>
-                <div className="text-xl text-white/50 space-x-8">
-                    <span>putra</span>
-                    <span>widhi</span>
+                <div className="text-lg text-white/50 space-x-6 mt-3 flex items-center">
+                    <span>Tugas Akhir</span>
+                    <span className="w-1 h-1 bg-white/40 rounded-full"></span>
+                    <span>Michael Leon Putra Widhi</span>
+                    <span className="w-1 h-1 bg-white/40 rounded-full"></span>
+                    <span>13521108</span>
                 </div>
 
-                {/* Explore Button */}
-                <button onClick={handleExplore} className="flex items-center bg-gradient-to-r from-white/30 to-white/20 hover:from-white/20 hover:to-white/10 text-white rounded-md px-8 pr-7 py-2.5 transition-all duration-300 mt-10">
-                    Explore
-                    <ChevronRight className="w-4 h-4 ml-2" />
-                </button>
+                {/* CTA Button */}
+                <motion.button 
+                    onClick={handleExplore} 
+                    className="group flex items-center bg-gradient-to-r from-main-blue to-main-blue/80 hover:from-main-blue/90 hover:to-main-blue/70 text-white rounded-xl px-8 pr-7 py-3 transition-all duration-300 font-semibold shadow-lg shadow-main-blue/20 mt-8"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                >
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Start Training
+                    <ChevronRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                </motion.button>
+
+            </motion.div>
+
+            {/* Floating Feature Cards */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 0.7, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                whileHover={{ scale: 1.05 }}
+                className="absolute top-16 right-20 z-20 group"
+            >
+                <Card className={`bg-white/10 border border-white/20 backdrop-blur-md hover:shadow-xl transition-all duration-300 rounded-2xl hover:rounded-3xl w-64`}>
+                    <CardContent className="p-4">
+                        <div className={`p-2 bg-black/20 rounded-lg inline-block mb-3 border ${features[0].iconBorder}`}>
+                            {features[0].icon}
+                        </div>
+                        <h3 className="text-lg font-semibold mb-1 text-white">{features[0].title}</h3>
+                        <p className="text-white/80 text-sm">{features[0].description}</p>
+                    </CardContent>
+                </Card>
+            </motion.div>
+
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 0.7, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.7 }}
+                whileHover={{ scale: 1.05 }}
+                className="absolute bottom-44 right-32 z-20 group"
+            >
+                <Card className={`bg-white/10 border border-white/20 backdrop-blur-md hover:shadow-xl transition-all duration-300 rounded-2xl hover:rounded-3xl w-64`}>
+                    <CardContent className="p-4">
+                        <div className={`p-2 bg-black/20 rounded-lg inline-block mb-3 border ${features[1].iconBorder}`}>
+                            {features[1].icon}
+                        </div>
+                        <h3 className="text-lg font-semibold mb-1 text-white">{features[1].title}</h3>
+                        <p className="text-white/80 text-sm">{features[1].description}</p>
+                    </CardContent>
+                </Card>
+            </motion.div>
+
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 0.7, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.9 }}
+                whileHover={{ scale: 1.05 }}
+                className="absolute bottom-16 right-[27rem] transform z-20 group"
+            >
+                <Card className={`bg-white/10 border border-white/20 backdrop-blur-md hover:shadow-xl transition-all duration-300 rounded-2xl hover:rounded-3xl w-64`}>
+                    <CardContent className="p-4">
+                        <div className={`p-2 bg-black/20 rounded-lg inline-block mb-3 border ${features[2].iconBorder}`}>
+                            {features[2].icon}
+                        </div>
+                        <h3 className="text-lg font-semibold mb-1 text-white">{features[2].title}</h3>
+                        <p className="text-white/80 text-sm">{features[2].description}</p>
+                    </CardContent>
+                </Card>
             </motion.div>
         </div>
     );
