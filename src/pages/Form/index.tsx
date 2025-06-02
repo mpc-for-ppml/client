@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useParams } from 'react-router-dom';
-import { Input, Button, Label, Switch } from '@/components';
+import { Input, Button, Label, Switch, Card } from '@/components';
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Select,
   SelectTrigger,
@@ -14,8 +15,9 @@ import { SessionData } from '@/types';
 import { toast } from "react-toastify";
 import { WS_URL, RECONNECT_BASE, MAX_RECONNECT } from '@/constant';
 import illustrationImg from "@/assets/images/side2.png";
-import UploadImage from "@/assets/icons/upload.png";
 import { RunConfig } from '@/types';
+import { CardContent } from '@/components/ui/card';
+import { Building, CheckCircle2, ChevronRight, Clock, Crown, Database, FileSpreadsheet, Info, Play, Settings, Sparkles, Upload, User, Users } from 'lucide-react';
 
 export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId, participantCount }) => {
     const { id } = useParams<{ id: string }>();
@@ -186,59 +188,170 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
         <main className="relative flex flex-row w-full min-h-screen bg-main-dark overflow-hidden">
             {/* Left Pane */}
             <div className="relative w-[47%] h-screen">
-                <div className="absolute border-white bg-white font-semibold border rounded-[3rem] p-2 rounded-xl top-8 left-9 w-32 text-center text-sm z-20">{userType.charAt(0).toUpperCase() + userType.slice(1)}</div>
+                {/* Role Badge */}
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="absolute top-6 left-8 z-50"
+                >
+                    <Card className="border rounded-[3rem]">
+                        <CardContent className="flex items-center gap-2 p-2 px-8">
+                            {userType === 'lead' ? (
+                                <Crown className="w-4 h-4 text-main-blue" />
+                            ) : (
+                                <Users className="w-4 h-4 text-main-yellow" />
+                            )}
+                            <span className="font-semibold text-sm">
+                                {userType.charAt(0).toUpperCase() + userType.slice(1)}
+                            </span>
+                        </CardContent>
+                    </Card>
+                </motion.div>
 
                 {/* Bottom-left Title & Subtitle */}
                 <div className="absolute bottom-20 left-9 z-20 text-white">
-                    <h1 className="text-5xl font-bold bg-gradient-to-r from-[#FFFFFF] to-[#999999] bg-clip-text text-transparent">Your Data.</h1>
-                    <h1 className="text-5xl font-bold bg-gradient-to-r from-[#FFFFFF] to-[#5B5B5B] bg-clip-text text-transparent">Your Insights.</h1>
-                    <h1 className="text-5xl font-bold bg-gradient-to-r from-[#E6E6E6] to-[#454545] bg-clip-text text-transparent">Your Security.</h1>
-                </div>
-                <div className="absolute bottom-8 left-9 z-20 text-white">
-                    <p className="text-sm font-base">Take control of your dataset, ensuring only you and </p>
-                    <p className="text-sm font-base">your team have access to the insights!</p>
+                    <motion.h1
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.4 }}
+                        className="text-5xl font-bold bg-gradient-to-r from-[#FFFFFF] to-[#999999] bg-clip-text text-transparent"
+                    >
+                        Your Data.
+                    </motion.h1>
+                    <motion.h1
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.6 }}
+                        className="text-5xl font-bold bg-gradient-to-r from-[#FFFFFF] to-[#5B5B5B] bg-clip-text text-transparent"
+                    >
+                        Your Insights.
+                    </motion.h1>
+                    <motion.h1
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.8 }}
+                        className="text-5xl font-bold bg-gradient-to-r from-[#E6E6E6] to-[#454545] bg-clip-text text-transparent"
+                    >
+                        Your Security.
+                    </motion.h1>
                 </div>
 
-                {/* Bottom-right Participant Status */}
-                <div className="absolute top-24 left-9 z-20 text-white text-muted-foreground">
-                    <p className="font-semibold mb-4 text-[1.4rem] text-base">Participant Status</p>
-                    <div className="space-y-3">
-                        {Object.entries(safeStatusMap).map(([id, status]) => (
-                            <div className={`flex w-full text-sm align-center ${status ? "border-[#00C20A] bg-[#00C20A]/10" : "border-white bg-white/10"} border rounded-[3rem]`} key={id}>
-                                <div className={`p-2 px-4 pt-2.5 ${status ? "border-[#00C20A] bg-[#00C20A]/10" : "border-white bg-white/10"} border rounded-[3rem]`}>{status ? '✅' : '⏳'}</div> 
-                                <div className="p-2 px-4 pt-2.5 pr-5">{id === userId ? 'You' : id}</div>
-                            </div>
-                        ))}
-                    </div>
+                <div className="absolute bottom-8 left-9 z-20 text-white">
+                    <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 1.0 }}
+                        className="text-sm font-base"
+                    >
+                        Take control of your dataset, ensuring only you and
+                    </motion.p>
+                    <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 1.2 }}
+                        className="text-sm font-base"
+                    >
+                        your team have access to the insights!
+                    </motion.p>
+                </div>
+
+                {/* Participant Status Card */}
+                <div className="absolute top-16 z-30 w-[90%] max-w-md">
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                    >
+                        <Card className="bg-transparent">
+                            <CardContent className="p-6 px-8">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="p-2 bg-white/10 rounded-lg">
+                                        <User className="w-5 h-5 text-white" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg font-semibold text-white">Participants</h3>
+                                        <p className="text-white/60 text-sm">Session status overview</p>
+                                    </div>
+                                </div>
+                                <div className="space-y-3">
+                                    {Object.entries(safeStatusMap).map(([id, status]) => (
+                                        <motion.div
+                                            key={id}
+                                            initial={{ opacity: 0, scale: 0.95 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            transition={{ duration: 0.3 }}
+                                            className={`flex items-center justify-between p-3 rounded-xl max-w-md border transition-all duration-300 ${
+                                                status 
+                                                    ? "bg-green-500/10 border-green-500/20" 
+                                                    : "bg-white/5 border-white/20"
+                                            }`}
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <div className={`p-1.5 rounded-full ${
+                                                    status ? "bg-green-500/20" : "bg-white/10"
+                                                }`}>
+                                                    {status ? (
+                                                        <CheckCircle2 className="w-3 h-3 text-green-400" />
+                                                    ) : (
+                                                        <Clock className="w-3 h-3 text-white/60" />
+                                                    )}
+                                                </div>
+                                                <span className="text-white text-sm font-medium">
+                                                    {id === userId ? 'You' : `User ${id.slice(0, 8)}`}
+                                                </span>
+                                            </div>
+                                            <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                                status 
+                                                    ? "bg-green-500/20 text-green-400" 
+                                                    : "bg-white/10 text-white/60"
+                                            }`}>
+                                                {status ? 'Ready' : 'Waiting'}
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </motion.div>
                 </div>
 
                 {/* Illustration Image */}
-                <img
-                    src={illustrationImg}
-                    className="z-0 h-full w-full object-cover"
-                    alt="Illustration"
-                    draggable="false"
-                />
+                <div className="z-0 h-full w-full absolute top-0">
+                    <img
+                        src={illustrationImg}
+                        className="object-cover"
+                        alt="Illustration"
+                        draggable="false"
+                    />
+                </div>
             </div>
 
             {/* Right Pane */}
             <div className="w-[53%] flex flex-col items-center justify-center min-h-screen p-4 space-y-6">
-                <div className="w-full max-w-md">
-                    <div className="flex flex-col w-full gap-1 mb-4">
-                        <p className="text-4xl font-semibold text-white">submit your dataset.</p>
-                        <p className="text-base mb-4 text-white">ready your data. once all join, we compute together</p>
+                <div className="w-full max-w-lg">
+                    <div className="flex items-center gap-5 mb-1">
+                        <div className="p-2 bg-white/20 rounded-lg">
+                            <FileSpreadsheet className="w-8 h-8 text-primary text-white" />
+                        </div>
+                        <h1 className="text-5xl font-semibold leading-tight mb-1.5 text-white">
+                            submit dataset.
+                        </h1>
                     </div>
+                    <h1 className="text-white">
+                        ready your data. once all join, we compute together
+                    </h1>
 
                     {/* Vertical Stepper */}
                     <div className="flex space-x-4 text-white mt-6">
                         {/* Stepper Line */}
-                        <div className="flex flex-col items-center mt-0.5">
+                        <div className="flex flex-col items-center mt-3">
                             {/* Step 1 Circle */}
                             <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm mb-2 ${step === 1 ? 'bg-main-blue text-white' : 'bg-white/30 text-white/50'}`}>
                                 {userType === 'lead' ? 1 : "-"}
                             </div>
                             {/* Vertical Line */}
-                            {userType === 'lead' && <div className={`w-px ${step >= 2 ? 'bg-main-blue h-[0.75rem]' : 'bg-white/30 h-[20.75rem]'}`} />}
+                            {userType === 'lead' && <div className={`w-px ${step >= 2 ? 'bg-main-blue h-[2.75rem]' : 'bg-white/30 h-[21.3rem]'}`} />}
                             {/* Step 2 Circle */}
                             {userType === 'lead' && <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm mt-2 ${step === 2 ? 'bg-main-blue text-white' : 'bg-white/30 text-white/50'}`}>
                                 2
@@ -249,22 +362,63 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                         <div className="flex flex-col space-y-6 w-full">
                             {/* Step 1 Content */}
                             <div className="space-y-4">
-                                <p className={`font-semibold ${step === 1 ? "text-blue-500" : "text-white/50"} py-0.5`}>Organization & File Upload</p>
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className={`p-2 rounded-lg ${step === 1 ? 'bg-main-blue/20 border border-main-blue/30' : 'bg-white/10'}`}>
+                                        {userType === 'lead' ? (
+                                            <Building className={`w-5 h-5 ${step === 1 ? 'text-main-blue' : 'text-white/60'}`} />
+                                        ) : (
+                                            <Upload className={`w-5 h-5 ${step === 1 ? 'text-main-blue' : 'text-white/60'}`} />
+                                        )}
+                                    </div>
+                                    <div>
+                                        <h3 className={`text-lg font-semibold ${step === 1 ? 'text-white' : 'text-white/60'}`}>
+                                            {userType === 'lead' ? 'Organization & Dataset' : 'Dataset Upload'}
+                                        </h3>
+                                        <p className="text-white/60 text-sm">
+                                            {userType === 'lead' ? 'Configure your organization details and upload data' : 'Upload your dataset to join the session'}
+                                        </p>
+                                    </div>
+                                </div>
 
                                 {step === 1 && (
-                                    <>
-                                        <div className="space-y-2">
-                                            <Label>Organization Name</Label>
-                                            <Input
-                                                className="pl-4 py-4"
-                                                placeholder="Enter your organization name..."
-                                                value={orgName}
-                                                onChange={(e) => setOrgName(e.target.value)}
-                                            />
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.4, delay: 0.1 }}
+                                        className="space-y-3"
+                                    >
+                                        <div className="space-y-3">
+                                            <Label className="text-sm font-medium text-white/90 flex items-center gap-2">
+                                                <Building className="w-4 h-4" />
+                                                Organization Name
+                                            </Label>
+                                            <div className="relative">
+                                                <Input
+                                                    placeholder="e.g., Acme Corporation"
+                                                    value={orgName}
+                                                    onChange={(e) => setOrgName(e.target.value)}
+                                                    className="bg-black/20 border-white/20 text-white placeholder:text-white/40 focus:border-main-blue focus:bg-black/30 transition-all duration-300 rounded-xl pl-4 pr-10"
+                                                />
+                                                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                                    <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                                                        orgName ? 'bg-green-400' : 'bg-white/20'
+                                                    }`} />
+                                                </div>
+                                            </div>
                                         </div>
-
-                                        <div>
-                                            <Label>Upload your CSV Dataset</Label>
+                                        <div className="space-y-3">
+                                            <Label className="text-sm font-medium text-white/90 flex items-center gap-2">
+                                                <FileSpreadsheet className="w-4 h-4" />
+                                                CSV Dataset
+                                                <Tooltip delayDuration={0}>
+                                                    <TooltipTrigger>
+                                                        <Info className="h-3 w-3 text-white/40 hover:text-white/60 transition-colors" />
+                                                    </TooltipTrigger>
+                                                    <TooltipContent className="bg-white text-black max-w-[200px]">
+                                                        <p>Upload a CSV file containing your training data</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </Label>
                                             <input
                                                 type="file"
                                                 accept=".csv"
@@ -273,97 +427,172 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                                                 hidden
                                                 id="file-upload"
                                             />
-                                            <label htmlFor="file-upload" className="block cursor-pointer mt-2">
-                                                <div className="border-2 border-dashed border-white/50 rounded-lg p-4 flex flex-col items-center bg-white/10 hover:bg-white/5">
-                                                    <img src={UploadImage} className="h-14" alt="" />
-                                                    <p className="text-sm font-bold text-white/70 text-center">
-                                                        Upload CSV file here...
+                                            <label htmlFor="file-upload" className="block cursor-pointer">
+                                                <div className={`border-2 border-dashed rounded-xl p-6 flex flex-col items-center transition-all duration-300 ${
+                                                    file 
+                                                        ? "border-green-500/50 bg-green-500/10" 
+                                                        : "border-white/30 bg-white/5 hover:border-white/50 hover:bg-white/10"
+                                                }`}>
+                                                    {file ? (
+                                                        <CheckCircle2 className="w-8 h-8 text-green-400 mb-3" />
+                                                    ) : (
+                                                        <Upload className="w-8 h-8 text-white/50 mb-3" />
+                                                    )}
+                                                    <p className={`text-sm font-semibold mb-1 ${
+                                                        file ? "text-green-400" : "text-white/70"
+                                                    }`}>
+                                                        {file ? "File uploaded successfully!" : "Click to upload CSV dataset"}
                                                     </p>
-                                                    <p className="text-sm font-normal text-white/70 text-center mt-1">
-                                                        {file ? file.name : "You haven't uploaded anything!"}
+                                                    <p className="text-xs text-white/60 text-center">
+                                                        {file ? file.name : "Drag and drop or click to browse"}
                                                     </p>
                                                 </div>
                                             </label>
                                         </div>
 
-                                        {userType === 'lead' ? (
-                                            step === 1 ? (
-                                                <Button className="mt-2" onClick={() => setStep(2)} disabled={!orgName || !file}>
-                                                    Continue
-                                                </Button>
-                                            ) : (
-                                                <>
-                                                    <Button onClick={handleSubmit} disabled={uploaded || !file}>
-                                                        {uploaded ? 'Uploaded ✓' : 'Upload'}
-                                                    </Button>
-                                                    <Button
-                                                        variant={isReady ? 'default' : 'outline'}
-                                                        disabled={!isReady}
-                                                        onClick={handleProceed}
+                                        <div className="flex gap-3 pt-2">
+                                            {userType === 'lead' ? (
+                                                step === 1 ? (
+                                                    <Button 
+                                                        className="flex items-center gap-2 bg-gradient-to-r from-main-blue to-main-blue/80 hover:from-main-blue/90 hover:to-main-blue/70 text-white font-semibold rounded-xl transition-all duration-300" 
+                                                        onClick={() => setStep(2)} 
+                                                        disabled={!orgName || !file}
                                                     >
-                                                        Proceed
+                                                        <ChevronRight className="w-4 h-4" />
+                                                        Continue to Label Selection
                                                     </Button>
-                                                </>
-                                            )
+                                                ) : (
+                                                    <div className="flex gap-3 w-full">
+                                                        <Button 
+                                                            onClick={handleSubmit} 
+                                                            disabled={uploaded || !file}
+                                                            className="flex items-center gap-2 bg-gradient-to-r from-main-yellow to-main-yellow/80 hover:from-main-yellow/90 hover:to-main-yellow/70 text-black font-semibold rounded-xl transition-all duration-300"
+                                                        >
+                                                            {uploaded ? <CheckCircle2 className="w-4 h-4" /> : <Upload className="w-4 h-4" />}
+                                                            {uploaded ? 'Uploaded Successfully' : 'Upload Dataset'}
+                                                        </Button>
+                                                        <Button
+                                                            disabled={!isReady}
+                                                            onClick={handleProceed}
+                                                            className={`flex items-center gap-2 font-semibold rounded-xl transition-all duration-300 ${
+                                                                isReady 
+                                                                    ? 'bg-gradient-to-r from-green-700 to-green-800 hover:from-green-800 hover:to-green-900 text-white'
+                                                                    : 'bg-white/10 text-white/50 cursor-not-allowed'
+                                                            }`}
+                                                        >
+                                                            <Play className="w-4 h-4" />
+                                                            Proceed to Training
+                                                        </Button>
+                                                    </div>
+                                                )
                                             ) : (
-                                            <div className="flex flex-row space-x-4">
-                                                <Button onClick={handleSubmit} disabled={uploaded || !file}>
-                                                    {uploaded ? 'Uploaded ✓' : 'Upload'}
+                                                <Button 
+                                                    onClick={handleSubmit} 
+                                                    disabled={uploaded || !file} 
+                                                    className="flex items-center gap-2 bg-gradient-to-r from-main-blue to-main-blue/80 hover:from-main-blue/90 hover:to-main-blue/70 text-white font-semibold rounded-xl transition-all duration-300"
+                                                >
+                                                    {uploaded ? <CheckCircle2 className="w-4 h-4" /> : <Upload className="w-4 h-4" />}
+                                                    {uploaded ? 'Uploaded Successfully' : 'Upload Dataset'}
                                                 </Button>
-                                            </div>
-                                        )}
+                                            )}
+                                        </div>
 
                                         {userType !== 'lead' && uploaded && (
-                                            <div className="text-sm mt-2 text-yellow-600">⚠️ Wait for the leader to proceed</div>
+                                            <motion.div
+                                                initial={{ opacity: 0, scale: 0.95 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                className="flex items-center gap-2 mt-1"
+                                            >
+                                                <Clock className="w-4 h-4 text-yellow-400" />
+                                                <p className="text-sm text-yellow-400">Waiting for leader to proceed with training configuration</p>
+                                            </motion.div>
                                         )}
-                                    </>
+                                    </motion.div>
                                 )}
                             </div>
 
                             {/* Step 2 Content */}
                             <div className="space-y-4">
-                                {userType === 'lead' && <p className={`font-semibold ${step === 2 ? "text-blue-500" : "text-white/50"} py-0.5`}>Choose Label</p>}
+                                <div className={`flex items-center gap-3 ${step == 2 && "mb-6"}`}>
+                                    {step == 2 && <div className='p-2 rounded-lg bg-main-blue/20 border border-main-blue/30'>
+                                        <Settings className='w-5 h-5 text-main-blue' />
+                                    </div>}
+                                    <div>
+                                        {userType === 'lead' && <h3 className={`text-lg font-semibold ${step === 2 ? 'text-white' : 'text-white/60'}`}>
+                                            Label Configuration
+                                        </h3>}
+                                        {step == 2 && <p className="text-white/60 text-sm">
+                                            Select the target column for training
+                                        </p>}
+                                    </div>
+                                </div>
 
                                 {step === 2 && (
-                                    <>
-                                        {userType === 'lead' && (
-                                            <div className="space-y-2">
-                                                <Label>Choose the Label</Label>
-                                                <select
-                                                    className="w-full pl-4 pr-[200px] py-1.5 rounded-lg bg-white text-black"
-                                                    value={label}
-                                                    onChange={(e) => setLabel(e.target.value)}
-                                                >
-                                                    <option value="">Select label...</option>
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.4, delay: 0.1 }}
+                                        className="space-y-4"
+                                    >
+                                        <div className="space-y-3">
+                                            <Label className="text-sm font-medium text-white/90 flex items-center gap-2">
+                                                <Database className="w-4 h-4" />
+                                                Target Column (Label)
+                                                <Tooltip delayDuration={0}>
+                                                    <TooltipTrigger>
+                                                        <Info className="h-3 w-3 text-white/40 hover:text-white/60 transition-colors" />
+                                                    </TooltipTrigger>
+                                                    <TooltipContent className="bg-white text-black max-w-[200px]">
+                                                        <p>Choose the column that contains the target values for prediction</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </Label>
+                                            <Select value={label} onValueChange={setLabel}>
+                                                <SelectTrigger className="bg-black/20 border-white/20 text-white">
+                                                    <SelectValue placeholder="Select target column..." />
+                                                </SelectTrigger>
+                                                <SelectContent>
                                                     {headers.map((header, idx) => (
-                                                        <option key={idx} value={header}>{header}</option>
+                                                        <SelectItem key={idx} value={header}>{header}</SelectItem>
                                                     ))}
-                                                </select>
-                                            </div>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
+                                        {error && (
+                                            <motion.div
+                                                initial={{ opacity: 0, scale: 0.95 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                className="flex items-center gap-3 p-3 bg-red-500/10 border border-red-500/20 rounded-xl"
+                                            >
+                                                <Info className="w-4 h-4 text-red-400" />
+                                                <p className="text-sm text-red-400">{error}</p>
+                                            </motion.div>
                                         )}
 
-                                        {error && <p className="text-sm text-red-600">{error}</p>}
-
-                                        {userType === 'lead' && <div className="flex flex-row space-x-4">
-                                            <Button
+                                        <div className="flex gap-3 pt-2">
+                                            <Button 
                                                 onClick={handleSubmit}
-                                                disabled={uploaded || !file || (userType === 'lead' && !label)}
+                                                disabled={uploaded || !file || !label}
+                                                className="flex items-center gap-2 bg-gradient-to-r from-main-yellow to-main-yellow/80 hover:from-main-yellow/90 hover:to-main-yellow/70 text-black font-semibold rounded-xl transition-all duration-300"
                                             >
-                                                {uploaded ? 'Uploaded ✓' : 'Upload'}
+                                                {uploaded ? <CheckCircle2 className="w-4 h-4" /> : <Upload className="w-4 h-4" />}
+                                                {uploaded ? 'Uploaded Successfully' : 'Upload Dataset'}
                                             </Button>
                                             <Button
-                                                variant={isReady ? 'default' : 'outline'}
                                                 disabled={!isReady}
                                                 onClick={handleProceed}
+                                                className={`flex items-center gap-2 font-semibold rounded-xl transition-all duration-300 ${
+                                                    isReady 
+                                                        ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white'
+                                                        : 'bg-white/10 text-white/50 cursor-not-allowed'
+                                                }`}
                                             >
-                                                Proceed
+                                                <Play className="w-4 h-4" />
+                                                Proceed to Training
                                             </Button>
-                                        </div>}
-
-                                        {userType !== 'lead' && uploaded && (
-                                            <div className="text-sm mt-2 text-yellow-600">⚠️ Wait for the leader to proceed</div>
-                                        )}
-                                    </>
+                                        </div>
+                                    </motion.div>
                                 )}
                             </div>
                         </div>
@@ -388,83 +617,250 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                         {/* Main contents */}
                         <div className="relative z-10 flex items-center justify-center h-full px-6">
                             {userType !== "lead" ? (
-                                <div className="flex flex-col items-center gap-6 text-white animate-pulse">
-                                    <div className="w-16 h-16 border-4 border-t-transparent border-white rounded-full animate-spin" />
-                                    <p className="text-xl font-semibold text-center max-w-md">
-                                        Initiating... Please wait. The leader is currently selecting training parameters.
-                                    </p>
-                                </div>
-                            ) : (
-                                <div className="w-full max-w-lg bg-transparent text-white rounded-2xl shadow-lg p-8 space-y-6">
-                                    <h2 className="text-2xl md:text-3xl font-semibold text-white leading-tight text-center">training configuration</h2>
-
-                                    <div className="w-full space-y-4">
-                                        <div className='space-y-2'>
-                                            <label>Normalizer</label>
-                                            <Select value={normalizer} onValueChange={setNormalizer}>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select a normalizer" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="minmax">MinMax</SelectItem>
-                                                    <SelectItem value="zscore">Z-Score</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-
-                                        <div className='space-y-2'>
-                                            <label>Regression Type</label>
-                                            <Select value={regression} onValueChange={setRegression}>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select regression type" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="linear">Linear Regression</SelectItem>
-                                                    <SelectItem value="logistic">Logistic Regression</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                        
-                                        <div className='w-full flex gap-x-6'>
-                                            <div className='space-y-2 w-1/2'>
-                                                <label>Learning Rate</label>
-                                                <Input
-                                                    type="number"
-                                                    min={0}
-                                                    value={learningRate}
-                                                    onChange={(e) => setLearningRate(e.target.value)}
-                                                    placeholder="e.g., 0.01"
-                                                />
-                                            </div>
-
-                                            <div className='space-y-2 w-1/2'>
-                                                <label>Epochs</label>
-                                                <Input
-                                                    type="number"
-                                                    min={0}
-                                                    value={epochs}
-                                                    onChange={(e) => setEpochs(e.target.value)}
-                                                    placeholder="e.g., 100"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="flex items-center justify-between">
-                                            <label htmlFor="logging">Enable Logging</label>
-                                            <Switch
-                                                id="logging"
-                                                checked={isLogging}
-                                                onCheckedChange={setIsLogging}
-                                            />
+                                <motion.div
+                                    initial={{ opacity: 0, y: 30 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.8, ease: "easeOut" }}
+                                    className="flex flex-col items-center gap-6 text-white"
+                                >
+                                    {/* Elegant Spinner */}
+                                    <div className="relative">
+                                        <motion.div 
+                                            className="w-16 h-16 border border-white/10 rounded-full"
+                                            animate={{ rotate: 360 }}
+                                            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                                        />
+                                        <motion.div 
+                                            className="absolute inset-2 border-2 border-t-main-blue border-r-main-yellow border-b-transparent border-l-transparent rounded-full"
+                                            animate={{ rotate: 360 }}
+                                            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                                        />
+                                        <div className="absolute inset-6 bg-main-blue/20 rounded-full flex items-center justify-center">
+                                            <Sparkles className="w-4 h-4 text-main-blue" />
                                         </div>
                                     </div>
+                                    
+                                    {/* Text Content */}
+                                    <div className="text-center max-w-sm space-y-3">
+                                        <motion.h3 
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ delay: 0.3 }}
+                                            className="text-xl font-semibold"
+                                        >
+                                            Training Configuration
+                                        </motion.h3>
+                                        <motion.p 
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ delay: 0.5 }}
+                                            className="text-white/70 leading-relaxed"
+                                        >
+                                            The leader is setting up training parameters. Your session will begin shortly.
+                                        </motion.p>
+                                        
+                                        {/* Subtle Progress Dots */}
+                                        <motion.div 
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ delay: 0.7 }}
+                                            className="flex items-center justify-center gap-2 pt-2"
+                                        >
+                                            {[0, 1, 2].map((i) => (
+                                                <motion.div
+                                                    key={i}
+                                                    className="w-1.5 h-1.5 bg-white/40 rounded-full"
+                                                    animate={{ 
+                                                        scale: [1, 1.3, 1],
+                                                        opacity: [0.4, 1, 0.4]
+                                                    }}
+                                                    transition={{
+                                                        duration: 1.5,
+                                                        repeat: Infinity,
+                                                        delay: i * 0.2
+                                                    }}
+                                                />
+                                            ))}
+                                        </motion.div>
+                                    </div>
+                                </motion.div>
+                            ) : (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 40, scale: 0.95 }}
+                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                    transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
+                                    className="w-full max-w-md"
+                                >
+                                    {/* Compact Header */}
+                                    <motion.div 
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.3 }}
+                                        className="text-center mb-6"
+                                    >
+                                        <div className="flex items-center justify-center gap-3 mb-2">
+                                            <div className="inline-flex items-center justify-center p-2 bg-gradient-to-br from-main-blue/20 to-main-yellow/20 border border-white/10 rounded-xl">
+                                                <Settings className="w-6 h-6 text-white" />
+                                            </div>
+                                        </div>
+                                        <h1 className="text-4xl font-semibold mb-1 text-white">
+                                            training configuration.
+                                        </h1>
+                                        <p className="text-white/60 text-base">
+                                            configure parameters for collaborative training
+                                        </p>
+                                    </motion.div>
 
-                                    <Button className="w-full" onClick={handleTrain}>
-                                        Train Data
-                                    </Button>
-                                </div>
+                                    {/* Form Card */}
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.4 }}
+                                    >
+                                        <Card className="bg-white/5 border border-white/10 backdrop-blur-sm shadow-2xl rounded-2xl">
+                                            <CardContent className="p-5">
+                                                <div className="space-y-4">
+                                                    {/* Algorithm Settings */}
+                                                    <div>
+                                                        <h3 className="text-xs font-medium text-white/90 mb-3 flex items-center gap-2">
+                                                            <div className="w-1 h-3 bg-main-blue rounded-full" />
+                                                            Algorithm Settings
+                                                        </h3>
+                                                        <div className="grid grid-cols-2 gap-3">
+                                                            <div className="space-y-1.5">
+                                                                <Label className="text-xs font-medium text-white/80">Normalizer</Label>
+                                                                <Select value={normalizer} onValueChange={setNormalizer}>
+                                                                    <SelectTrigger className="bg-white/5 border-white/20 text-white h-8 text-sm hover:bg-white/10 transition-colors">
+                                                                        <SelectValue placeholder="Select" />
+                                                                    </SelectTrigger>
+                                                                    <SelectContent>
+                                                                        <SelectItem value="minmax">MinMax</SelectItem>
+                                                                        <SelectItem value="zscore">Z-Score</SelectItem>
+                                                                    </SelectContent>
+                                                                </Select>
+                                                            </div>
+
+                                                            <div className="space-y-1.5">
+                                                                <Label className="text-xs font-medium text-white/80">Model Type</Label>
+                                                                <Select value={regression} onValueChange={setRegression}>
+                                                                    <SelectTrigger className="bg-white/5 border-white/20 text-white h-8 text-sm hover:bg-white/10 transition-colors">
+                                                                        <SelectValue placeholder="Select" />
+                                                                    </SelectTrigger>
+                                                                    <SelectContent>
+                                                                        <SelectItem value="linear">Linear</SelectItem>
+                                                                        <SelectItem value="logistic">Logistic</SelectItem>
+                                                                    </SelectContent>
+                                                                </Select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    {/* Training Parameters */}
+                                                    <div>
+                                                        <h3 className="text-xs font-medium text-white/90 mb-3 flex items-center gap-2">
+                                                            <div className="w-1 h-3 bg-main-yellow rounded-full" />
+                                                            Training Parameters
+                                                        </h3>
+                                                        <div className="grid grid-cols-2 gap-3">
+                                                            <div className="space-y-1.5">
+                                                                <Label className="text-xs font-medium text-white/80">Learning Rate</Label>
+                                                                <Input
+                                                                    type="number"
+                                                                    step="0.001"
+                                                                    min={0}
+                                                                    value={learningRate}
+                                                                    onChange={(e) => setLearningRate(e.target.value)}
+                                                                    placeholder="0.01"
+                                                                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-8 text-sm hover:bg-white/10 transition-colors focus:border-main-blue"
+                                                                />
+                                                            </div>
+
+                                                            <div className="space-y-1.5">
+                                                                <Label className="text-xs font-medium text-white/80">Epochs</Label>
+                                                                <Input
+                                                                    type="number"
+                                                                    min={1}
+                                                                    value={epochs}
+                                                                    onChange={(e) => setEpochs(e.target.value)}
+                                                                    placeholder="100"
+                                                                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-8 text-sm hover:bg-white/10 transition-colors focus:border-main-blue"
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Logging Toggle */}
+                                                    <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="p-1.5 bg-white/10 rounded">
+                                                                <Database className="w-3 h-3 text-white/80" />
+                                                            </div>
+                                                            <div>
+                                                                <Label className="text-sm font-medium text-white">Enable Logging</Label>
+                                                                <p className="text-xs text-white/60">Track progress</p>
+                                                            </div>
+                                                        </div>
+                                                        <Switch
+                                                            checked={isLogging}
+                                                            onCheckedChange={setIsLogging}
+                                                            className="data-[state=checked]:bg-main-blue"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                {/* Action Button */}
+                                                <Button 
+                                                    className="w-full mt-5 h-10 bg-gradient-to-r from-main-blue to-main-blue/80 hover:from-main-blue/90 hover:to-main-blue/70 text-white font-semibold rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02]" 
+                                                    onClick={handleTrain}
+                                                >
+                                                    <Play className="w-4 h-4 mr-2" />
+                                                    Start Training
+                                                </Button>
+                                            </CardContent>
+                                        </Card>
+                                    </motion.div>
+                                </motion.div>
                             )}
                         </div>
+
+                        {/* Floating Info Cards */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 0.6, y: 0 }}
+                            transition={{ duration: 0.6, delay: 0.8 }}
+                            className="absolute bottom-16 left-20 z-0"
+                        >
+                            <Card className="bg-white/10 border border-white/20 backdrop-blur-md rounded-2xl w-48 p-4 opacity-70">
+                                <CardContent className="p-0">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <div className="p-1.5 bg-blue-400/20 rounded border border-blue-400/30">
+                                            <Info className="w-3 h-3 text-blue-400" />
+                                        </div>
+                                        <h4 className="text-sm font-semibold text-white">Secure MPC</h4>
+                                    </div>
+                                    <p className="text-xs text-white/70">Multi-party computation ensures data privacy</p>
+                                </CardContent>
+                            </Card>
+                        </motion.div>
+        
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 0.6, y: 0 }}
+                            transition={{ duration: 0.6, delay: 1.0 }}
+                            className="absolute top-16 right-16 z-0"
+                        >
+                            <Card className="bg-white/10 border border-white/20 backdrop-blur-md rounded-2xl w-52 p-4 opacity-70">
+                                <CardContent className="p-0">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <div className="p-1.5 bg-purple-400/20 rounded border border-purple-400/30">
+                                            <Users className="w-3 h-3 text-purple-400" />
+                                        </div>
+                                        <h4 className="text-sm font-semibold text-white">Collaborate</h4>
+                                    </div>
+                                    <p className="text-xs text-white/70">Train models together without sharing raw data</p>
+                                </CardContent>
+                            </Card>
+                        </motion.div>
                     </motion.div>
                 )}
             </AnimatePresence>

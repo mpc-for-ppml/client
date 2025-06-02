@@ -109,7 +109,7 @@ export const Role: React.FC = () => {
                         choose your role.
                     </h1>
                     <p className="text-white/60 text-base">
-                        Select whether you'll lead or participate in the training session
+                        select whether you'll lead or participate in the training session
                     </p>
                 </motion.div>
 
