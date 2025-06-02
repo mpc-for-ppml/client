@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useParams } from 'react-router-dom';
-import { Input, Button, Label, Switch } from '@/components';
+import { Input, Button, Label, Switch, Card } from '@/components';
 import {
   Select,
   SelectTrigger,
@@ -16,6 +16,8 @@ import { WS_URL, RECONNECT_BASE, MAX_RECONNECT } from '@/constant';
 import illustrationImg from "@/assets/images/side2.png";
 import UploadImage from "@/assets/icons/upload.png";
 import { RunConfig } from '@/types';
+import { CardContent } from '@/components/ui/card';
+import { CheckCircle2, Clock, Crown, User, Users } from 'lucide-react';
 
 export const FormUpload2: React.FC<SessionData> = ({ userType, userId, sessionId, participantCount }) => {
     const { id } = useParams<{ id: string }>();
@@ -186,39 +188,143 @@ export const FormUpload2: React.FC<SessionData> = ({ userType, userId, sessionId
         <main className="relative flex flex-row w-full min-h-screen bg-main-dark overflow-hidden">
             {/* Left Pane */}
             <div className="relative w-[47%] h-screen">
-                <div className="absolute border-white bg-white font-semibold border rounded-[3rem] p-2 rounded-xl top-8 left-9 w-32 text-center text-sm z-20">{userType.charAt(0).toUpperCase() + userType.slice(1)}</div>
+                {/* Role Badge */}
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="absolute top-6 left-8 z-50"
+                >
+                    <Card className="border rounded-[3rem]">
+                        <CardContent className="flex items-center gap-2 p-2 px-8">
+                            {userType === 'lead' ? (
+                                <Crown className="w-4 h-4 text-main-blue" />
+                            ) : (
+                                <Users className="w-4 h-4 text-main-yellow" />
+                            )}
+                            <span className="font-semibold text-sm">
+                                {userType.charAt(0).toUpperCase() + userType.slice(1)}
+                            </span>
+                        </CardContent>
+                    </Card>
+                </motion.div>
 
                 {/* Bottom-left Title & Subtitle */}
                 <div className="absolute bottom-20 left-9 z-20 text-white">
-                    <h1 className="text-5xl font-bold bg-gradient-to-r from-[#FFFFFF] to-[#999999] bg-clip-text text-transparent">Your Data.</h1>
-                    <h1 className="text-5xl font-bold bg-gradient-to-r from-[#FFFFFF] to-[#5B5B5B] bg-clip-text text-transparent">Your Insights.</h1>
-                    <h1 className="text-5xl font-bold bg-gradient-to-r from-[#E6E6E6] to-[#454545] bg-clip-text text-transparent">Your Security.</h1>
-                </div>
-                <div className="absolute bottom-8 left-9 z-20 text-white">
-                    <p className="text-sm font-base">Take control of your dataset, ensuring only you and </p>
-                    <p className="text-sm font-base">your team have access to the insights!</p>
+                    <motion.h1
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.4 }}
+                        className="text-5xl font-bold bg-gradient-to-r from-[#FFFFFF] to-[#999999] bg-clip-text text-transparent"
+                    >
+                        Your Data.
+                    </motion.h1>
+                    <motion.h1
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.6 }}
+                        className="text-5xl font-bold bg-gradient-to-r from-[#FFFFFF] to-[#5B5B5B] bg-clip-text text-transparent"
+                    >
+                        Your Insights.
+                    </motion.h1>
+                    <motion.h1
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.8 }}
+                        className="text-5xl font-bold bg-gradient-to-r from-[#E6E6E6] to-[#454545] bg-clip-text text-transparent"
+                    >
+                        Your Security.
+                    </motion.h1>
                 </div>
 
-                {/* Bottom-right Participant Status */}
-                <div className="absolute top-24 left-9 z-20 text-white text-muted-foreground">
-                    <p className="font-semibold mb-4 text-[1.4rem] text-base">Participant Status</p>
-                    <div className="space-y-3">
-                        {Object.entries(safeStatusMap).map(([id, status]) => (
-                            <div className={`flex w-full text-sm align-center ${status ? "border-[#00C20A] bg-[#00C20A]/10" : "border-white bg-white/10"} border rounded-[3rem]`} key={id}>
-                                <div className={`p-2 px-4 pt-2.5 ${status ? "border-[#00C20A] bg-[#00C20A]/10" : "border-white bg-white/10"} border rounded-[3rem]`}>{status ? '✅' : '⏳'}</div> 
-                                <div className="p-2 px-4 pt-2.5 pr-5">{id === userId ? 'You' : id}</div>
-                            </div>
-                        ))}
-                    </div>
+                <div className="absolute bottom-8 left-9 z-20 text-white">
+                    <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 1.0 }}
+                        className="text-sm font-base"
+                    >
+                        Take control of your dataset, ensuring only you and
+                    </motion.p>
+                    <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 1.2 }}
+                        className="text-sm font-base"
+                    >
+                        your team have access to the insights!
+                    </motion.p>
+                </div>
+
+                {/* Participant Status Card */}
+                <div className="absolute top-16 z-30 w-[90%] max-w-md">
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                    >
+                        <Card className="bg-transparent">
+                            <CardContent className="p-6 px-8">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="p-2 bg-white/10 rounded-lg">
+                                        <User className="w-5 h-5 text-white" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg font-semibold text-white">Participants</h3>
+                                        <p className="text-white/60 text-sm">Session status overview</p>
+                                    </div>
+                                </div>
+                                <div className="space-y-3">
+                                    {Object.entries(safeStatusMap).map(([id, status]) => (
+                                        <motion.div
+                                            key={id}
+                                            initial={{ opacity: 0, scale: 0.95 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            transition={{ duration: 0.3 }}
+                                            className={`flex items-center justify-between p-3 rounded-xl max-w-md border transition-all duration-300 ${
+                                                status 
+                                                    ? "bg-green-500/10 border-green-500/20" 
+                                                    : "bg-white/5 border-white/20"
+                                            }`}
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <div className={`p-1.5 rounded-full ${
+                                                    status ? "bg-green-500/20" : "bg-white/10"
+                                                }`}>
+                                                    {status ? (
+                                                        <CheckCircle2 className="w-3 h-3 text-green-400" />
+                                                    ) : (
+                                                        <Clock className="w-3 h-3 text-white/60" />
+                                                    )}
+                                                </div>
+                                                <span className="text-white text-sm font-medium">
+                                                    {id === userId ? 'You' : `User ${id.slice(0, 8)}`}
+                                                </span>
+                                            </div>
+                                            <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                                status 
+                                                    ? "bg-green-500/20 text-green-400" 
+                                                    : "bg-white/10 text-white/60"
+                                            }`}>
+                                                {status ? 'Ready' : 'Waiting'}
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </motion.div>
                 </div>
 
                 {/* Illustration Image */}
-                <img
-                    src={illustrationImg}
-                    className="z-0 h-full w-full object-cover"
-                    alt="Illustration"
-                    draggable="false"
-                />
+                <div className="z-0 h-full w-full absolute top-0">
+                    <img
+                        src={illustrationImg}
+                        className="object-cover"
+                        alt="Illustration"
+                        draggable="false"
+                    />
+                </div>
             </div>
 
             {/* Right Pane */}
