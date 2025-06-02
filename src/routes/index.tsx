@@ -2,7 +2,7 @@ import React from 'react';
 import { createBrowserRouter, Outlet, RouteObject } from 'react-router-dom';
 import { Home, Log, Role, Result } from '@/pages';
 import TestModel from '@/pages/TestModel';
-import FormUploadWrapper from '@/wrappers/FormUploadWrapper';
+import { FormUploadWrapper, FormUploadWrapper2 } from '@/wrappers/FormUploadWrapper';
 import { RouteGuard } from '@/components';
 
 const MainLayout: React.FC = () => (
@@ -39,6 +39,14 @@ const routes: RouteObject[] = [
                 element: (
                     <RouteGuard requiredPath="form-upload">
                         <FormUploadWrapper />
+                    </RouteGuard>
+                ) 
+            },
+            { 
+                path: 'form2/:id', 
+                element: (
+                    <RouteGuard requiredPath="form-upload">
+                        <FormUploadWrapper2 />
                     </RouteGuard>
                 ) 
             },
