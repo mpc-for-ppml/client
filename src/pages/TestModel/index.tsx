@@ -207,13 +207,14 @@ export default function TestModel() {
 						<Button
 							variant="ghost"
 							onClick={() => navigate(`/result/${id}`)}
-							className="mb-1 w-44 text-white"
+							className="mb-2 w-44 text-white hover:text-white hover:font-semibold hover:bg-white/10 z-50"
 						>
-							← &nbsp; Back to Results
+							<ChevronRight className="w-4 h-4 mr-2 rotate-180" />
+							Back to Results
 						</Button>
 						
 						<div className="flex items-center gap-5 mb-1">
-							<div className="p-2 bg-white/20 rounded-lg">
+							<div className="p-2 bg-gradient-to-br from-main-blue/20 to-main-yellow/20 border border-white/10 rounded-xl">
 								<FlaskConical className="w-8 h-8 text-primary text-white" />
 							</div>
 							<h1 className="text-5xl font-semibold leading-tight mb-1.5 text-white">

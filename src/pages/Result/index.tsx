@@ -168,7 +168,7 @@ export const Result: React.FC = () => {
                     <CardContent className="flex items-center items-center justify-between w-full">
                         <div className="flex flex-col w-[40%]">
                             <div className="flex items-center gap-5 mb-1">
-                                <div className="p-2 bg-white/20 rounded-lg">
+                                <div className="p-2 bg-gradient-to-br from-main-blue/20 to-main-yellow/20 border border-white/10 rounded-xl">
                                     <Sparkle className="w-8 h-8 text-primary text-white" />
                                 </div>
                                 <h1 className="text-5xl font-semibold leading-tight mb-1.5 text-white">

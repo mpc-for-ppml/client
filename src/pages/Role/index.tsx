@@ -101,7 +101,7 @@ export const Role: React.FC = () => {
                     className="text-center pt-12"
                 >
                     <div className="flex items-center justify-center gap-3 mb-2">
-                        <div className="p-2 bg-white/20 rounded-lg">
+                        <div className="p-2 bg-gradient-to-br from-main-blue/20 to-main-yellow/20 border border-white/10 rounded-xl">
                             <PersonStanding className="w-6 h-6 text-white" />
                         </div>
                     </div>
@@ -142,7 +142,7 @@ export const Role: React.FC = () => {
                                     transition={{ duration: 0.5, ease: "easeInOut" }}
                                 >
                                 <Card
-                                    className={`w-full h-full cursor-pointer transition-all duration-500 ${
+                                    className={`w-full h-full border border-white/30 cursor-pointer transition-all duration-500 ${
                                         userType === "lead"
                                             ? "bg-gradient-to-br from-main-blue/30 to-main-blue/20 border-main-blue/50 shadow-lg shadow-main-blue/20"
                                             : "bg-white/10 border-white/20 hover:bg-white/15"
@@ -190,7 +190,7 @@ export const Role: React.FC = () => {
                                     transition={{ duration: 0.5, ease: "easeInOut" }}
                                 >
                                 <Card
-                                    className={`w-full h-full cursor-pointer transition-all duration-500 ${
+                                    className={`w-full h-full border border-white/30 cursor-pointer transition-all duration-500 ${
                                         userType === "participant"
                                             ? "bg-gradient-to-br from-main-yellow/30 to-main-yellow/20 border-main-yellow/50 shadow-lg shadow-main-yellow/20"
                                             : "bg-white/10 border-white/20 hover:bg-white/15"
@@ -221,178 +221,178 @@ export const Role: React.FC = () => {
                             </motion.div>
                         </motion.div>
 
-                    {/* Action Panel */}
+                        {/* Action Panel */}
                         <AnimatePresence>
-                        {userType && (
-                            <motion.div
-                                initial={{ opacity: 0, x: 30, scale: 0.95 }}
-                                animate={{ opacity: 1, x: 0, scale: 1 }}
-                                exit={{ opacity: 0, x: 30, scale: 0.95 }}
-                                transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
-                                className="w-full max-w-md z-50"
-                            >
-                            <Card className="bg-white/10 border-white/20 backdrop-blur-md rounded-2xl p-4">
-                                <CardContent className="space-y-3 p-3 px-5">
-                                    {userType === 'lead' && (
-                                        <>
-                                            <div className="flex items-center gap-3 mb-3">
-                                                <div className="p-1.5 bg-main-blue/20 rounded-lg border border-main-blue/30">
-                                                    <Crown className="w-4 h-4 text-main-blue" />
-                                                </div>
-                                                <div>
-                                                    <h3 className="text-base text-white font-semibold">Leader Settings</h3>
-                                                    <p className="text-white/60 text-xs">Configure your training session</p>
-                                                </div>
-                                            </div>
-                                            
-                                            <div className="space-y-2">
-                                                <div className="flex items-center justify-between">
-                                                    <Label className="text-xs font-medium text-white/90">
-                                                        Total Participants
-                                                    </Label>
-                                                    <Tooltip delayDuration={0}>
-                                                        <TooltipTrigger>
-                                                            <Info className="h-3 w-3 text-white/40 hover:text-white/60 transition-colors" />
-                                                        </TooltipTrigger>
-                                                        <TooltipContent className="bg-white text-black max-w-[200px]">
-                                                            <p>Number of parties including yourself (min: 2, max: {MAX_PARTICIPANTS})</p>
-                                                        </TooltipContent>
-                                                    </Tooltip>
-                                                </div>
-                                                <div className="relative">
-                                                    <UserCheck className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-                                                    <Input
-                                                        type="number"
-                                                        step="any"
-                                                        placeholder="2"
-                                                        value={participantCount}
-                                                        onChange={e => setParticipantCount(
-                                                            Math.max(2, Math.min(MAX_PARTICIPANTS, parseInt(e.target.value) || 2))
-                                                        )}
-                                                        className="bg-black/20 border-white/20 text-white placeholder:text-white/40 focus:border-main-blue focus:bg-black/30 transition-all duration-300 rounded-xl pl-10 py-2 text-sm"
-                                                    />
-                                                    <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                                                        <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-                                                            participantCount >= 2 ? 'bg-green-400' : 'bg-white/20'
-                                                        }`} />
+                            {userType && (
+                                <motion.div
+                                    initial={{ opacity: 0, x: 30, scale: 0.95 }}
+                                    animate={{ opacity: 1, x: 0, scale: 1 }}
+                                    exit={{ opacity: 0, x: 30, scale: 0.95 }}
+                                    transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
+                                    className="w-full max-w-md z-50"
+                                >
+                                <Card className="bg-white/10 border border-white/20 backdrop-blur-md rounded-2xl p-4">
+                                    <CardContent className="space-y-3 p-3 px-5">
+                                        {userType === 'lead' && (
+                                            <>
+                                                <div className="flex items-center gap-3 mb-3">
+                                                    <div className="p-1.5 bg-main-blue/20 rounded-lg border border-main-blue/30">
+                                                        <Crown className="w-4 h-4 text-main-blue" />
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="text-base text-white font-semibold">Leader Settings</h3>
+                                                        <p className="text-white/60 text-xs">Configure your training session</p>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            
-                                            <Button 
-                                                onClick={handleGenerateSession} 
-                                                className='w-full bg-gradient-to-r from-main-yellow to-main-yellow/80 hover:from-main-yellow/90 hover:to-main-yellow/70 text-black font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 py-2 text-sm'
-                                            >
-                                                <Hash className="w-4 h-4" />
-                                                Generate Session ID
-                                            </Button>
-                                            
-                                            {sessionId && (
-                                                <motion.div
-                                                    initial={{ opacity: 0, scale: 0.95 }}
-                                                    animate={{ opacity: 1, scale: 1 }}
-                                                    className="space-y-2"
-                                                >
+                                                
+                                                <div className="space-y-2">
+                                                    <div className="flex items-center justify-between">
+                                                        <Label className="text-xs font-medium text-white/90">
+                                                            Total Participants
+                                                        </Label>
+                                                        <Tooltip delayDuration={0}>
+                                                            <TooltipTrigger>
+                                                                <Info className="h-3 w-3 text-white/40 hover:text-white/60 transition-colors" />
+                                                            </TooltipTrigger>
+                                                            <TooltipContent className="bg-white text-black max-w-[200px]">
+                                                                <p>Number of parties including yourself (min: 2, max: {MAX_PARTICIPANTS})</p>
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    </div>
                                                     <div className="relative">
+                                                        <UserCheck className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
                                                         <Input
-                                                            value={sessionId}
-                                                            readOnly
-                                                            className="bg-black/20 border-white/20 text-white placeholder:text-white/40 transition-all duration-300 rounded-xl pl-4 pr-12 py-2 font-mono text-xs"
+                                                            type="number"
+                                                            step="any"
+                                                            placeholder="2"
+                                                            value={participantCount}
+                                                            onChange={e => setParticipantCount(
+                                                                Math.max(2, Math.min(MAX_PARTICIPANTS, parseInt(e.target.value) || 2))
+                                                            )}
+                                                            className="bg-black/20 border-white/20 text-white placeholder:text-white/40 focus:border-main-blue focus:bg-black/30 transition-all duration-300 rounded-xl pl-10 py-2 text-sm"
                                                         />
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => { navigator.clipboard.writeText(sessionId); setCopied(true); }}
-                                                            className={`absolute right-3 top-1/2 -translate-y-1/2 transition-all duration-300 ${
-                                                                copied ? 'text-green-400' : 'text-white/60 hover:text-white'
-                                                            }`}
-                                                        >
-                                                            <Copy size={16} />
-                                                        </button>
+                                                        <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                                            <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                                                                participantCount >= 2 ? 'bg-green-400' : 'bg-white/20'
+                                                            }`} />
+                                                        </div>
                                                     </div>
-                                                    {!copied && (
-                                                        <p className="text-xs text-main-yellow flex items-center gap-2">
-                                                            <Info className="w-3 h-3" />
-                                                            Copy your session ID before proceeding
-                                                        </p>
-                                                    )}
-                                                </motion.div>
-                                            )}
-                                        </>
-                                    )}
+                                                </div>
+                                                
+                                                <Button 
+                                                    onClick={handleGenerateSession} 
+                                                    className='w-full bg-gradient-to-r from-main-yellow to-main-yellow/80 hover:from-main-yellow/90 hover:to-main-yellow/70 text-black font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 py-2 text-sm'
+                                                >
+                                                    <Hash className="w-4 h-4" />
+                                                    Generate Session ID
+                                                </Button>
+                                                
+                                                {sessionId && (
+                                                    <motion.div
+                                                        initial={{ opacity: 0, scale: 0.95 }}
+                                                        animate={{ opacity: 1, scale: 1 }}
+                                                        className="space-y-2"
+                                                    >
+                                                        <div className="relative">
+                                                            <Input
+                                                                value={sessionId}
+                                                                readOnly
+                                                                className="bg-black/20 border-white/20 text-white placeholder:text-white/40 transition-all duration-300 rounded-xl pl-4 pr-12 py-2 font-mono text-xs"
+                                                            />
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => { navigator.clipboard.writeText(sessionId); setCopied(true); }}
+                                                                className={`absolute right-3 top-1/2 -translate-y-1/2 transition-all duration-300 ${
+                                                                    copied ? 'text-green-400' : 'text-white/60 hover:text-white'
+                                                                }`}
+                                                            >
+                                                                <Copy size={16} />
+                                                            </button>
+                                                        </div>
+                                                        {!copied && (
+                                                            <p className="text-xs text-main-yellow flex items-center gap-2">
+                                                                <Info className="w-3 h-3" />
+                                                                Copy your session ID before proceeding
+                                                            </p>
+                                                        )}
+                                                    </motion.div>
+                                                )}
+                                            </>
+                                        )}
 
-                                    {userType === 'participant' && (
-                                        <>
-                                            <div className="flex items-center gap-3 mb-3">
-                                                <div className="p-1.5 bg-main-yellow/20 rounded-lg border border-main-yellow/30">
-                                                    <Users className="w-4 h-4 text-main-yellow" />
-                                                </div>
-                                                <div>
-                                                    <h3 className="text-base text-white font-semibold">Participant Settings</h3>
-                                                    <p className="text-white/60 text-xs">Join an existing session</p>
-                                                </div>
-                                            </div>
-                                            
-                                            <div className="space-y-2">
-                                                <div className="flex items-center justify-between">
-                                                    <Label className="text-xs font-medium text-white/90">
-                                                        Session ID
-                                                    </Label>
-                                                    <Tooltip delayDuration={0}>
-                                                        <TooltipTrigger>
-                                                            <Info className="h-3 w-3 text-white/40 hover:text-white/60 transition-colors" />
-                                                        </TooltipTrigger>
-                                                        <TooltipContent className="bg-white text-black max-w-[200px]">
-                                                            <p>Enter the session ID provided by your leader</p>
-                                                        </TooltipContent>
-                                                    </Tooltip>
-                                                </div>
-                                                <div className="relative">
-                                                    <Hash className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-                                                    <Input
-                                                        placeholder="Enter session ID"
-                                                        value={sessionId}
-                                                        onChange={e => setSessionId(e.target.value)}
-                                                        className="bg-black/20 border-white/20 text-white placeholder:text-white/40 focus:border-main-yellow focus:bg-black/30 transition-all duration-300 rounded-xl pl-10 font-mono text-sm py-2"
-                                                    />
-                                                    <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                                                        <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-                                                            sessionId ? 'bg-green-400' : 'bg-white/20'
-                                                        }`} />
+                                        {userType === 'participant' && (
+                                            <>
+                                                <div className="flex items-center gap-3 mb-3">
+                                                    <div className="p-1.5 bg-main-yellow/20 rounded-lg border border-main-yellow/30">
+                                                        <Users className="w-4 h-4 text-main-yellow" />
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="text-base text-white font-semibold">Participant Settings</h3>
+                                                        <p className="text-white/60 text-xs">Join an existing session</p>
                                                     </div>
                                                 </div>
-                                                <p className="text-xs text-white/50">
-                                                    Example: fd7f1f66-6736-4967-ad80-7fa97634841c
+                                                
+                                                <div className="space-y-2">
+                                                    <div className="flex items-center justify-between">
+                                                        <Label className="text-xs font-medium text-white/90">
+                                                            Session ID
+                                                        </Label>
+                                                        <Tooltip delayDuration={0}>
+                                                            <TooltipTrigger>
+                                                                <Info className="h-3 w-3 text-white/40 hover:text-white/60 transition-colors" />
+                                                            </TooltipTrigger>
+                                                            <TooltipContent className="bg-white text-black max-w-[200px]">
+                                                                <p>Enter the session ID provided by your leader</p>
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    </div>
+                                                    <div className="relative">
+                                                        <Hash className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                                                        <Input
+                                                            placeholder="Enter session ID"
+                                                            value={sessionId}
+                                                            onChange={e => setSessionId(e.target.value)}
+                                                            className="bg-black/20 border-white/20 text-white placeholder:text-white/40 focus:border-main-yellow focus:bg-black/30 transition-all duration-300 rounded-xl pl-10 font-mono text-sm py-2"
+                                                        />
+                                                        <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                                            <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                                                                sessionId ? 'bg-green-400' : 'bg-white/20'
+                                                            }`} />
+                                                        </div>
+                                                    </div>
+                                                    <p className="text-xs text-white/50">
+                                                        Example: fd7f1f66-6736-4967-ad80-7fa97634841c
+                                                    </p>
+                                                </div>
+                                            </>
+                                        )}
+
+                                        {error && (
+                                            <motion.div
+                                                initial={{ opacity: 0, scale: 0.95 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                className="bg-red-500/10 border border-red-500/20 rounded-xl p-2 px-3"
+                                            >
+                                                <p className="text-xs text-red-400 flex items-center gap-2">
+                                                    <Info className="w-3 h-3" />
+                                                    {error}
                                                 </p>
-                                            </div>
-                                        </>
-                                    )}
-
-                                    {error && (
-                                        <motion.div
-                                            initial={{ opacity: 0, scale: 0.95 }}
-                                            animate={{ opacity: 1, scale: 1 }}
-                                            className="bg-red-500/10 border border-red-500/20 rounded-xl p-2 px-3"
+                                            </motion.div>
+                                        )}
+                                        
+                                        <Button
+                                            className="w-full bg-gradient-to-r from-main-blue to-main-blue/80 hover:from-main-blue/90 hover:to-main-blue/70 text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 py-2 text-sm"
+                                            onClick={handleProceed}
+                                            disabled={!sessionId || (userType==='lead' && !copied)}
                                         >
-                                            <p className="text-xs text-red-400 flex items-center gap-2">
-                                                <Info className="w-3 h-3" />
-                                                {error}
-                                            </p>
-                                        </motion.div>
-                                    )}
-                                    
-                                    <Button
-                                        className="w-full bg-gradient-to-r from-main-blue to-main-blue/80 hover:from-main-blue/90 hover:to-main-blue/70 text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 py-2 text-sm"
-                                        onClick={handleProceed}
-                                        disabled={!sessionId || (userType==='lead' && !copied)}
-                                    >
-                                        <Sparkles className="w-4 h-4" />
-                                        Proceed to Form
-                                        <ChevronRight className="w-4 h-4" />
-                                    </Button>
-                                </CardContent>
-                            </Card>
-                            </motion.div>
-                        )}
+                                            <Sparkles className="w-4 h-4" />
+                                            Proceed to Form
+                                            <ChevronRight className="w-4 h-4" />
+                                        </Button>
+                                    </CardContent>
+                                </Card>
+                                </motion.div>
+                            )}
                         </AnimatePresence>
                     </div>
                 </motion.div>
