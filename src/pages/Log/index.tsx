@@ -10,14 +10,14 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { CheckCircle2, Sparkles, Copy, Check } from "lucide-react";
 
 const milestones = [
-    "Data Preprocessing",
-    "Secure ID Exchange",
-    "Data Intersection",
-    "Privacy Filtering",
-    "Model Initialization",
-    "Federated Training",
-    "Model Evaluation",
-    "Result Aggregation",
+    { label: "Data Preprocessing", keyword: "Applied" },
+    { label: "Secure ID Exchange", keyword: "Received" },
+    { label: "Data Intersection", keyword: "Found" },
+    { label: "Privacy Filtering", keyword: "Completed" },
+    { label: "Model Initialization", keyword: "Loaded" },
+    { label: "Federated Training", keyword: "Training complete" },
+    { label: "Model Evaluation", keyword: "Evaluation complete" },
+    { label: "Result Aggregation", keyword: "MPyC task complete" },
 ];
 
 export const Log: React.FC = () => {
@@ -47,11 +47,23 @@ export const Log: React.FC = () => {
         }
     };
 
-    // Filter logs that contain a green check
-    const successLogs = messages.filter(({ message }) => message.includes("✅"));
-
-    // Check if each milestone is reached in order based on logs
-    const reached = milestones.map((_, idx) => idx < successLogs.length);
+    // Check which milestones have been reached based on keywords
+    // Find the highest milestone reached
+    let highestMilestoneIndex = -1;
+    milestones.forEach((milestone, index) => {
+        const isReached = messages.some(({ message }) => 
+            message.includes("✅") && message.includes(milestone.keyword)
+        );
+        if (isReached) {
+            highestMilestoneIndex = index;
+        }
+    });
+    
+    // Mark all milestones up to the highest one as reached
+    const reached = milestones.map((_, idx) => idx <= highestMilestoneIndex);
+    
+    // Count how many milestones have been reached
+    const reachedCount = highestMilestoneIndex + 1;
     
     // Check if MPC task is completed
     useEffect(() => {
@@ -183,7 +195,7 @@ export const Log: React.FC = () => {
                             <div className="relative flex items-start justify-between">
                                 {milestones.map((milestone, idx) => (
                                     <div 
-                                        key={milestone} 
+                                        key={milestone.label} 
                                         className="flex flex-col items-center"
                                         style={{ width: `${100 / milestones.length}%` }}
                                     >
@@ -196,7 +208,7 @@ export const Log: React.FC = () => {
                                         />
                                         {/* Label */}
                                         <span className="text-xs mt-2 text-center max-w-[80px] leading-tight">
-                                            {milestone}
+                                            {milestone.label}
                                         </span>
                                     </div>
                                 ))}
@@ -208,13 +220,13 @@ export const Log: React.FC = () => {
                                 }} />
                                 
                                 {/* Progress line */}
-                                {successLogs.length > 1 && (
+                                {reachedCount > 1 && (
                                     <div 
                                         className="absolute top-3 h-0.5 bg-main-yellow transition-all duration-500"
                                         style={{
                                             left: `${50 / milestones.length}%`,
                                             width: `${Math.min(
-                                                (successLogs.length - 1) * (100 - (100 / milestones.length)) / (milestones.length - 1),
+                                                (reachedCount - 1) * (100 - (100 / milestones.length)) / (milestones.length - 1),
                                                 100 - (100 / milestones.length)
                                             )}%`
                                         }}
@@ -250,7 +262,7 @@ export const Log: React.FC = () => {
                                             "text-gray-400"
                                         }`}
                                     >
-                                        [{new Date(timestamp).toLocaleTimeString()}] {message.replace("[Party 0] ", "")}
+                                        [{new Date(timestamp).toLocaleTimeString()}] {message.replace(/\[Party \d+\] /g, "")}
                                     </div>
                                 );
                             })
