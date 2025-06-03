@@ -24,14 +24,18 @@ export function useSession() {
         if (state.session) {
             data = state.session;
             sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(data));
+            setSession(data);
         } else {
             const stored = sessionStorage.getItem(SESSION_STORAGE_KEY);
-            if (stored) data = JSON.parse(stored);
+            if (stored) {
+                data = JSON.parse(stored);
+                setSession(data);
+            } else if (location.pathname !== '/') {
+                // Only navigate if we're not already on the home page
+                navigate('/');
+            }
         }
-
-        if (!data) navigate('/');
-        else setSession(data);
-    }, [state, navigate]);
+    }, [state.session, location.pathname, navigate]);
 
     const validateSession = async (id: string) => {
         try {

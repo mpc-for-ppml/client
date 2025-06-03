@@ -197,7 +197,7 @@ export const RouteGuard: React.FC<RouteGuardProps> = ({ children, requiredPath }
             isMounted = false;
             if (checkTimeout) clearTimeout(checkTimeout);
         };
-    }, [sessionId, session?.userId, requiredPath, navigate]);
+    }, [sessionId, session, requiredPath, navigate, location.state, accessChecked]);
 
     const handleRedirect = () => {
         if (redirectInfo) {

@@ -55,49 +55,82 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
     }, []);
 
     useEffect(() => {
-        let socket: WebSocket;
+        let socket: WebSocket | null = null;
         let retries = 0;
+        let isComponentMounted = true;
+        let connectionTimeout: NodeJS.Timeout;
       
         const connect = () => {
-            socket = new WebSocket(`${WS_URL}/ws/${sessionId}`);
-            socketRef.current = socket;
+            if (!isComponentMounted) return;
+            
+            try {
+                socket = new WebSocket(`${WS_URL}/ws/${sessionId}`);
+                socketRef.current = socket;
 
-            socket.onopen = () => {
-                // reset retry counter on success
-                retries = 0;
-                const initPayload = {
-                    userId,
-                    userType,
-                    orgName: userType === 'lead' ? orgName : '',
-                    status: false
+                socket.onopen = () => {
+                    if (!isComponentMounted || !socket) return;
+                    // reset retry counter on success
+                    retries = 0;
+                    const initPayload = {
+                        userId,
+                        userType,
+                        orgName: userType === 'lead' ? orgName : '',
+                        status: false
+                    };
+                    socket.send(JSON.stringify(initPayload));
                 };
-                socket.send(JSON.stringify(initPayload));
-            };
 
-            socket.onmessage = ({ data }) => {
-                const parsed = JSON.parse(data);
-                const { statusMap, proceed, training } = parsed;
+                socket.onmessage = ({ data }) => {
+                    if (!isComponentMounted) return;
+                    try {
+                        const parsed = JSON.parse(data);
+                        const { statusMap, proceed, training } = parsed;
 
-                if (statusMap) setStatusMap(statusMap);
-                if (proceed) setShowOverlay(true);
-                if (training) navigate(`/log/${sessionId}`);
-            };
-        
-            socket.onclose = () => {
+                        if (statusMap) setStatusMap(statusMap);
+                        if (proceed) setShowOverlay(true);
+                        if (training) navigate(`/log/${sessionId}`);
+                    } catch (error) {
+                        console.error('WebSocket message parse error:', error);
+                    }
+                };
+            
+                socket.onclose = (event) => {
+                    if (!isComponentMounted) return;
+                    
+                    // Only retry if it wasn't a normal closure
+                    if (event.code !== 1000 && retries < MAX_RECONNECT) {
+                        const delay = RECONNECT_BASE * 2 ** retries;
+                        retries += 1;
+                        console.log(`WebSocket closed. Reconnecting in ${delay}ms... (attempt ${retries}/${MAX_RECONNECT})`);
+                        connectionTimeout = setTimeout(connect, delay);
+                    }
+                };
+            
+                socket.onerror = (error) => {
+                    console.error("WebSocket error:", error);
+                    // Don't set error state here as it will be handled by onclose
+                };
+            } catch (error) {
+                console.error("WebSocket connection error:", error);
                 if (retries < MAX_RECONNECT) {
                     const delay = RECONNECT_BASE * 2 ** retries;
                     retries += 1;
-                    setTimeout(connect, delay);
+                    connectionTimeout = setTimeout(connect, delay);
                 }
-            };
-        
-            // socket.onerror = () => setError("WebSocket error");
+            }
         };
       
-        connect();
+        // Delay initial connection to ensure component is fully mounted
+        connectionTimeout = setTimeout(connect, 100);
       
-        return () => socket && socket.close();
-    }, [sessionId]);
+        return () => {
+            isComponentMounted = false;
+            if (connectionTimeout) clearTimeout(connectionTimeout);
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.close(1000, 'Component unmounting');
+            }
+        };
+    }, [sessionId, userId, userType, navigate]);
 
     const handleSubmit = async () => {
         setError(null);
@@ -430,11 +463,11 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                                             <label htmlFor="file-upload" className="block cursor-pointer">
                                                 <div className={`border-2 border-dashed rounded-xl p-6 flex flex-col items-center transition-all duration-300 ${
                                                     file 
-                                                        ? "border-green-500/50 bg-green-500/10" 
+                                                        ? "border-main-blue/50 bg-main-blue/10" 
                                                         : "border-white/30 bg-white/5 hover:border-white/50 hover:bg-white/10"
                                                 }`}>
                                                     {file ? (
-                                                        <CheckCircle2 className="w-8 h-8 text-green-400 mb-3" />
+                                                        <CheckCircle2 className="w-8 h-8 text-main-blue mb-3" />
                                                     ) : (
                                                         <Upload className="w-8 h-8 text-white/50 mb-3" />
                                                     )}
@@ -764,27 +797,41 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                                                         <div className="grid grid-cols-2 gap-3">
                                                             <div className="space-y-1.5">
                                                                 <Label className="text-xs font-medium text-white/80">Learning Rate</Label>
-                                                                <Input
-                                                                    type="number"
-                                                                    step="0.001"
-                                                                    min={0}
-                                                                    value={learningRate}
-                                                                    onChange={(e) => setLearningRate(e.target.value)}
-                                                                    placeholder="0.01"
-                                                                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-8 text-sm hover:bg-white/10 transition-colors focus:border-main-blue"
-                                                                />
+                                                                <div className="relative">
+                                                                    <Input
+                                                                        type="number"
+                                                                        step="0.001"
+                                                                        min={0}
+                                                                        value={learningRate}
+                                                                        onChange={(e) => setLearningRate(e.target.value)}
+                                                                        placeholder="0.01"
+                                                                        className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-8 text-sm hover:bg-white/10 transition-colors focus:border-main-blue pr-10"
+                                                                    />
+                                                                    <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                                                        <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                                                                            learningRate ? 'bg-green-400' : 'bg-white/20'
+                                                                        }`} />
+                                                                    </div>
+                                                                </div>
                                                             </div>
 
                                                             <div className="space-y-1.5">
                                                                 <Label className="text-xs font-medium text-white/80">Epochs</Label>
-                                                                <Input
-                                                                    type="number"
-                                                                    min={1}
-                                                                    value={epochs}
-                                                                    onChange={(e) => setEpochs(e.target.value)}
-                                                                    placeholder="100"
-                                                                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-8 text-sm hover:bg-white/10 transition-colors focus:border-main-blue"
-                                                                />
+                                                                <div className="relative">
+                                                                    <Input
+                                                                        type="number"
+                                                                        min={1}
+                                                                        value={epochs}
+                                                                        onChange={(e) => setEpochs(e.target.value)}
+                                                                        placeholder="100"
+                                                                        className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-8 text-sm hover:bg-white/10 transition-colors focus:border-main-blue pr-10"
+                                                                    />
+                                                                    <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                                                        <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                                                                            epochs ? 'bg-green-400' : 'bg-white/20'
+                                                                        }`} />
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -810,6 +857,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
 
                                                 {/* Action Button */}
                                                 <Button 
+                                                    disabled={!learningRate || !epochs}
                                                     className="w-full mt-5 h-10 bg-gradient-to-r from-main-blue to-main-blue/80 hover:from-main-blue/90 hover:to-main-blue/70 text-white font-semibold rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02]" 
                                                     onClick={handleTrain}
                                                 >
