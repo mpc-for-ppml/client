@@ -908,7 +908,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                                                                                 </SelectContent>
                                                                             </Select>
                                                                         ) : (
-                                                                            <div className="space-y-2 max-h-32 overflow-y-auto">
+                                                                            <div className="space-y-2 max-h-10 overflow-y-auto">
                                                                                 {commonColumnsData.common_columns
                                                                                     .filter(col => col.is_potential_identifier)
                                                                                     .map(col => (

@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import Batik from "@/assets/icons/batik.png";
-import { ChevronRight, Shield, Users, Zap, Sparkles } from 'lucide-react';
+import { ChevronRight, Shield, Users, Zap, Sparkles, FlaskConical } from 'lucide-react';
+import { GearIcon } from '@radix-ui/react-icons';
 
 export const Home: React.FC = () => {
     const navigate = useNavigate();
@@ -167,6 +168,34 @@ export const Home: React.FC = () => {
                         </div>
                         <h3 className="text-lg font-semibold mb-1 text-white">{features[1].title}</h3>
                         <p className="text-white/80 text-sm">{features[1].description}</p>
+                    </CardContent>
+                </Card>
+            </motion.div>
+
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 0.7, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+                whileHover={{ scale: 1.05 }}
+                className="absolute bottom-12 right-[18rem] transform z-20 group"
+            >
+                <Card className={`bg-white/5 border border-white/20 backdrop-blur-md hover:shadow-xl transition-all duration-300 rounded-2xl hover:rounded-3xl`}>
+                    <CardContent className="p-4 bg-gradient-to-br from-main-blue/20 to-main-yellow/20 rounded-2xl">
+                        <FlaskConical className="w-8 h-8 text-primary text-white" />
+                    </CardContent>
+                </Card>
+            </motion.div>
+
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 0.7, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.0 }}
+                whileHover={{ scale: 1.05 }}
+                className="absolute top-24 right-[25rem] transform z-20 group"
+            >
+                <Card className={`bg-white/5 border border-white/20 backdrop-blur-md hover:shadow-xl transition-all duration-300 rounded-2xl hover:rounded-3xl`}>
+                    <CardContent className="p-4 bg-gradient-to-br from-main-blue/20 to-main-yellow/20 rounded-2xl">
+                        <GearIcon className="w-10 h-10 text-primary text-white" />
                     </CardContent>
                 </Card>
             </motion.div>

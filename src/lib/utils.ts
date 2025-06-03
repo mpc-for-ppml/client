@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
  * Formats a duration in seconds to a human-readable format
  * @param seconds - The duration in seconds
  * @param showDecimals - Whether to show decimal places for seconds when under 1 minute
- * @returns A formatted string (e.g., "1h 2m 3s", "2m 15s", "45.5s")
+ * @returns A formatted string (e.g., "1h 2m", "2m 15s", "45.5s")
  */
 export function formatDuration(seconds: number, showDecimals: boolean = true): string {
   if (seconds < 0) return "0s";
@@ -24,18 +24,20 @@ export function formatDuration(seconds: number, showDecimals: boolean = true): s
     parts.push(`${hours}h`);
   }
   
-  if (minutes > 0) {
+  if (minutes > 0 || hours > 0) {
     parts.push(`${minutes}m`);
   }
   
-  // Show decimal places for seconds only when total duration is less than 1 minute
-  if (secs > 0 || parts.length === 0) {
-    if (hours === 0 && minutes === 0 && showDecimals) {
-      // For durations under 1 minute, show one decimal place
-      parts.push(`${secs.toFixed(2)}s`);
-    } else {
-      // For longer durations, use whole seconds
-      parts.push(`${Math.floor(secs)}s`);
+  // Only show seconds if duration is less than 1 hour
+  if (hours === 0) {
+    if (secs > 0 || parts.length === 0) {
+      if (minutes === 0 && showDecimals) {
+        // For durations under 1 minute, show decimal places
+        parts.push(`${secs.toFixed(2)}s`);
+      } else {
+        // For durations under 1 hour but over 1 minute, use whole seconds
+        parts.push(`${Math.floor(secs)}s`);
+      }
     }
   }
   
