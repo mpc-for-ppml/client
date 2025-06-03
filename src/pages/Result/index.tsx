@@ -164,18 +164,18 @@ export const Result: React.FC = () => {
                 transition={{ duration: 0.6 }}
                 className="z-50"
             >
-                <Card className="bg-transparent mt-4 w-full p-5 pb-3">
+                <Card className="bg-transparent mt-4 w-full p-5 pb-1">
                     <CardContent className="flex items-center items-center justify-between w-full">
                         <div className="flex flex-col w-[40%]">
-                            <div className="flex items-center gap-5 mb-1">
+                            <div className="flex items-center gap-3 mb-2">
                                 <div className="p-2 bg-gradient-to-br from-main-blue/20 to-main-yellow/20 border border-white/10 rounded-xl">
-                                    <Sparkle className="w-8 h-8 text-primary text-white" />
+                                    <Sparkle className="w-6 h-6 text-white" />
                                 </div>
-                                <h1 className="text-5xl font-semibold leading-tight mb-1.5 text-white">
+                                <h1 className="text-4xl font-semibold text-white">
                                     training summary.
                                 </h1>
                             </div>
-                            <h1 className="text-white">
+                            <h1 className="text-white/60 text-base">
                                 model final result and statistic displayed below
                             </h1>
                         </div>

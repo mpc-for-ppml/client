@@ -363,15 +363,15 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
             {/* Right Pane */}
             <div className="w-[53%] flex flex-col items-center justify-center min-h-screen p-4 space-y-6">
                 <div className="w-full max-w-lg">
-                    <div className="flex items-center gap-5 mb-1">
-                        <div className="p-2 bg-white/20 rounded-lg">
-                            <FileSpreadsheet className="w-8 h-8 text-primary text-white" />
+                    <div className="flex items-center gap-3 mb-2">
+                        <div className="p-2 bg-gradient-to-br from-main-blue/20 to-main-yellow/20 border border-white/10 rounded-xl">
+                            <FileSpreadsheet className="w-6 h-6 text-primary text-white" />
                         </div>
-                        <h1 className="text-5xl font-semibold leading-tight mb-1.5 text-white">
+                        <h1 className="text-4xl font-semibold text-white">
                             submit dataset.
                         </h1>
                     </div>
-                    <h1 className="text-white">
+                    <h1 className="text-white/60 text-base">
                         ready your data. once all join, we compute together
                     </h1>
 
@@ -463,11 +463,11 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                                             <label htmlFor="file-upload" className="block cursor-pointer">
                                                 <div className={`border-2 border-dashed rounded-xl p-6 flex flex-col items-center transition-all duration-300 ${
                                                     file 
-                                                        ? "border-main-blue/50 bg-main-blue/10" 
+                                                        ? "border-green-400/50 bg-green-400/10" 
                                                         : "border-white/30 bg-white/5 hover:border-white/50 hover:bg-white/10"
                                                 }`}>
                                                     {file ? (
-                                                        <CheckCircle2 className="w-8 h-8 text-main-blue mb-3" />
+                                                        <CheckCircle2 className="w-8 h-8 text-green-400 mb-3" />
                                                     ) : (
                                                         <Upload className="w-8 h-8 text-white/50 mb-3" />
                                                     )}

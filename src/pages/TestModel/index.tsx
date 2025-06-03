@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { motion, AnimatePresence } from "framer-motion";
-import { Upload, FileText, Loader2, Download, ChevronRight, Sparkles, Database, Info, FlaskConical, Eye, Target, BarChart3, Brain, Layers, Gauge, Users, Timer, TrendingUp, Binary, FileSpreadsheet } from "lucide-react";
+import { Upload, FileText, Loader2, Download, ChevronRight, Sparkles, Database, Info, FlaskConical, Eye, Target, BarChart3, Brain, Layers, Gauge, Users, Timer, TrendingUp, Binary, FileSpreadsheet, CheckCircle2 } from "lucide-react";
 import { FormApi } from "@/api";
 import { SessionResult } from "@/types";
 import { toast } from "react-toastify";
@@ -202,26 +202,26 @@ export default function TestModel() {
                 transition={{ duration: 0.6 }}
                 className="z-50"
 			>
-				<Card className="bg-transparent mt-4 w-full p-5 pb-2">
+				<Card className="bg-transparent mt-4 w-full p-5 pb-0">
 					<CardContent className="flex flex-col">
 						<Button
 							variant="ghost"
 							onClick={() => navigate(`/result/${id}`)}
-							className="mb-2 w-44 text-white hover:text-white hover:font-semibold hover:bg-white/10 z-50"
+							className="mb-3 w-44 text-white hover:text-white hover:font-semibold hover:bg-white/10 z-50"
 						>
 							<ChevronRight className="w-4 h-4 mr-2 rotate-180" />
 							Back to Results
 						</Button>
 						
-						<div className="flex items-center gap-5 mb-1">
+						<div className="flex items-center gap-3 mb-2">
 							<div className="p-2 bg-gradient-to-br from-main-blue/20 to-main-yellow/20 border border-white/10 rounded-xl">
-								<FlaskConical className="w-8 h-8 text-primary text-white" />
+								<FlaskConical className="w-6 h-6 text-primary text-white" />
 							</div>
-							<h1 className="text-5xl font-semibold leading-tight mb-1.5 text-white">
+							<h1 className="text-4xl font-semibold text-white">
                                 test your model.
                             </h1>
 						</div>
-						<h1 className="text-white">
+						<h1 className="text-white/60 text-base">
 							make predictions using your trained {modelType.toLowerCase()} model
 						</h1>
 					</CardContent>
@@ -377,6 +377,18 @@ export default function TestModel() {
 												transition={{ duration: 0.3 }}
 												className="space-y-4"
 											>
+												<Label className="text-sm font-medium text-white/90 flex items-center gap-2">
+													<FileSpreadsheet className="w-4 h-4" />
+													CSV Dataset
+													<Tooltip delayDuration={0}>
+														<TooltipTrigger>
+															<Info className="h-3 w-3 text-white/40 hover:text-white/60 transition-colors" />
+														</TooltipTrigger>
+														<TooltipContent className="bg-white text-black max-w-[200px]">
+															<p>Upload a CSV file containing your training data</p>
+														</TooltipContent>
+													</Tooltip>
+												</Label>
 												<input
 													type="file"
 													accept=".csv"
@@ -386,17 +398,33 @@ export default function TestModel() {
 													id="file-upload"
 												/>
 												<label htmlFor="file-upload" className="block cursor-pointer mt-2">
-													<div className="border-2 border-dashed border-white/50 rounded-lg p-4 flex flex-col items-center bg-white/10 hover:bg-white/5">
-														<FileSpreadsheet className="w-12 h-12 mx-auto mb-4 text-white/50" />
-														<p className="text-sm font-semibold text-white/50 mb-1">
-															Upload a CSV file with the same features as your training data
-														</p>
-														<p className="text-xs text-white/50 mb-3">
-															Required columns: {features.join(", ")}
-														</p>
-														<p className="text-sm font-normal text-white/70 text-center mt-1">
-															{file ? file.name : "You haven't uploaded anything!"}
-														</p>
+													<div className={`border-2 border-dashed rounded-xl p-6 flex flex-col items-center transition-all duration-300 ${
+														file 
+															? "border-green-400/50 bg-green-400/10" 
+															: "border-white/30 bg-white/5 hover:border-white/50 hover:bg-white/10"
+													}`}>
+														{file ? (
+															<>
+																<CheckCircle2 className="w-8 h-8 text-green-400 mb-3" />
+																<p className="text-sm font-semibold mb-1 text-green-400">
+																	File uploaded successfully!
+																</p>
+																<p className="text-xs text-white/60 text-center">{file.name}</p>
+															</>
+															) : (
+															<>
+																<Upload className="w-8 h-8 text-white/50 mb-3" />
+																<p className="text-sm font-semibold text-white/50 mb-1">
+																	Upload a CSV file with the same features as your training data
+																</p>
+																<p className="text-xs text-white/50 mb-3">
+																	Required columns: {features.join(', ')}
+																</p>
+																<p className="text-xs text-white/60 text-center">
+																	Drag and drop or click to browse
+																</p>
+															</>
+														)}
 													</div>
 												</label>
 											</motion.div>
