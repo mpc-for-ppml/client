@@ -11,13 +11,21 @@ import {
   SelectItem,
 } from "@/components/ui/select"
 import { FormApi } from '@/api';
-import { SessionData } from '@/types';
+import { SessionData, CommonColumnsResponse, IdentifierConfig } from '@/types';
 import { toast } from "react-toastify";
 import { WS_URL, RECONNECT_BASE, MAX_RECONNECT } from '@/constant';
 import illustrationImg from "@/assets/images/side2.png";
 import { RunConfig } from '@/types';
 import { CardContent } from '@/components/ui/card';
-import { Building, CheckCircle2, ChevronRight, Clock, Crown, Database, FileSpreadsheet, Info, Play, Settings, Sparkles, Upload, User, Users } from 'lucide-react';
+import { Building, CheckCircle2, ChevronRight, Clock, Crown, Database, FileSpreadsheet, Info, Play, Settings, Sparkles, Upload, User, Users, Key, AlertTriangle, Home } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId, participantCount }) => {
     const { id } = useParams<{ id: string }>();
@@ -42,6 +50,13 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
     const [learningRate, setLearningRate] = useState("0.01")
     const [epochs, setEpochs] = useState("100")
     const [isLogging, setIsLogging] = useState(false)
+
+    /* Usestate for identifier selection */
+    const [commonColumnsData, setCommonColumnsData] = useState<CommonColumnsResponse | null>(null);
+    const [identifierMode, setIdentifierMode] = useState<'single' | 'combined'>('single');
+    const [selectedIdentifiers, setSelectedIdentifiers] = useState<string[]>([]);
+    const [showNoCommonColumnsDialog, setShowNoCommonColumnsDialog] = useState(false);
+    const [isLoadingCommonColumns, setIsLoadingCommonColumns] = useState(false);
 
     // Safely handle cases where statusMap might be undefined/null
     const safeStatusMap = statusMap || {};
@@ -188,13 +203,48 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
         setFile(e.target.files?.[0]||null)
     }
 
+    const fetchCommonColumns = async () => {
+        setIsLoadingCommonColumns(true);
+        try {
+            const data = await FormApi.getCommonColumns(sessionId);
+            setCommonColumnsData(data);
+            
+            if (data.common_columns.length === 0) {
+                setShowNoCommonColumnsDialog(true);
+            } else {
+                // Auto-select first potential identifier
+                const firstIdentifier = data.common_columns.find(col => col.is_potential_identifier);
+                if (firstIdentifier) {
+                    setSelectedIdentifiers([firstIdentifier.name]);
+                }
+                setShowOverlay(true);
+                // Notify others that lead were proceeding
+                socketRef.current?.send(JSON.stringify({ userId, proceed: true }));
+            }
+        } catch (error) {
+            toast.error('Failed to fetch common columns');
+        } finally {
+            setIsLoadingCommonColumns(false);
+        }
+    };
+
     const handleProceed = async () => {
-        setShowOverlay(true);
-        // Notify others that lead were proceeding
-        socketRef.current?.send(JSON.stringify({ userId, proceed: true }));
+        if (userType === 'lead') {
+            await fetchCommonColumns();
+        } else {
+            setShowOverlay(true);
+            // Notify others that lead were proceeding
+            socketRef.current?.send(JSON.stringify({ userId, proceed: true }));
+        }
     };
 
     const handleTrain = async () => {
+        const identifierConfig: IdentifierConfig = {
+            mode: identifierMode,
+            columns: selectedIdentifiers,
+            separator: identifierMode === 'combined' ? '_' : undefined
+        };
+
         const payload: RunConfig = {
             userId: userId,
             normalizer: normalizer,
@@ -202,7 +252,8 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
             learningRate: parseFloat(learningRate),
             epochs: parseInt(epochs),
             label: label,
-            isLogging: isLogging
+            isLogging: isLogging,
+            identifierConfig: identifierConfig
         };
 
         await FormApi.run(sessionId, payload)
@@ -505,7 +556,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                                                             {uploaded ? 'Uploaded Successfully' : 'Upload Dataset'}
                                                         </Button>
                                                         <Button
-                                                            disabled={!isReady}
+                                                            disabled={!isReady || isLoadingCommonColumns}
                                                             onClick={handleProceed}
                                                             className={`flex items-center gap-2 font-semibold rounded-xl transition-all duration-300 ${
                                                                 isReady 
@@ -513,8 +564,21 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                                                                     : 'bg-white/10 text-white/50 cursor-not-allowed'
                                                             }`}
                                                         >
-                                                            <Play className="w-4 h-4" />
-                                                            Proceed to Training
+                                                            {isLoadingCommonColumns ? (
+                                                                <>
+                                                                    <motion.div
+                                                                        animate={{ rotate: 360 }}
+                                                                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                                                                        className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
+                                                                    />
+                                                                    Analyzing Columns...
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <Play className="w-4 h-4" />
+                                                                    Proceed to Training
+                                                                </>
+                                                            )}
                                                         </Button>
                                                     </div>
                                                 )
@@ -613,7 +677,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                                                 {uploaded ? 'Uploaded Successfully' : 'Upload Dataset'}
                                             </Button>
                                             <Button
-                                                disabled={!isReady}
+                                                disabled={!isReady || isLoadingCommonColumns}
                                                 onClick={handleProceed}
                                                 className={`flex items-center gap-2 font-semibold rounded-xl transition-all duration-300 ${
                                                     isReady 
@@ -621,8 +685,21 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                                                         : 'bg-white/10 text-white/50 cursor-not-allowed'
                                                 }`}
                                             >
-                                                <Play className="w-4 h-4" />
-                                                Proceed to Training
+                                                {isLoadingCommonColumns ? (
+                                                    <>
+                                                        <motion.div
+                                                            animate={{ rotate: 360 }}
+                                                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                                                            className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
+                                                        />
+                                                        Analyzing Columns...
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Play className="w-4 h-4" />
+                                                        Proceed to Training
+                                                    </>
+                                                )}
                                             </Button>
                                         </div>
                                     </motion.div>
@@ -722,7 +799,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                                     initial={{ opacity: 0, y: 40, scale: 0.95 }}
                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                     transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
-                                    className="w-full max-w-md"
+                                    className="w-full max-w-7xl"
                                 >
                                     {/* Compact Header */}
                                     <motion.div 
@@ -750,114 +827,245 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: 0.4 }}
                                     >
-                                        <Card className="bg-white/5 border border-white/10 backdrop-blur-sm shadow-2xl rounded-2xl">
-                                            <CardContent className="p-5">
-                                                <div className="space-y-4">
-                                                    {/* Algorithm Settings */}
-                                                    <div>
-                                                        <h3 className="text-xs font-medium text-white/90 mb-3 flex items-center gap-2">
-                                                            <div className="w-1 h-3 bg-main-blue rounded-full" />
-                                                            Algorithm Settings
-                                                        </h3>
-                                                        <div className="grid grid-cols-2 gap-3">
-                                                            <div className="space-y-1.5">
-                                                                <Label className="text-xs font-medium text-white/80">Normalizer</Label>
-                                                                <Select value={normalizer} onValueChange={setNormalizer}>
-                                                                    <SelectTrigger className="bg-white/5 border-white/20 text-white h-8 text-sm hover:bg-white/10 transition-colors">
-                                                                        <SelectValue placeholder="Select" />
-                                                                    </SelectTrigger>
-                                                                    <SelectContent>
-                                                                        <SelectItem value="minmax">MinMax</SelectItem>
-                                                                        <SelectItem value="zscore">Z-Score</SelectItem>
-                                                                    </SelectContent>
-                                                                </Select>
-                                                            </div>
+                                        <Card className="bg-white/5 border border-white/10 backdrop-blur-sm shadow-2xl rounded-2xl max-w-5xl mx-auto">
+                                            <CardContent className="p-6">
+                                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                                    {/* Left Column */}
+                                                    <div className="space-y-4">
+                                                        {/* Identifier Selection */}
+                                                        {commonColumnsData && commonColumnsData.common_columns.length > 0 && (
+                                                            <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                                                                <h3 className="text-sm font-medium text-white/90 mb-3 flex items-center gap-2">
+                                                                    <div className="w-1 h-3 bg-green-500 rounded-full" />
+                                                                    Identifier Configuration
+                                                                </h3>
+                                                                
+                                                                {/* Mode Selection */}
+                                                                <div className="space-y-3">
+                                                                    <div className="grid grid-cols-2 gap-2">
+                                                                        <button
+                                                                            onClick={() => {
+                                                                                setIdentifierMode('single');
+                                                                                setSelectedIdentifiers(selectedIdentifiers.slice(0, 1));
+                                                                            }}
+                                                                            className={`p-2 rounded-lg border transition-all duration-200 ${
+                                                                                identifierMode === 'single'
+                                                                                    ? 'bg-main-blue/20 border-main-blue text-white'
+                                                                                    : 'bg-white/5 border-white/20 text-white/60 hover:bg-white/10'
+                                                                            }`}
+                                                                        >
+                                                                            <div className="flex items-center gap-2">
+                                                                                <Key className="w-4 h-4" />
+                                                                                <span className="text-xs font-medium">Single</span>
+                                                                            </div>
+                                                                        </button>
+                                                                        <button
+                                                                            onClick={() => {
+                                                                                const availableIdentifiers = commonColumnsData.common_columns.filter(col => col.is_potential_identifier).length;
+                                                                                if (availableIdentifiers > 1) {
+                                                                                    setIdentifierMode('combined');
+                                                                                }
+                                                                            }}
+                                                                            disabled={commonColumnsData.common_columns.filter(col => col.is_potential_identifier).length <= 1}
+                                                                            className={`p-2 rounded-lg border transition-all duration-200 ${
+                                                                                commonColumnsData.common_columns.filter(col => col.is_potential_identifier).length <= 1
+                                                                                    ? 'bg-white/5 border-white/10 text-white/30 cursor-not-allowed opacity-50'
+                                                                                    : identifierMode === 'combined'
+                                                                                        ? 'bg-main-blue/20 border-main-blue text-white'
+                                                                                        : 'bg-white/5 border-white/20 text-white/60 hover:bg-white/10'
+                                                                            }`}
+                                                                            title={commonColumnsData.common_columns.filter(col => col.is_potential_identifier).length <= 1 ? "Need multiple identifiers to combine" : ""}
+                                                                        >
+                                                                            <div className="flex items-center gap-2">
+                                                                                <Database className="w-4 h-4" />
+                                                                                <span className="text-xs font-medium">Combined</span>
+                                                                            </div>
+                                                                        </button>
+                                                                    </div>
 
-                                                            <div className="space-y-1.5">
-                                                                <Label className="text-xs font-medium text-white/80">Model Type</Label>
-                                                                <Select value={regression} onValueChange={setRegression}>
-                                                                    <SelectTrigger className="bg-white/5 border-white/20 text-white h-8 text-sm hover:bg-white/10 transition-colors">
-                                                                        <SelectValue placeholder="Select" />
-                                                                    </SelectTrigger>
-                                                                    <SelectContent>
-                                                                        <SelectItem value="linear">Linear</SelectItem>
-                                                                        <SelectItem value="logistic">Logistic</SelectItem>
-                                                                    </SelectContent>
-                                                                </Select>
+                                                                    {/* Column Selection */}
+                                                                    <div>
+                                                                        <Label className="text-xs font-medium text-white/80 mb-1.5">
+                                                                            {identifierMode === 'single' ? 'Select Identifier Column' : 'Select Columns to Combine'}
+                                                                        </Label>
+                                                                        {identifierMode === 'single' ? (
+                                                                            <Select 
+                                                                                value={selectedIdentifiers[0] || ''} 
+                                                                                onValueChange={(value) => setSelectedIdentifiers([value])}
+                                                                            >
+                                                                                <SelectTrigger className="bg-white/5 border-white/20 text-white h-8 text-sm hover:bg-white/10 transition-colors">
+                                                                                    <SelectValue placeholder="Select identifier..." />
+                                                                                </SelectTrigger>
+                                                                                <SelectContent>
+                                                                                    {commonColumnsData.common_columns
+                                                                                        .filter(col => col.is_potential_identifier)
+                                                                                        .map(col => (
+                                                                                            <SelectItem key={col.name} value={col.name}>
+                                                                                                {col.name}
+                                                                                            </SelectItem>
+                                                                                        ))
+                                                                                    }
+                                                                                </SelectContent>
+                                                                            </Select>
+                                                                        ) : (
+                                                                            <div className="space-y-2 max-h-32 overflow-y-auto">
+                                                                                {commonColumnsData.common_columns
+                                                                                    .filter(col => col.is_potential_identifier)
+                                                                                    .map(col => (
+                                                                                        <label
+                                                                                            key={col.name}
+                                                                                            className={`flex items-center gap-2 p-2 px-3 rounded-lg border cursor-pointer transition-all duration-200 ${
+                                                                                                selectedIdentifiers.includes(col.name)
+                                                                                                    ? 'bg-main-blue/20 border-main-blue'
+                                                                                                    : 'bg-white/5 border-white/20 hover:bg-white/10'
+                                                                                            }`}
+                                                                                        >
+                                                                                            <input
+                                                                                                type="checkbox"
+                                                                                                checked={selectedIdentifiers.includes(col.name)}
+                                                                                                onChange={(e) => {
+                                                                                                    if (e.target.checked) {
+                                                                                                        setSelectedIdentifiers([...selectedIdentifiers, col.name]);
+                                                                                                    } else {
+                                                                                                        setSelectedIdentifiers(selectedIdentifiers.filter(id => id !== col.name));
+                                                                                                    }
+                                                                                                }}
+                                                                                                className="w-4 h-4 rounded border-white/20 bg-white/5 text-main-blue focus:ring-main-blue"
+                                                                                            />
+                                                                                            <span className="text-sm text-white">{col.name}</span>
+                                                                                        </label>
+                                                                                    ))
+                                                                                }
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+
+                                                                    {/* Info about selected identifier */}
+                                                                    {selectedIdentifiers.length > 0 && (
+                                                                        <div className="p-2 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                                                                            <p className="text-xs text-blue-400 px-1">
+                                                                                {identifierMode === 'single' 
+                                                                                    ? `Using "${selectedIdentifiers[0]}" as identifier`
+                                                                                    : `Combining ${selectedIdentifiers.join(' + ')} as identifier`
+                                                                                }
+                                                                            </p>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+                                                        {/* Logging Toggle */}
+                                                        <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                                                            <div className="flex items-center justify-between">
+                                                                <div className="flex items-center gap-3">
+                                                                    <div className="p-2 bg-white/10 rounded-lg">
+                                                                        <Database className="w-4 h-4 text-white/80" />
+                                                                    </div>
+                                                                    <div>
+                                                                        <Label className="text-sm font-medium text-white">Enable Logging</Label>
+                                                                        <p className="text-xs text-white/60">Track training progress</p>
+                                                                    </div>
+                                                                </div>
+                                                                <Switch
+                                                                    checked={isLogging}
+                                                                    onCheckedChange={setIsLogging}
+                                                                    className="data-[state=checked]:bg-main-blue"
+                                                                />
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
-                                                    {/* Training Parameters */}
-                                                    <div>
-                                                        <h3 className="text-xs font-medium text-white/90 mb-3 flex items-center gap-2">
-                                                            <div className="w-1 h-3 bg-main-yellow rounded-full" />
-                                                            Training Parameters
-                                                        </h3>
-                                                        <div className="grid grid-cols-2 gap-3">
-                                                            <div className="space-y-1.5">
-                                                                <Label className="text-xs font-medium text-white/80">Learning Rate</Label>
-                                                                <div className="relative">
-                                                                    <Input
-                                                                        type="number"
-                                                                        step="0.001"
-                                                                        min={0}
-                                                                        value={learningRate}
-                                                                        onChange={(e) => setLearningRate(e.target.value)}
-                                                                        placeholder="0.01"
-                                                                        className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-8 text-sm hover:bg-white/10 transition-colors focus:border-main-blue pr-10"
-                                                                    />
-                                                                    <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                                                                        <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-                                                                            learningRate ? 'bg-green-400' : 'bg-white/20'
-                                                                        }`} />
-                                                                    </div>
+
+                                                    {/* Right Column */}
+                                                    <div className="space-y-4">
+                                                        {/* Algorithm Settings */}
+                                                        <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                                                            <h3 className="text-sm font-medium text-white/90 mb-3 flex items-center gap-2">
+                                                                <div className="w-1 h-3 bg-main-blue rounded-full" />
+                                                                Algorithm Settings
+                                                            </h3>
+                                                            <div className="grid grid-cols-2 gap-3">
+                                                                <div className="space-y-1.5">
+                                                                    <Label className="text-xs font-medium text-white/80">Normalizer</Label>
+                                                                    <Select value={normalizer} onValueChange={setNormalizer}>
+                                                                        <SelectTrigger className="bg-white/5 border-white/20 text-white h-9 text-sm hover:bg-white/10 transition-colors">
+                                                                            <SelectValue placeholder="Select" />
+                                                                        </SelectTrigger>
+                                                                        <SelectContent>
+                                                                            <SelectItem value="minmax">MinMax</SelectItem>
+                                                                            <SelectItem value="zscore">Z-Score</SelectItem>
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                </div>
+
+                                                                <div className="space-y-1.5">
+                                                                    <Label className="text-xs font-medium text-white/80">Model Type</Label>
+                                                                    <Select value={regression} onValueChange={setRegression}>
+                                                                        <SelectTrigger className="bg-white/5 border-white/20 text-white h-9 text-sm hover:bg-white/10 transition-colors">
+                                                                            <SelectValue placeholder="Select" />
+                                                                        </SelectTrigger>
+                                                                        <SelectContent>
+                                                                            <SelectItem value="linear">Linear</SelectItem>
+                                                                            <SelectItem value="logistic">Logistic</SelectItem>
+                                                                        </SelectContent>
+                                                                    </Select>
                                                                 </div>
                                                             </div>
+                                                        </div>
+                                                        
+                                                        {/* Training Parameters */}
+                                                        <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                                                            <h3 className="text-sm font-medium text-white/90 mb-3 flex items-center gap-2">
+                                                                <div className="w-1 h-3 bg-main-yellow rounded-full" />
+                                                                Training Parameters
+                                                            </h3>
+                                                            <div className="grid grid-cols-2 gap-3">
+                                                                <div className="space-y-1.5">
+                                                                    <Label className="text-xs font-medium text-white/80">Learning Rate</Label>
+                                                                    <div className="relative">
+                                                                        <Input
+                                                                            type="number"
+                                                                            step="0.001"
+                                                                            min={0}
+                                                                            value={learningRate}
+                                                                            onChange={(e) => setLearningRate(e.target.value)}
+                                                                            placeholder="0.01"
+                                                                            className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-9 text-sm hover:bg-white/10 transition-colors focus:border-main-blue pr-10"
+                                                                        />
+                                                                        <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                                                            <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                                                                                learningRate ? 'bg-green-400' : 'bg-white/20'
+                                                                            }`} />
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
 
-                                                            <div className="space-y-1.5">
-                                                                <Label className="text-xs font-medium text-white/80">Epochs</Label>
-                                                                <div className="relative">
-                                                                    <Input
-                                                                        type="number"
-                                                                        min={1}
-                                                                        value={epochs}
-                                                                        onChange={(e) => setEpochs(e.target.value)}
-                                                                        placeholder="100"
-                                                                        className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-8 text-sm hover:bg-white/10 transition-colors focus:border-main-blue pr-10"
-                                                                    />
-                                                                    <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                                                                        <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-                                                                            epochs ? 'bg-green-400' : 'bg-white/20'
-                                                                        }`} />
+                                                                <div className="space-y-1.5">
+                                                                    <Label className="text-xs font-medium text-white/80">Epochs</Label>
+                                                                    <div className="relative">
+                                                                        <Input
+                                                                            type="number"
+                                                                            min={1}
+                                                                            value={epochs}
+                                                                            onChange={(e) => setEpochs(e.target.value)}
+                                                                            placeholder="100"
+                                                                            className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-9 text-sm hover:bg-white/10 transition-colors focus:border-main-blue pr-10"
+                                                                        />
+                                                                        <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                                                            <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                                                                                epochs ? 'bg-green-400' : 'bg-white/20'
+                                                                            }`} />
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-
-                                                    {/* Logging Toggle */}
-                                                    <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="p-1.5 bg-white/10 rounded">
-                                                                <Database className="w-3 h-3 text-white/80" />
-                                                            </div>
-                                                            <div>
-                                                                <Label className="text-sm font-medium text-white">Enable Logging</Label>
-                                                                <p className="text-xs text-white/60">Track progress</p>
-                                                            </div>
-                                                        </div>
-                                                        <Switch
-                                                            checked={isLogging}
-                                                            onCheckedChange={setIsLogging}
-                                                            className="data-[state=checked]:bg-main-blue"
-                                                        />
                                                     </div>
                                                 </div>
 
                                                 {/* Action Button */}
                                                 <Button 
-                                                    disabled={!learningRate || !epochs}
+                                                    disabled={!learningRate || !epochs || selectedIdentifiers.length === 0}
                                                     className="w-full mt-5 h-10 bg-gradient-to-r from-main-blue to-main-blue/80 hover:from-main-blue/90 hover:to-main-blue/70 text-white font-semibold rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02]" 
                                                     onClick={handleTrain}
                                                 >
@@ -912,6 +1120,75 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* No Common Columns Dialog */}
+            <Dialog open={showNoCommonColumnsDialog} onOpenChange={setShowNoCommonColumnsDialog}>
+                <DialogContent className="bg-main-dark border border-white/20 text-white max-w-2xl">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-3 text-xl">
+                            <AlertTriangle className="w-6 h-6 text-yellow-400" />
+                            No Common Columns Found
+                        </DialogTitle>
+                        <DialogDescription className="text-white/70 mt-3">
+                            {commonColumnsData?.error || "All parties must have at least one column with the same name to proceed with MPC"}
+                        </DialogDescription>
+                    </DialogHeader>
+                    
+                    <div className="mt-4 space-y-4">
+                        <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+                            <h4 className="text-sm font-semibold text-white mb-3">Uploaded Column Summary:</h4>
+                            <div className="space-y-2">
+                                {commonColumnsData && Object.entries(commonColumnsData.all_columns_by_user).map(([userId, columns]) => (
+                                    <div key={userId} className="flex items-start gap-3">
+                                        <div className="flex items-center gap-2 min-w-[100px]">
+                                            <User className="w-4 h-4 text-white/60" />
+                                            <span className="text-sm font-medium text-white/80">{userId}:</span>
+                                        </div>
+                                        <div className="flex flex-wrap gap-1.5">
+                                            {columns.map((col, idx) => (
+                                                <span 
+                                                    key={idx}
+                                                    className="px-2 py-0.5 bg-white/10 border border-white/20 rounded text-xs text-white/90"
+                                                >
+                                                    {col}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+                            <h4 className="text-sm font-semibold text-blue-400 mb-2">Recommendations:</h4>
+                            <ul className="space-y-1.5 text-sm text-white/70">
+                                <li className="flex items-start gap-2">
+                                    <span className="text-blue-400 mt-0.5">•</span>
+                                    All parties need to agree on a common identifier column name
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="text-blue-400 mt-0.5">•</span>
+                                    Rename columns to match before uploading (e.g., all use "user_id")
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="text-blue-400 mt-0.5">•</span>
+                                    Re-upload files with at least one matching column name
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <DialogFooter className="mt-6">
+                        <Button
+                            onClick={() => navigate('/')}
+                            className="bg-gradient-to-r from-main-blue to-main-blue/80 hover:from-main-blue/90 hover:to-main-blue/70 text-white font-semibold rounded-lg transition-all duration-300"
+                        >
+                            <Home className="w-4 h-4 mr-2" />
+                            Back to Home
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </main>
     );
 };

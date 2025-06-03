@@ -75,6 +75,12 @@ export interface SessionResult {
 
 // Backend-related Types
 // Requests and Responses
+export interface IdentifierConfig {
+    mode: 'single' | 'combined';
+    columns: string[];
+    separator?: string;
+}
+
 export interface RunConfig {
     userId: string;
     normalizer: string;
@@ -83,6 +89,7 @@ export interface RunConfig {
     epochs: number;
     label: string;
     isLogging: boolean;
+    identifierConfig?: IdentifierConfig;
 }
 
 export interface SessionInfo {
@@ -99,4 +106,22 @@ export interface SessionStateCheck {
     reason: string;
     current_state: 'created' | 'uploading' | 'ready' | 'processing' | 'completed' | 'failed';
     session_info: SessionInfo;
+}
+
+export interface CommonColumn {
+    name: string;
+    is_potential_identifier: boolean;
+    unique_counts: Record<string, number>;
+    dtypes: Record<string, string>;
+    sample_values: any[];
+}
+
+export interface CommonColumnsResponse {
+    session_id: string;
+    total_users: number;
+    common_columns: CommonColumn[];
+    potential_labels: string[];
+    all_columns_by_user: Record<string, string[]>;
+    error?: string;
+    recommendation?: string;
 }

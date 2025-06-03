@@ -1,7 +1,7 @@
 import axios from "axios";
 
 import { API_URL_LOCAL } from "@/constant";
-import { RunConfig, SessionResult, SessionStateCheck } from "@/types";
+import { RunConfig, SessionResult, SessionStateCheck, CommonColumnsResponse } from "@/types";
 
 class FormApi {
     private static axiosInstance = axios.create({
@@ -108,6 +108,18 @@ class FormApi {
         } catch (error: any) {
             console.log(error);
             throw new Error(error.response?.data?.detail || "Failed to make batch prediction");
+        }
+    }
+
+    static async getCommonColumns(sessionId: string): Promise<CommonColumnsResponse> {
+        try {
+            const response = await this.axiosInstance.get<CommonColumnsResponse>(
+                `/sessions/${sessionId}/common-columns`,
+                { headers: { "Content-Type": "application/json" } }
+            );
+            return response.data;
+        } catch (error: any) {
+            throw new Error(error.response?.data?.detail || "Failed to get common columns");
         }
     }
 }
