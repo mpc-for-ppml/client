@@ -236,8 +236,8 @@ export const Role: React.FC = () => {
                                         {userType === 'lead' && (
                                             <>
                                                 <div className="flex items-center gap-3 mb-3">
-                                                    <div className="p-1.5 bg-main-blue/20 rounded-lg border border-main-blue/30">
-                                                        <Crown className="w-4 h-4 text-main-blue" />
+                                                    <div className="p-1.5 bg-blue-500/20 rounded-lg border border-blue-600/30">
+                                                        <Crown className="w-4 h-4 text-blue-400" />
                                                     </div>
                                                     <div>
                                                         <h3 className="text-base text-white font-semibold">Leader Settings</h3>

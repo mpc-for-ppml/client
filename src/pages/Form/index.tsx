@@ -363,11 +363,11 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                             {/* Step 1 Content */}
                             <div className="space-y-4">
                                 <div className="flex items-center gap-3 mb-3">
-                                    <div className={`p-2 rounded-lg ${step === 1 ? 'bg-main-blue/20 border border-main-blue/30' : 'bg-white/10'}`}>
+                                    <div className={`p-2 rounded-lg ${step === 1 ? 'bg-blue-500/20 border border-blue-600/30' : 'bg-white/10'}`}>
                                         {userType === 'lead' ? (
-                                            <Building className={`w-5 h-5 ${step === 1 ? 'text-main-blue' : 'text-white/60'}`} />
+                                            <Building className={`w-5 h-5 ${step === 1 ? 'text-blue-400' : 'text-white/60'}`} />
                                         ) : (
-                                            <Upload className={`w-5 h-5 ${step === 1 ? 'text-main-blue' : 'text-white/60'}`} />
+                                            <Upload className={`w-5 h-5 ${step === 1 ? 'text-blue-400' : 'text-white/60'}`} />
                                         )}
                                     </div>
                                     <div>
@@ -514,8 +514,8 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                             {/* Step 2 Content */}
                             <div className="space-y-4">
                                 <div className={`flex items-center gap-3 ${step == 2 && "mb-6"}`}>
-                                    {step == 2 && <div className='p-2 rounded-lg bg-main-blue/20 border border-main-blue/30'>
-                                        <Settings className='w-5 h-5 text-main-blue' />
+                                    {step == 2 && <div className='p-2 rounded-lg bg-blue-500/20 border border-blue-600/30'>
+                                        <Settings className='w-5 h-5 text-blue-400' />
                                     </div>}
                                     <div>
                                         {userType === 'lead' && <h3 className={`text-lg font-semibold ${step === 2 ? 'text-white' : 'text-white/60'}`}>

@@ -243,10 +243,10 @@ export default function TestModel() {
                             className="flex flex-col w-[70%] rounded-xl"
                         >
 							<div className="bg-white/5 border border-white/20 rounded-2xl overflow-hidden">
-								<div className="bg-gradient-to-r from-white/10 to-white/5 p-6 border-b border-white/10">
+								<div className="bg-gradient-to-r from-blue-500/20 to-yellow-400/10 p-6 border-b border-white/10">
 									<div className="flex items-center gap-3 mb-2">
-										<div className="p-2 bg-main-blue/20 rounded-lg">
-											<Database className="w-5 h-5 text-main-blue" />
+										<div className="p-2 bg-blue-500/20 rounded-lg">
+											<Database className="w-5 h-5 text-blue-400" />
 										</div>
 										<h3 className="text-xl font-semibold text-white">Input Data</h3>
 										<Tooltip delayDuration={0}>
