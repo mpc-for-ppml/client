@@ -106,7 +106,6 @@ class FormApi {
             );
             return response.data;
         } catch (error: any) {
-            console.log(error);
             throw new Error(error.response?.data?.detail || "Failed to make batch prediction");
         }
     }

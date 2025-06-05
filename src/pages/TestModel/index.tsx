@@ -148,7 +148,6 @@ export default function TestModel() {
 			
 			toast.success("Prediction completed successfully!");
 		} catch (error: any) {
-			console.log(error.message);
 			toast.error(error.message);
 		} finally {
 			setPredicting(false);
