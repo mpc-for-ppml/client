@@ -1,7 +1,7 @@
 import axios from "axios";
 import { API_URL_LOCAL } from "@/constant";
 
-const BASE_URL = import.meta.env.VITE_API_URL || API_URL_LOCAL;
+const BASE_URL = import.meta.env.VITE_REACT_APP_API_BASE || API_URL_LOCAL;
 
 class RoleApi {
     private static axiosInstance = axios.create({

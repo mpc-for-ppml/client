@@ -5,7 +5,7 @@ import { RunConfig, SessionResult, SessionStateCheck, CommonColumnsResponse } fr
 
 class FormApi {
     private static axiosInstance = axios.create({
-        baseURL: import.meta.env.VITE_API_URL || API_URL_LOCAL,
+        baseURL: import.meta.env.VITE_REACT_APP_API_BASE || API_URL_LOCAL,
     });
 
     static async upload(form: FormData): Promise<void> {
