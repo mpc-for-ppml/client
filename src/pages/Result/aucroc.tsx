@@ -60,7 +60,7 @@ export const ChartAucRoc: React.FC<{ data: AucRocData }> = ({ data }) => {
             <CardContent className="p-0 pb-4">
                 <ChartContainer config={chartConfig}>
                     <ComposedChart
-                        height={1000}
+                        height={300}
                         data={chartData}
                         margin={{
                             top: 10,

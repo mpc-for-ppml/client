@@ -79,7 +79,7 @@ export const ChartPieInteractive: React.FC<{ timeData: TimeData[] }> = ({ timeDa
             <CardHeader className="flex-row items-start space-y-0 p-0">
                 <Select value={activePhase} onValueChange={setActivePhase}>
                     <SelectTrigger
-                        className="ml-auto h-7 w-[220px] rounded-lg pl-2.5 bg-white"
+                        className="ml-auto h-7 w-full sm:w-[220px] rounded-lg pl-2.5 bg-white text-xs sm:text-sm"
                         aria-label="Select a value"
                     >
                         <SelectValue placeholder="Select phase" />
@@ -107,7 +107,7 @@ export const ChartPieInteractive: React.FC<{ timeData: TimeData[] }> = ({ timeDa
                 <ChartContainer
                     id={id}
                     config={chartConfig}
-                    className="mx-auto aspect-square w-full min-h-[325px]"
+                    className="mx-auto aspect-square w-full min-h-[250px] md:min-h-[325px]"
                 >
                     <PieChart>
                         <ChartTooltip

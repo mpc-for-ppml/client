@@ -164,9 +164,9 @@ export const Result: React.FC = () => {
                 transition={{ duration: 0.6 }}
                 className="z-50"
             >
-                <Card className="bg-transparent mt-4 w-full p-5 pb-1">
-                    <CardContent className="flex items-center items-center justify-between w-full">
-                        <div className="flex flex-col w-[40%]">
+                <Card className="bg-transparent mt-4 w-full md:p-5 p-3 md:pb-1">
+                    <CardContent className="flex md:flex-row flex-col items-center items-center md:justify-between w-full">
+                        <div className="flex flex-col md:w-[40%] w-full justify-start md:pb-0 pb-4">
                             <div className="flex items-center gap-3 mb-2">
                                 <div className="p-2 bg-gradient-to-br from-main-blue/20 to-main-yellow/20 border border-white/10 rounded-xl">
                                     <Sparkle className="w-6 h-6 text-white" />
@@ -179,8 +179,8 @@ export const Result: React.FC = () => {
                                 model final result and statistic displayed below
                             </h1>
                         </div>
-                        <div className="flex space-x-4 w-[50%] justify-end text-white">
-                            <div className="bg-gradient-to-r from-white/10 to-white/5 border-b border-white/10 p-4 bg-white/20 w-[50%] rounded-2xl text-2xl font-bold px-5">
+                        <div className="flex sm:flex-row flex-col md:space-x-4 space-x-0 md:space-y-0 space-y-4 md:w-[50%] w-full md:justify-end text-white">
+                            <div className="bg-gradient-to-r from-white/10 to-white/5 border-b border-white/10 p-4 bg-white/20 sm:w-[50%] rounded-2xl md:text-2xl text-lg font-bold md:px-5">
                                 <span className="flex items-center gap-2 font-normal mb-1 text-base text-white/80">
                                     <img
                                         src={Model}
@@ -192,7 +192,7 @@ export const Result: React.FC = () => {
                                 </span>
                                 {summary.model}
                             </div>
-                            <div className="bg-gradient-to-r from-white/10 to-white/5 border-b border-white/10 p-4 bg-white/20 w-[50%] rounded-2xl text-2xl font-bold px-5">
+                            <div className="bg-gradient-to-r from-white/10 to-white/5 border-b border-white/10 p-4 bg-white/20 sm:w-[50%] rounded-2xl md:text-2xl text-lg font-bold md:px-5">
                                 <span className="flex items-center gap-2 font-normal mb-1 text-base text-white/80">
                                     <img
                                         src={Session}
@@ -215,13 +215,13 @@ export const Result: React.FC = () => {
                 transition={{ duration: 1.2 }}
                 className="z-50"
             >
-                <Card className="bg-transparent w-full px-5 mb-4">
-                    <CardContent className="flex items-stretch justify-between w-full text-white space-x-4">
+                <Card className="bg-transparent w-full md:px-5 px-3 mb-4">
+                    <CardContent className="flex md:flex-row flex-col items-stretch justify-between w-full text-white md:space-x-4 space-x-0 md:space-y-0 space-y-5">
                         <motion.div 
                             initial={{ opacity: 0, x: -50 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.6, delay: 0.2 }}
-                            className="border border-white/20 rounded-2xl flex flex-col w-[30%] bg-white/10 p-6 pb-8 px-8"
+                            className="border border-white/20 rounded-2xl flex flex-col md:w-[30%] w-full bg-white/10 p-6 pb-8 md:px-8 px-6"
                         >
                             <h1 className="text-xl font-semibold mb-1 flex items-center gap-3">
                                 Model training time
@@ -285,7 +285,7 @@ export const Result: React.FC = () => {
                             transition={{ duration: 0.6, delay: 0.4 }}
                             className="flex flex-col flex-1 space-y-4"
                         >
-                            <div className="border border-white/20 rounded-2xl flex flex-col bg-white/10 p-6 pb-8 px-8 flex-1">
+                            <div className="border border-white/20 rounded-2xl flex flex-col bg-white/10 p-6 pb-8 md:px-8 px-6 flex-1">
                                 <h1 className="text-xl font-semibold mb-1 flex items-center gap-3">
                                     Model statistic
                                     <Tooltip delayDuration={0}>
@@ -315,7 +315,7 @@ export const Result: React.FC = () => {
                                     ))}
                                 </div>
                             </div>
-                            <div className="border border-white/20 rounded-2xl flex flex-col bg-white/10 p-6 pb-8 px-8 flex-1">
+                            <div className="border border-white/20 rounded-2xl flex flex-col bg-white/10 p-6 pb-8 md:px-8 px-6 flex-1">
                                 <h1 className="text-xl font-semibold mb-1 flex items-center gap-3">
                                     Process Model
                                     <Tooltip delayDuration={0}>
@@ -369,9 +369,9 @@ export const Result: React.FC = () => {
                             initial={{ opacity: 0, x: 50 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.6, delay: 0.6 }}
-                            className="flex flex-col w-[40%] flex-1 space-y-4"
+                            className="flex flex-col md:w-[40%] w-full flex-1 space-y-4"
                         >
-                            <div className="border border-white/20 rounded-2xl flex flex-col bg-white/10 p-6 pb-8 px-8 flex-1">
+                            <div className="border border-white/20 rounded-2xl flex flex-col bg-white/10 p-6 pb-8 md:px-8 px-6 flex-1">
                                 <h1 className="text-xl font-semibold mb-1 flex items-center gap-3">
                                     Evaluation report
                                     <Tooltip delayDuration={0}>
@@ -390,7 +390,7 @@ export const Result: React.FC = () => {
                                     <ChartLineLinear data={actualVsPredicted} />
                                 )}
                             </div>
-                            <div className="border border-white/20 rounded-2xl flex flex-col bg-white/10 p-6 pb-8 px-8 flex flex-col flex-1">
+                            <div className="border border-white/20 rounded-2xl flex flex-col bg-white/10 p-6 pb-8 md:px-8 px-6 flex flex-col flex-1">
                                 <h1 className="text-xl font-semibold mb-1 flex items-center gap-3">
                                     Model Weight
                                     <Tooltip delayDuration={0}>
@@ -410,15 +410,15 @@ export const Result: React.FC = () => {
                                         <div key={index} className="flex items-center justify-between">
                                             <div className="flex items-center gap-2">
                                                 <div className={`min-w-[8px] w-2 h-2 rounded-full flex-shrink-0 ${coef.value < 0 ? 'bg-red-500' : 'bg-main-blue'}`} />
-                                                <span className="text-sm text-white/80">{coef.feature.replace('_', ' ')}</span>
+                                                <span className="text-xs md:text-sm text-white/80">{coef.feature.replace('_', ' ')}</span>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                <span className="text-sm font-medium text-white tabular-nums text-right" style={{ minWidth: '90px' }}>
+                                                <span className="text-xs md:text-sm font-medium text-white tabular-nums text-right" style={{ minWidth: '80px' }}>
                                                     {formatCoefficient(coef.value)}
                                                 </span>
                                                 <div className={`h-2 rounded-full ${coef.value < 0 ? 'bg-red-500/50' : 'bg-main-blue/50'}`} style={{
-                                                    width: `${normalizeCoefficient(coef.value)}px`,
-                                                    maxWidth: '200px'
+                                                    width: `${Math.min(normalizeCoefficient(coef.value), 120)}px`,
+                                                    maxWidth: '120px'
                                                 }} />
                                             </div>
                                         </div>

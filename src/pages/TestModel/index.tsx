@@ -201,7 +201,7 @@ export default function TestModel() {
                 transition={{ duration: 0.6 }}
                 className="z-50"
 			>
-				<Card className="bg-transparent mt-4 w-full p-5 pb-0">
+				<Card className="bg-transparent mt-4 w-full md:p-5 p-3 md:pb-0 pb-0">
 					<CardContent className="flex flex-col">
 						<Button
 							variant="ghost"
@@ -233,13 +233,13 @@ export default function TestModel() {
                 transition={{ duration: 1.2 }}
                 className="z-50"
             >
-				<Card className="bg-transparent w-full px-5 mb-4">
-                    <CardContent className="flex items-stretch justify-between w-full text-white space-x-6">
+				<Card className="bg-transparent w-full md:px-5 px-3 mb-4">
+                    <CardContent className="flex md:flex-row flex-col items-stretch justify-between w-full text-white md:space-x-6 space-x-0 md:space-y-0 space-y-6">
 						<motion.div 
                             initial={{ opacity: 0, x: -50 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.6, delay: 0.2 }}
-                            className="flex flex-col w-[70%] rounded-xl"
+                            className="flex flex-col md:w-[70%] w-full rounded-xl"
                         >
 							<div className="bg-white/5 border border-white/20 rounded-2xl overflow-hidden">
 								<div className="bg-gradient-to-r from-blue-500/20 to-yellow-400/10 p-6 border-b border-white/10">
@@ -268,14 +268,14 @@ export default function TestModel() {
 												value="manual" 
 												className="data-[state=active]:bg-main-blue data-[state=active]:text-white text-white/70 rounded-lg transition-all duration-300"
 											>
-												<FileText className="w-4 h-4 mr-2" />
+												<FileText className="md:w-4 md:h-4 w-0 h-0 md:mr-2" />
 												Manual Input
 											</TabsTrigger>
 											<TabsTrigger 
 												value="file"
 												className="data-[state=active]:bg-main-yellow data-[state=active]:text-black text-white/70 rounded-lg transition-all duration-300"
 											>
-												<Upload className="w-4 h-4 mr-2" />
+												<Upload className="md:w-4 md:h-4 w-0 h-0 md:mr-2" />
 												Upload CSV
 											</TabsTrigger>
 										</TabsList>
@@ -397,7 +397,7 @@ export default function TestModel() {
 													id="file-upload"
 												/>
 												<label htmlFor="file-upload" className="block cursor-pointer mt-2">
-													<div className={`border-2 border-dashed rounded-xl p-6 flex flex-col items-center transition-all duration-300 ${
+													<div className={`border-2 border-dashed rounded-xl p-6 flex flex-col items-center text-center transition-all duration-300 ${
 														file 
 															? "border-green-400/50 bg-green-400/10" 
 															: "border-white/30 bg-white/5 hover:border-white/50 hover:bg-white/10"
@@ -588,9 +588,9 @@ export default function TestModel() {
                             initial={{ opacity: 0, y: 50 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: 0.4 }}
-                            className="flex flex-col w-[30%] min-w-[350px] space-y-6"
+                            className="flex flex-col md:w-[30%] md:min-w-[350px] w-full space-y-6"
                         >
-							<div className="bg-white/10 border border-white/20 rounded-2xl p-6 pb-8 px-8 h-[400px] relative overflow-hidden">								
+							<div className="bg-white/10 border border-white/20 rounded-2xl p-6 pb-8 md:px-8 px-6 h-[400px] relative overflow-hidden">								
 								<div className="relative z-10 h-full flex flex-col">
 									<div className="flex items-center gap-3 mb-2">
 										<h1 className="text-xl font-semibold text-white">Model Overview</h1>
@@ -647,7 +647,7 @@ export default function TestModel() {
 								</div>
 							</div>
 
-							<div className="bg-white/10 border border-white/20 rounded-2xl p-6 pb-8 px-8 h-[400px] relative overflow-hidden">								
+							<div className="bg-white/10 border border-white/20 rounded-2xl p-6 pb-8 md:px-8 px-6 h-[400px] relative overflow-hidden">								
 								<div className="relative z-10 h-full flex flex-col">
 									<div className="flex items-center gap-3 mb-2">
 										<h1 className="text-xl font-semibold text-white">Training Stats</h1>
