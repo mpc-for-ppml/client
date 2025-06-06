@@ -10,7 +10,7 @@ class FormApi {
 
     static async upload(form: FormData): Promise<void> {
         try {
-            await this.axiosInstance.post("/upload", form, {
+            await this.axiosInstance.post("/upload/", form, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
         } catch (error: any) {
