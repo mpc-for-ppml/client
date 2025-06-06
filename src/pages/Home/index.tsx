@@ -37,7 +37,7 @@ export const Home: React.FC = () => {
     return (
         <div className="relative h-screen w-full bg-main-dark text-white overflow-hidden">
             {/* Made with love */}
-            <div className="absolute md:left-[-17rem] left-[-19rem] top-1/2 -translate-y-1/2 rotate-90 pl-4 md:mt-16 flex items-center space-x-20">
+            <div className="absolute md:left-[-17rem] left-[-19rem] top-1/2 md:-translate-y-1/2 -translate-y-2/3 rotate-90 pl-4 md:mt-16 flex items-center space-x-20">
                 <span className="text-xs tracking-widest text-white/40 mr-[29rem]">MADE WITH LOVE</span>
                 <div className="h-[65rem] w-px bg-white/40 rotate-90" />
             </div>
@@ -205,7 +205,7 @@ export const Home: React.FC = () => {
                 animate={{ opacity: 0.7, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.9 }}
                 whileHover={{ scale: 1.05 }}
-                className="absolute bottom-16 md:right-[27rem] right-[20rem] transform z-20 group"
+                className="absolute bottom-16 md:right-[27rem] right-[24rem] transform z-20 group"
             >
                 <Card className={`bg-white/15 border border-white/20 backdrop-blur-md hover:shadow-xl transition-all duration-300 rounded-2xl hover:rounded-3xl w-64`}>
                     <CardContent className="p-4">
