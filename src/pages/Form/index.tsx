@@ -269,15 +269,15 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
 
 
     return (
-        <main className="relative flex flex-row w-full min-h-screen bg-main-dark overflow-hidden">
+        <main className="relative flex md:flex-row flex-col-reverse w-full min-h-screen bg-main-dark overflow-hidden">
             {/* Left Pane */}
-            <div className="relative w-[47%] h-screen">
+            <div className="relative md:w-[47%] w-full h-screen">
                 {/* Role Badge */}
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
-                    className="absolute top-6 left-8 z-50"
+                    className="absolute hidden md:block top-6 left-8 z-50"
                 >
                     <Card className="border rounded-[3rem]">
                         <CardContent className="flex items-center gap-2 p-2 px-8">
@@ -294,12 +294,12 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                 </motion.div>
 
                 {/* Bottom-left Title & Subtitle */}
-                <div className="absolute bottom-20 left-9 z-20 text-white">
+                <div className="absolute md:bottom-20 bottom-[4.5rem] left-9 z-20 text-white">
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.4 }}
-                        className="text-5xl font-bold bg-gradient-to-r from-[#FFFFFF] to-[#999999] bg-clip-text text-transparent"
+                        className="md:text-5xl text-4xl font-bold bg-gradient-to-r from-[#FFFFFF] to-[#999999] bg-clip-text text-transparent"
                     >
                         Your Data.
                     </motion.h1>
@@ -307,7 +307,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.6 }}
-                        className="text-5xl font-bold bg-gradient-to-r from-[#FFFFFF] to-[#5B5B5B] bg-clip-text text-transparent"
+                        className="md:text-5xl text-4xl font-bold bg-gradient-to-r from-[#FFFFFF] to-[#5B5B5B] bg-clip-text text-transparent"
                     >
                         Your Insights.
                     </motion.h1>
@@ -315,7 +315,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.8 }}
-                        className="text-5xl font-bold bg-gradient-to-r from-[#E6E6E6] to-[#454545] bg-clip-text text-transparent"
+                        className="md:text-5xl text-4xl font-bold bg-gradient-to-r from-[#E6E6E6] to-[#454545] bg-clip-text text-transparent"
                     >
                         Your Security.
                     </motion.h1>
@@ -326,7 +326,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 1.0 }}
-                        className="text-sm font-base"
+                        className="md:text-sm text-xs font-base"
                     >
                         Take control of your dataset, ensuring only you and
                     </motion.p>
@@ -334,14 +334,14 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 1.2 }}
-                        className="text-sm font-base"
+                        className="md:text-sm text-xs font-base"
                     >
                         your team have access to the insights!
                     </motion.p>
                 </div>
 
                 {/* Participant Status Card */}
-                <div className="absolute top-16 z-30 w-[90%] max-w-md">
+                <div className="absolute md:top-16 top-3 z-30 w-[90%] max-w-md">
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -412,8 +412,28 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
             </div>
 
             {/* Right Pane */}
-            <div className="w-[53%] flex flex-col items-center justify-center min-h-screen p-4 space-y-6">
-                <div className="w-full max-w-lg">
+            <div className="md:w-[53%] w-full flex flex-col items-center justify-center min-h-screen p-4 space-y-6">
+                {/* Role Badge */}
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="absolute block md:hidden top-8 left-8 z-50"
+                >
+                    <Card className="border rounded-[3rem]">
+                        <CardContent className="flex items-center gap-2 p-2 px-8">
+                            {userType === 'lead' ? (
+                                <Crown className="w-4 h-4 text-main-blue" />
+                            ) : (
+                                <Users className="w-4 h-4 text-main-yellow" />
+                            )}
+                            <span className="font-semibold text-sm">
+                                {userType.charAt(0).toUpperCase() + userType.slice(1)}
+                            </span>
+                        </CardContent>
+                    </Card>
+                </motion.div>
+                <div className="w-full max-w-lg p-4 md:pt-0 pt-12">
                     <div className="flex items-center gap-3 mb-2">
                         <div className="p-2 bg-gradient-to-br from-main-blue/20 to-main-yellow/20 border border-white/10 rounded-xl">
                             <FileSpreadsheet className="w-6 h-6 text-primary text-white" />
@@ -427,9 +447,9 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                     </h1>
 
                     {/* Vertical Stepper */}
-                    <div className="flex space-x-4 text-white mt-6">
+                    <div className="flex md:space-x-4 text-white mt-6">
                         {/* Stepper Line */}
-                        <div className="flex flex-col items-center mt-3">
+                        <div className="md:flex md:flex-col items-center mt-3 hidden">
                             {/* Step 1 Circle */}
                             <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm mb-2 ${step === 1 ? 'bg-main-blue text-white' : 'bg-white/30 text-white/50'}`}>
                                 {userType === 'lead' ? 1 : "-"}
@@ -718,7 +738,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                         animate={{ x: 0 }}
                         exit={{ x: "100%" }}
                         transition={{ type: "tween", duration: 0.6 }}
-                        className="absolute top-0 left-0 w-full h-full bg-main-dark z-50 overflow-hidden"
+                        className="absolute top-0 left-0 md:w-full w-screen md:h-full h-screen bg-main-dark z-50 overflow-hidden"
                     >
                         {/* Blurry Bubbles */}
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: [0.3, 0.7, 0.3] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute -top-20 -right-20 w-[30rem] h-[30rem] bg-main-yellow rounded-full filter blur-[120px] opacity-50 z-0"></motion.div>
