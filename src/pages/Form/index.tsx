@@ -738,14 +738,14 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
                         animate={{ x: 0 }}
                         exit={{ x: "100%" }}
                         transition={{ type: "tween", duration: 0.6 }}
-                        className="absolute top-0 left-0 md:w-full w-screen md:h-full h-screen bg-main-dark z-50 overflow-hidden"
+                        className="fixed top-0 left-0 w-screen h-screen bg-main-dark z-50 md:overflow-hidden overflow-y-auto overflow-x-hidden md:pt-0 py-20"
                     >
                         {/* Blurry Bubbles */}
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: [0.3, 0.7, 0.3] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute -top-20 -right-20 w-[30rem] h-[30rem] bg-main-yellow rounded-full filter blur-[120px] opacity-50 z-0"></motion.div>
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: [0.5, 0.9, 0.5] }} transition={{ duration: 7.5, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-20 -left-20 w-[30rem] h-[30rem] bg-main-blue rounded-full filter blur-[120px] opacity-50 z-0"></motion.div>
 
                         {/* Main contents */}
-                        <div className="relative z-10 flex items-center justify-center h-full px-6">
+                        <div className="relative z-10 flex items-center justify-center min-h-screen px-6">
                             {userType !== "lead" ? (
                                 <motion.div
                                     initial={{ opacity: 0, y: 30 }}

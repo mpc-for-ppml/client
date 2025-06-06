@@ -116,7 +116,7 @@ export const Role: React.FC = () => {
                 {/* Cards Section */}
                 <motion.div 
                     animate={{ 
-                        marginTop: userType ? 20 : 40,
+                        marginTop: userType ? 30 : 40,
                     }}
                     transition={{ duration: 0.5, ease: "easeInOut" }}
                     className={`${userType ? "md:flex-1 md:mt-0 mt-10" : "mt-10" } flex items-center justify-center`}
@@ -256,7 +256,7 @@ export const Role: React.FC = () => {
                                     animate={{ opacity: 1, x: 0, scale: 1 }}
                                     exit={{ opacity: 0, x: 30, scale: 0.95 }}
                                     transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
-                                    className="w-full max-w-md z-50"
+                                    className="w-full md:max-w-md md:px-0 px-8 z-50"
                                 >
                                 <Card className="bg-white/10 border border-white/20 backdrop-blur-md rounded-2xl p-4">
                                     <CardContent className="space-y-3 p-3 px-5">

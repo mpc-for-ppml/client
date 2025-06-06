@@ -164,7 +164,7 @@ export const Result: React.FC = () => {
                 transition={{ duration: 0.6 }}
                 className="z-50"
             >
-                <Card className="bg-transparent mt-4 w-full md:p-5 p-3 md:pb-1">
+                <Card className="bg-transparent mt-4 w-full md:p-5 p-3 sm:pb-1">
                     <CardContent className="flex md:flex-row flex-col items-center items-center md:justify-between w-full">
                         <div className="flex flex-col md:w-[40%] w-full justify-start md:pb-0 pb-4">
                             <div className="flex items-center gap-3 mb-2">
@@ -179,7 +179,7 @@ export const Result: React.FC = () => {
                                 model final result and statistic displayed below
                             </h1>
                         </div>
-                        <div className="flex sm:flex-row flex-col md:space-x-4 space-x-0 md:space-y-0 space-y-4 md:w-[50%] w-full md:justify-end text-white">
+                        <div className="flex sm:flex-row flex-col sm:space-x-4 space-x-0 sm:space-y-0 space-y-4 md:w-[50%] w-full sm:justify-end text-white">
                             <div className="bg-gradient-to-r from-white/10 to-white/5 border-b border-white/10 p-4 bg-white/20 sm:w-[50%] rounded-2xl md:text-2xl text-lg font-bold md:px-5">
                                 <span className="flex items-center gap-2 font-normal mb-1 text-base text-white/80">
                                     <img
