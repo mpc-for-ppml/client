@@ -61,7 +61,7 @@ export const Role: React.FC = () => {
     };
 
     return (
-        <div className="relative h-screen bg-main-dark text-white overflow-hidden">
+        <div className="relative h-screen bg-main-dark text-white md:overflow-hidden overflow-y-auto overflow-x-hidden">
             {/* Animated Blurry Bubbles */}
             <motion.div 
                 initial={{ opacity: 0 }} 
@@ -100,7 +100,7 @@ export const Role: React.FC = () => {
                     transition={{ duration: 0.6 }}
                     className="text-center pt-12"
                 >
-                    <div className="flex items-center justify-center gap-3 mb-2">
+                    <div className="flex items-center justify-center gap-3 mb-2 md:mt-0 mt-10">
                         <div className="p-2 bg-gradient-to-br from-main-blue/20 to-main-yellow/20 border border-white/10 rounded-xl">
                             <PersonStanding className="w-6 h-6 text-white" />
                         </div>
@@ -116,108 +116,135 @@ export const Role: React.FC = () => {
                 {/* Cards Section */}
                 <motion.div 
                     animate={{ 
-                        marginTop: userType ? 0 : 40,
+                        marginTop: userType ? 20 : 40,
                     }}
                     transition={{ duration: 0.5, ease: "easeInOut" }}
-                    className={`${userType ? "flex-1" : "mt-10" } flex items-center justify-center`}
+                    className={`${userType ? "md:flex-1 md:mt-0 mt-10" : "mt-10" } flex items-center justify-center`}
                 >
-                    <div className='flex items-center gap-16 w-full justify-center'>
-                        <motion.div className={`flex ${userType ? "space-x-2" : "space-x-6"}`}>
-                            {/* Role Selection Cards */}
+                    <div className='flex md:flex-row flex-col items-center md:gap-16 gap-10 w-full justify-center md:mb-0 mb-10'>
+                        <motion.div
+                            className={`flex flex-col md:flex-row justify-center items-center w-full ${
+                                userType ? "md:space-x-2 space-x-0" : "md:space-x-6 space-x-0"
+                            } space-y-4 md:space-y-0`}
+                        >
+                            {/* Leader Card */}
                             <motion.div
-                                animate={{ 
+                                animate={{
                                     scale: userType === "lead" ? 0.95 : 1,
-                                    x: userType && userType !== "lead" ? -20 : 0
+                                    x: userType && userType !== "lead" ? -10 : 0,
                                 }}
                                 whileHover={{ scale: userType === "lead" ? 0.97 : 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 transition={{ duration: 0.4, ease: "easeOut" }}
-                                className="group"
+                                className="group w-full md:max-w-xs"
                             >
-                                <motion.div
-                                    animate={{
-                                        width: userType ? 256 : 288,
-                                        height: userType ? 288 : 320
-                                    }}
-                                    transition={{ duration: 0.5, ease: "easeInOut" }}
-                                >
                                 <Card
                                     className={`w-full h-full border border-white/30 cursor-pointer transition-all duration-500 ${
                                         userType === "lead"
-                                            ? "bg-gradient-to-br from-main-blue/30 to-main-blue/20 border-main-blue/50 shadow-lg shadow-main-blue/20"
-                                            : "bg-white/10 border-white/20 hover:bg-white/15"
+                                        ? "bg-gradient-to-br from-main-blue/30 to-main-blue/20 border-main-blue/50 shadow-lg shadow-main-blue/20"
+                                        : "bg-white/10 border-white/20 hover:bg-white/15"
                                     } backdrop-blur-md rounded-2xl hover:rounded-3xl overflow-hidden`}
                                     onClick={() => setUserType("lead")}
                                 >
-                                    <CardContent className="flex flex-col items-center justify-center h-full p-4">
-                                        <div className={`p-3 rounded-full mb-3 transition-all duration-300 ${
-                                            userType === "lead" ? "bg-main-blue/20" : "bg-white/10 group-hover:bg-white/20"
-                                        }`}>
-                                            <Crown className={`w-8 h-8 ${
+                                    <CardContent className="flex flex-col items-center justify-center h-full p-8 py-10">
+                                        <div
+                                            className={`p-3 rounded-full mb-3 transition-all duration-300 ${
+                                                userType === "lead"
+                                                ? "bg-main-blue/20"
+                                                : "bg-white/10 group-hover:bg-white/20"
+                                            }`}
+                                        >
+                                            <Crown
+                                                className={`w-8 h-8 ${
                                                 userType === "lead" ? "text-main-blue" : "text-white/80"
-                                            }`} />
+                                                }`}
+                                            />
                                         </div>
                                         <img
                                             src={Leader}
-                                            className={`block ${userType ? "h-20" : "h-24" } mb-3`}
+                                            className={`block ${userType ? "h-20" : "h-24"} mb-3`}
                                             draggable="false"
                                             alt="Leader"
                                         />
-                                        <h3 className={`${userType ? "text-lg" : "text-xl" } font-semibold mb-1 ${userType === "lead" ? "text-black" : "text-white"}`}>Leader</h3>
-                                        <p className={`text-center ${userType ? "text-xs" : "text-sm" } ${userType === "lead" ? "text-black/60" : "text-white/60"}`}>
+                                        <h3
+                                            className={`${
+                                                userType ? "text-lg" : "text-xl"
+                                            } font-semibold mb-1 ${
+                                                userType === "lead" ? "text-black" : "text-white"
+                                            }`}
+                                        >
+                                            Leader
+                                        </h3>
+                                        <p
+                                            className={`text-center ${
+                                                userType ? "text-xs" : "text-sm"
+                                            } ${userType === "lead" ? "text-black/60" : "text-white/60"}`}
+                                        >
                                             Create and manage a training session
                                         </p>
                                     </CardContent>
                                 </Card>
-                                </motion.div>
                             </motion.div>
 
+                            {/* Participant Card */}
                             <motion.div
-                                animate={{ 
+                                animate={{
                                     scale: userType === "participant" ? 0.95 : 1,
-                                    x: userType && userType !== "participant" ? 20 : 0
+                                    x: userType && userType !== "participant" ? 10 : 0,
                                 }}
                                 whileHover={{ scale: userType === "participant" ? 0.97 : 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 transition={{ duration: 0.4, ease: "easeOut" }}
-                                className="group"
+                                className="group w-full md:max-w-xs"
                             >
-                                <motion.div
-                                    animate={{
-                                        width: userType ? 256 : 288,
-                                        height: userType ? 288 : 320
-                                    }}
-                                    transition={{ duration: 0.5, ease: "easeInOut" }}
-                                >
                                 <Card
                                     className={`w-full h-full border border-white/30 cursor-pointer transition-all duration-500 ${
                                         userType === "participant"
-                                            ? "bg-gradient-to-br from-main-yellow/30 to-main-yellow/20 border-main-yellow/50 shadow-lg shadow-main-yellow/20"
-                                            : "bg-white/10 border-white/20 hover:bg-white/15"
+                                        ? "bg-gradient-to-br from-main-yellow/30 to-main-yellow/20 border-main-yellow/50 shadow-lg shadow-main-yellow/20"
+                                        : "bg-white/10 border-white/20 hover:bg-white/15"
                                     } backdrop-blur-md rounded-2xl hover:rounded-3xl overflow-hidden`}
                                     onClick={() => setUserType("participant")}
                                 >
-                                    <CardContent className="flex flex-col items-center justify-center h-full p-4">
-                                        <div className={`p-3 rounded-full mb-3 transition-all duration-300 ${
-                                            userType === "participant" ? "bg-main-yellow/20" : "bg-white/10 group-hover:bg-white/20"
-                                        }`}>
-                                            <Users className={`w-8 h-8 ${
-                                                userType === "participant" ? "text-main-yellow" : "text-white/80"
-                                            }`} />
+                                    <CardContent className="flex flex-col items-center justify-center h-full p-8 py-10">
+                                        <div
+                                            className={`p-3 rounded-full mb-3 transition-all duration-300 ${
+                                                userType === "participant"
+                                                ? "bg-main-yellow/20"
+                                                : "bg-white/10 group-hover:bg-white/20"
+                                            }`}
+                                        >
+                                        <Users
+                                            className={`w-8 h-8 ${
+                                            userType === "participant"
+                                                ? "text-main-yellow"
+                                                : "text-white/80"
+                                            }`}
+                                        />
                                         </div>
                                         <img
                                             src={Participant}
-                                            className={`block ${userType ? "h-20" : "h-24" } mb-3`}
+                                            className={`block ${userType ? "h-20" : "h-24"} mb-3`}
                                             draggable="false"
                                             alt="Participant"
                                         />
-                                        <h3 className={`${userType ? "text-lg" : "text-xl" } font-semibold mb-1 ${userType === "participant" ? "text-black" : "text-white"}`}>Participant</h3>
-                                        <p className={`text-center ${userType ? "text-xs" : "text-sm" } ${userType === "participant" ? "text-black/60" : "text-white/60"}`}>
+                                        <h3
+                                            className={`${
+                                                userType ? "text-lg" : "text-xl"
+                                            } font-semibold mb-1 ${
+                                                userType === "participant" ? "text-black" : "text-white"
+                                            }`}
+                                        >
+                                        Participant
+                                        </h3>
+                                        <p
+                                            className={`text-center ${
+                                                userType ? "text-xs" : "text-sm"
+                                            } ${userType === "participant" ? "text-black/60" : "text-white/60"}`}
+                                        >
                                             Join an existing training session created
                                         </p>
                                     </CardContent>
                                 </Card>
-                                </motion.div>
                             </motion.div>
                         </motion.div>
 
