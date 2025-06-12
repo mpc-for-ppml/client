@@ -48,3 +48,79 @@ export default tseslint.config({
   },
 })
 ```
+
+## System Diagram
+```mermaid
+graph TD
+    subgraph "User Interaction"
+        U[("👤<br>User")]
+    end
+
+    subgraph "Web Application"
+        direction LR
+        subgraph "Frontend Layer"
+            R[("⚛️<br>React App")]
+            UI_Stack[("🎨<br>UI & Styling<br>(Tailwind, shadcn/ui, Framer Motion)")]
+            V[("💻<br>Vite")]
+            TS[("📜<br>TypeScript")]
+        end
+
+        subgraph "Backend Layer (Python)"
+            FB[("⚡🐍<br>FastAPI Backend")]
+            WS[("🔌<br>Websocket")]
+            SessMgr[("🔑<br>Session Manager")]
+        end
+    end
+
+    subgraph "Multi-Party Computation (MPyC) Environment"
+        subgraph "MPyC Party Containers"
+            P1[("🐳<br>Party 1 (Leader)")]
+            P2[("🐳<br>Party 2")]
+            P3[("🐳<br>Party 3")]
+        end
+        MPyC_Workflow[("📊<br>MPyC Workflow<br>(Data Prep, PSI, Training, Eval, Results)")]
+    end
+
+
+    %% Connections
+    U -- Accesses & Interacts with --> R
+
+    V -- Bundles & Serves --> R
+    TS -- Provides Static Typing for --> R
+    R -- Integrates --> UI_Stack
+
+    R -- Communicates via API to --> FB
+    R -- Establishes persistent connection to --> WS
+
+    FB -- Manages Sessions via --> SessMgr
+    FB -- Orchestrates & Triggers --> MPyC_Workflow
+    WS -- Relays Status & Data from --> FB
+    WS -- Relays Status & Data to --> R
+
+    SessMgr -- Coordinates --> P1
+    FB -- Triggers specific endpoints on --> P1
+    FB -- Triggers specific endpoints on --> P2
+    FB -- Triggers specific endpoints on --> P3
+
+    P1 & P2 & P3 -- Participate in --> MPyC_Workflow
+    MPyC_Workflow -- Utilizes MPyC Libraries for --> P1
+    MPyC_Workflow -- Utilizes MPyC Libraries for --> P2
+    MPyC_Workflow -- Utilizes MPyC Libraries for --> P3
+    MPyC_Workflow -- Delivers Final Model/Results to --> R
+    MPyC_Workflow -- Delivers Final Model/Results to Each --> P1
+    MPyC_Workflow -- Delivers Final Model/Results to Each --> P2
+    MPyC_Workflow -- Delivers Final Model/Results to Each --> P3
+
+
+    classDef default fill:#1e1e2e,stroke:#89b4fa,stroke-width:2px,color:#cdd6f4;
+    classDef special fill:#313244,stroke:#a6e3a1,stroke-width:2px,color:#cdd6f4;
+    classDef user fill:#a6e3a1,stroke:#a6e3a1,stroke-width:2px,color:#1e1e2e;
+    classDef backend fill:#f9e2af,stroke:#fab387,stroke-width:2px,color:#1e1e2e;
+    classDef mpyc fill:#b4befe,stroke:#89b4fa,stroke-width:2px,color:#1e1e2e;
+
+    class V,TS special;
+    class R,UI_Stack default;
+    class U user;
+    class FB,WS,SessMgr backend;
+    class P1,P2,P3,MPyC_Workflow mpyc;
+```

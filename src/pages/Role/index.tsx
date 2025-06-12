@@ -125,7 +125,7 @@ export const Role: React.FC = () => {
                         <motion.div
                             className={`flex flex-col md:flex-row justify-center items-center w-full ${
                                 userType ? "md:space-x-2 space-x-0" : "md:space-x-6 space-x-0"
-                            } space-y-4 md:space-y-0`}
+                            } space-y-6 md:space-y-0`}
                         >
                             {/* Leader Card */}
                             <motion.div
