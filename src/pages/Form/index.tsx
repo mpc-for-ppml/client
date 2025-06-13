@@ -57,6 +57,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
     const [selectedIdentifiers, setSelectedIdentifiers] = useState<string[]>([]);
     const [showNoCommonColumnsDialog, setShowNoCommonColumnsDialog] = useState(false);
     const [isLoadingCommonColumns, setIsLoadingCommonColumns] = useState(false);
+    const [isTraining, setIsTraining] = useState(false);
 
     // Safely handle cases where statusMap might be undefined/null
     const safeStatusMap = statusMap || {};
@@ -239,6 +240,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
     };
 
     const handleTrain = async () => {
+        setIsTraining(true);
         const identifierConfig: IdentifierConfig = {
             mode: identifierMode,
             columns: selectedIdentifiers,
@@ -264,6 +266,7 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
             .catch((error: any) => {
                 setError(error.message || 'Train config upload failed');
                 toast.error(error || 'Server is unreachable. Please try again later.');
+                setIsTraining(false);
             })
     }
 
@@ -1085,12 +1088,25 @@ export const FormUpload: React.FC<SessionData> = ({ userType, userId, sessionId,
 
                                                 {/* Action Button */}
                                                 <Button 
-                                                    disabled={!learningRate || !epochs || selectedIdentifiers.length === 0}
-                                                    className="w-full mt-5 h-10 bg-gradient-to-r from-main-blue to-main-blue/80 hover:from-main-blue/90 hover:to-main-blue/70 text-white font-semibold rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02]" 
+                                                    disabled={!learningRate || !epochs || selectedIdentifiers.length === 0 || isTraining}
+                                                    className="w-full mt-5 h-10 bg-gradient-to-r from-main-blue to-main-blue/80 hover:from-main-blue/90 hover:to-main-blue/70 text-white font-semibold rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none" 
                                                     onClick={handleTrain}
                                                 >
-                                                    <Play className="w-4 h-4 mr-2" />
-                                                    Start Training
+                                                    {isTraining ? (
+                                                        <>
+                                                            <motion.div
+                                                                animate={{ rotate: 360 }}
+                                                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                                                                className="w-4 h-4 mr-2 border-2 border-white/30 border-t-white rounded-full"
+                                                            />
+                                                            Starting Training...
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Play className="w-4 h-4 mr-2" />
+                                                            Start Training
+                                                        </>
+                                                    )}
                                                 </Button>
                                             </CardContent>
                                         </Card>
